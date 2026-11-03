@@ -1,6 +1,6 @@
 {
   "name": "gilil-on-desktop",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Gilil On \u2014 Windows desktop shell (Electron) + Stage 2 server",
   "main": "main.js",
   "author": "Gilil",
@@ -8,11 +8,16 @@
   "private": true,
   "scripts": {
     "start": "electron .",
-    "predist": "node scripts/sync-manual-docs.js && node scripts/prep-win-native.js",
+    "prepare:server-resources": "node scripts/prep-packaged-server.js && node scripts/prep-win-native.js",
+    "predist": "node scripts/sync-manual-docs.js && npm run prepare:server-resources",
     "dist": "electron-builder --win nsis portable",
     "postdist": "node scripts/restore-linux-native.js",
+    "predist:nsis": "node scripts/sync-manual-docs.js && npm run prepare:server-resources",
     "dist:nsis": "electron-builder --win nsis",
+    "postdist:nsis": "node scripts/restore-linux-native.js",
+    "predist:portable": "node scripts/sync-manual-docs.js && npm run prepare:server-resources",
     "dist:portable": "electron-builder --win portable",
+    "postdist:portable": "node scripts/restore-linux-native.js",
     "smoke:update": "node scripts/smoke-auto-update.js"
   },
   "dependencies": {
@@ -66,6 +71,7 @@
         "to": "server",
         "filter": [
           "**/*",
+          ".env",
           "!data/**",
           "!**/*.md",
           "!scripts/smoke.js",
@@ -104,7 +110,12 @@
       ],
       "signAndEditExecutable": false,
       "publish": [
-        "github"
+        {
+          "provider": "github",
+          "owner": "ruslan613",
+          "repo": "gilil-on-desktop",
+          "releaseType": "release"
+        }
       ]
     },
     "portable": {

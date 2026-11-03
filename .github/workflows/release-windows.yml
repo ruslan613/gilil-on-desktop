@@ -21,9 +21,22 @@ jobs:
         with:
           node-version: '20'
           cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            server/package-lock.json
 
-      - name: Install dependencies
+      - name: Install root dependencies
         run: npm ci
+
+      # server/ is extraResources, not an Electron dependency. Root `npm ci`
+      # does not install it. Without server/node_modules and server/.env the
+      # embedded node.exe exits before listen (8788) and the shell quits.
+      - name: Install embedded server dependencies
+        working-directory: server
+        run: npm ci
+
+      - name: Prepare packaged server env and win32 better-sqlite3
+        run: npm run prepare:server-resources
 
       - name: Build NSIS and publish to GitHub Releases
         env:
@@ -31,3 +44,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CSC_IDENTITY_AUTO_DISCOVERY: 'false'
         run: npx electron-builder --win nsis --publish always
+
+      # win.publish used to be the string "github", which drops releaseType and
+      # makes electron-builder create a draft. Undraft so the tag is downloadable.
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release edit "${{ github.ref_name }}" --draft=false --latest
