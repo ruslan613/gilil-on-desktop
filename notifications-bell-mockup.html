@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Gilil On · Notifications Bell — Design Concept</title>
+<style>
+:root {
+  --bg: #0b0f14;
+  --bg-elev: #111827;
+  --bg-card: #151c27;
+  --bg-card-2: #1a2332;
+  --line: #243044;
+  --line-soft: #1e293b;
+  --hover-line: #334155;
+  --hover-bg: rgba(255,255,255,.03);
+  --ink: #e5e7eb;
+  --muted: #94a3b8;
+  --muted-2: #64748b;
+  --orange: #f59e0b;
+  --orange-hot: #fb923c;
+  --teal: #14b8a6;
+  --teal-dim: rgba(20,184,166,.18);
+  --teal-deep: #0f766e;
+  --mark-ink: #042f2e;
+  --red: #ef4444;
+  --red-glow: rgba(239,68,68,.45);
+  --green: #22c55e;
+  --blue: #3b82f6;
+  --radius: 14px;
+  --radius-sm: 10px;
+  --pill: 999px;
+  --shadow: 0 16px 48px rgba(0,0,0,.45);
+  --font: "Segoe UI", "Inter", system-ui, -apple-system, sans-serif;
+  --sidebar-w: 280px;
+  --header-h: 58px;
+  --panel-w: 360px;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body {
+  font-family: var(--font);
+  background: #05070a;
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.45;
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  padding: 24px;
+}
+.stage {
+  width: 1920px;
+  height: 1200px;
+  background: var(--bg);
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 24px 80px rgba(0,0,0,.55);
+  border: 1px solid #1a2230;
+}
+.app {
+  height: 100%;
+  display: grid;
+  grid-template-rows: var(--header-h) 1fr;
+}
+.appbar {
+  display: flex; align-items: center; gap: 14px;
+  padding: 0 16px;
+  background: var(--bg-elev);
+  border-bottom: 1px solid var(--line-soft);
+  z-index: 30;
+  position: relative;
+}
+.brand { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.brand .mark {
+  width: 34px; height: 34px; border-radius: 10px;
+  background: linear-gradient(135deg, var(--teal), var(--teal-deep));
+  display: grid; place-items: center;
+  font-weight: 800; font-size: 13px; color: var(--mark-ink);
+}
+.brand h1 { margin: 0; font-size: 1rem; font-weight: 700; }
+.brand .tag { display: block; font-size: 10px; color: var(--muted-2); font-weight: 400; }
+
+.pills {
+  display: flex; align-items: center; gap: 6px;
+  flex: 1; overflow: hidden; padding: 4px 0; min-width: 0;
+}
+.pill {
+  appearance: none; cursor: default;
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 14px; border-radius: var(--pill);
+  border: 1px solid var(--line); background: transparent;
+  color: var(--muted); font-size: 13px; font-weight: 550; white-space: nowrap;
+  position: relative;
+}
+.pill.active {
+  color: var(--orange-hot); border-color: var(--orange); background: transparent;
+}
+.pill.crm {
+  color: #fff; background: var(--teal-dim); border-color: var(--teal);
+}
+.pill .task-badge {
+  position: absolute; top: -4px; right: -4px;
+  min-width: 18px; height: 18px; padding: 0 5px; border-radius: var(--pill);
+  background: var(--red); color: #fff; font-size: 10px; font-weight: 700;
+  display: grid; place-items: center;
+  box-shadow: 0 0 10px var(--red-glow);
+}
+
+.lang-switch {
+  display: flex; align-items: center; gap: 3px; flex-shrink: 0;
+  padding: 3px; border-radius: var(--pill);
+  border: 1px solid var(--line); background: rgba(0,0,0,.28); margin-left: 4px;
+}
+.lang-btn {
+  appearance: none; border: none; padding: 5px 9px; border-radius: var(--pill);
+  background: transparent; color: var(--muted); font-size: 11.5px; font-weight: 700;
+}
+.lang-btn.active { background: var(--teal-dim); color: #5eead4; }
+
+.role-switch {
+  display: flex; gap: 2px; flex-shrink: 0;
+  padding: 3px; border-radius: var(--pill);
+  border: 1px solid var(--line); background: rgba(0,0,0,.2);
+}
+.role-btn {
+  appearance: none; border: none; padding: 5px 10px; border-radius: var(--pill);
+  background: transparent; color: var(--muted); font-size: 11.5px; font-weight: 650;
+}
+.role-btn.active { background: var(--teal-dim); color: #5eead4; }
+
+.theme-gear {
+  appearance: none; border: 1px solid var(--line); cursor: default;
+  width: 34px; height: 34px; border-radius: 10px;
+  background: var(--bg-card); color: var(--muted);
+  display: grid; place-items: center; font-size: 16px; flex-shrink: 0; margin-left: 4px;
+}
+
+/* ——— Notification bell ——— */
+.notif-wrap {
+  position: relative; flex-shrink: 0; margin-left: 4px;
+}
+.bell-btn {
+  appearance: none; border: 1px solid var(--line); cursor: pointer;
+  width: 34px; height: 34px; border-radius: 10px;
+  background: var(--teal-dim); color: var(--teal);
+  border-color: var(--teal);
+  display: grid; place-items: center; flex-shrink: 0;
+  position: relative;
+  box-shadow: 0 0 0 1px rgba(20,184,166,.25);
+}
+.bell-btn svg { width: 18px; height: 18px; }
+.bell-badge {
+  position: absolute; top: -5px; right: -5px;
+  min-width: 18px; height: 18px; padding: 0 5px;
+  border-radius: var(--pill);
+  background: var(--red); color: #fff;
+  font-size: 10px; font-weight: 800;
+  display: grid; place-items: center;
+  box-shadow: 0 0 10px var(--red-glow);
+  line-height: 1;
+  animation: pulse-red 1.6s ease-in-out infinite;
+}
+@keyframes pulse-red {
+  0%, 100% { box-shadow: 0 0 6px var(--red-glow); }
+  50% { box-shadow: 0 0 14px var(--red-glow), 0 0 22px rgba(239,68,68,.3); }
+}
+
+.notif-panel {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: var(--panel-w);
+  max-height: 560px;
+  background: var(--bg-elev);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  z-index: 90;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+.notif-panel::before {
+  content: '';
+  position: absolute; top: -6px; right: 12px;
+  width: 12px; height: 12px;
+  background: var(--bg-elev);
+  border-left: 1px solid var(--line);
+  border-top: 1px solid var(--line);
+  transform: rotate(45deg);
+}
+.notif-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px 10px;
+  border-bottom: 1px solid var(--line-soft);
+}
+.notif-head h2 {
+  margin: 0; font-size: 15px; font-weight: 700; letter-spacing: .01em;
+}
+.notif-head .mark-all {
+  appearance: none; border: none; background: none; cursor: pointer;
+  color: var(--teal); font-size: 12px; font-weight: 600; padding: 4px 6px;
+  border-radius: 6px;
+}
+.notif-head .mark-all:hover { background: var(--teal-dim); }
+
+.notif-filters {
+  display: flex; gap: 4px; padding: 10px 12px;
+  border-bottom: 1px solid var(--line-soft);
+  overflow-x: auto;
+}
+.nf {
+  appearance: none; cursor: pointer;
+  padding: 5px 11px; border-radius: var(--pill);
+  border: 1px solid var(--line); background: transparent;
+  color: var(--muted); font-size: 11.5px; font-weight: 600; white-space: nowrap;
+}
+.nf.active {
+  background: var(--teal-dim); color: #5eead4; border-color: var(--teal);
+}
+.nf .cnt {
+  display: inline-block; margin-left: 4px;
+  min-width: 16px; padding: 0 5px; border-radius: var(--pill);
+  background: rgba(239,68,68,.2); color: #fca5a5; font-size: 10px; font-weight: 700;
+}
+.nf.active .cnt { background: rgba(20,184,166,.25); color: #5eead4; }
+
+.notif-list {
+  flex: 1; overflow-y: auto; padding: 6px;
+  max-height: 400px;
+}
+.nitem {
+  display: grid;
+  grid-template-columns: 40px 1fr auto;
+  gap: 10px;
+  padding: 10px 10px;
+  border-radius: 12px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  align-items: start;
+  position: relative;
+}
+.nitem:hover { background: var(--hover-bg); border-color: var(--line-soft); }
+.nitem.unread { background: rgba(20,184,166,.06); }
+.nitem.unread:hover { background: rgba(20,184,166,.1); border-color: rgba(20,184,166,.25); }
+.nitem .av {
+  width: 40px; height: 40px; border-radius: 12px;
+  display: grid; place-items: center;
+  font-weight: 700; font-size: 12px; color: #fff; flex-shrink: 0;
+}
+.nitem .av.msg { background: linear-gradient(135deg, #0f766e, #14b8a6); }
+.nitem .av.task { background: linear-gradient(135deg, #b45309, #f59e0b); color: #1c1917; }
+.nitem .av.inv { background: linear-gradient(135deg, #1d4ed8, #3b82f6); }
+.nitem .av.lead { background: linear-gradient(135deg, #7c3aed, #a78bfa); }
+.nitem .av.mail { background: linear-gradient(135deg, #334155, #64748b); }
+.nitem .body { min-width: 0; }
+.nitem .who {
+  font-size: 13px; font-weight: 650; color: var(--ink);
+  display: flex; align-items: center; gap: 6px;
+}
+.nitem .who .type-tag {
+  font-size: 10px; font-weight: 700; padding: 1px 6px;
+  border-radius: 999px; letter-spacing: .02em;
+}
+.type-tag.msg { background: var(--teal-dim); color: #5eead4; }
+.type-tag.task { background: rgba(245,158,11,.15); color: var(--orange-hot); }
+.type-tag.inv { background: rgba(59,130,246,.15); color: #93c5fd; }
+.type-tag.lead { background: rgba(167,139,250,.15); color: #c4b5fd; }
+.type-tag.mail { background: rgba(148,163,184,.15); color: var(--muted); }
+.nitem .what {
+  font-size: 12.5px; color: var(--muted); margin-top: 2px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.nitem .meta-r {
+  text-align: right; display: flex; flex-direction: column;
+  align-items: flex-end; gap: 6px; padding-top: 2px;
+}
+.nitem .when { font-size: 11px; color: var(--muted-2); white-space: nowrap; }
+.nitem .dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--teal); box-shadow: 0 0 8px rgba(20,184,166,.5);
+}
+.nitem:not(.unread) .dot { visibility: hidden; }
+
+.notif-foot {
+  padding: 10px 14px;
+  border-top: 1px solid var(--line-soft);
+  text-align: center;
+}
+.notif-foot a {
+  color: var(--teal); font-size: 12.5px; font-weight: 600;
+  text-decoration: none;
+}
+.notif-foot a:hover { color: #5eead4; }
+
+/* Empty state panel (inset annotation) */
+.empty-panel {
+  position: absolute;
+  left: 48px; bottom: 48px;
+  width: 320px;
+  background: var(--bg-elev);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  padding: 28px 20px;
+  text-align: center;
+  z-index: 40;
+}
+.empty-panel .empty-ico {
+  width: 56px; height: 56px; margin: 0 auto 12px;
+  border-radius: 16px;
+  background: var(--bg-card-2);
+  border: 1px solid var(--line);
+  display: grid; place-items: center;
+  color: var(--muted-2);
+}
+.empty-panel .empty-ico svg { width: 28px; height: 28px; opacity: .7; }
+.empty-panel h3 { margin: 0 0 4px; font-size: 15px; font-weight: 700; }
+.empty-panel p { margin: 0; font-size: 12.5px; color: var(--muted); }
+.empty-label {
+  position: absolute; top: -10px; left: 14px;
+  background: var(--bg-card); border: 1px solid var(--line);
+  color: var(--muted); font-size: 10px; font-weight: 700;
+  padding: 2px 8px; border-radius: 999px; letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+/* Callout annotations */
+.callout {
+  position: absolute; z-index: 50;
+  background: rgba(15,23,42,.92);
+  border: 1px solid var(--teal);
+  color: #99f6e4;
+  font-size: 11.5px; font-weight: 600;
+  padding: 6px 10px; border-radius: 8px;
+  max-width: 220px; line-height: 1.35;
+  box-shadow: 0 8px 24px rgba(0,0,0,.4);
+}
+.callout strong { color: #fff; display: block; margin-bottom: 2px; }
+.callout.c1 { top: 68px; right: 420px; }
+.callout.c2 { top: 300px; right: 400px; }
+.callout.c3 { bottom: 200px; left: 390px; }
+
+.userchip {
+  display: flex; align-items: center; gap: 10px; flex-shrink: 0;
+  padding: 4px 10px 4px 4px; border-radius: var(--pill);
+  border: 1px solid var(--line); background: var(--hover-bg); margin-left: 4px;
+}
+.userchip .av {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: linear-gradient(135deg, #334155, #1e293b);
+  display: grid; place-items: center;
+  font-weight: 700; font-size: 12px; color: var(--teal); position: relative;
+}
+.userchip .av::after {
+  content: ''; position: absolute; right: 0; bottom: 0;
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--green); border: 2px solid var(--bg-elev);
+}
+.userchip .meta { line-height: 1.2; }
+.userchip .meta strong { display: block; font-size: 12.5px; }
+.userchip .meta span { font-size: 11px; color: var(--muted); }
+
+.body {
+  display: grid; grid-template-columns: var(--sidebar-w) 1fr;
+  min-height: 0; position: relative;
+}
+.body::after {
+  content: ''; position: absolute; inset: 0;
+  background: rgba(5,8,12,.35);
+  pointer-events: none; z-index: 5;
+}
+.sidebar {
+  border-right: 1px solid var(--line-soft);
+  background: var(--bg);
+  padding: 12px; overflow: hidden;
+}
+.sidebar-head input {
+  width: 100%; appearance: none; border: 1px solid var(--line);
+  background: var(--bg-card); color: var(--muted);
+  padding: 9px 12px; border-radius: 10px; font-size: 12.5px; margin-bottom: 12px;
+}
+.g-label {
+  font-size: 10px; font-weight: 700; color: var(--muted-2);
+  letter-spacing: .06em; text-transform: uppercase;
+  margin: 10px 0 6px; padding: 0 4px;
+}
+.chat-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px; border-radius: 10px; margin-bottom: 2px;
+}
+.chat-row .cav {
+  width: 34px; height: 34px; border-radius: 10px;
+  background: var(--bg-card-2); display: grid; place-items: center;
+  font-size: 11px; font-weight: 700; color: var(--teal); flex-shrink: 0;
+}
+.chat-row .nm { font-size: 13px; font-weight: 600; }
+.chat-row .sub { font-size: 11px; color: var(--muted-2); }
+
+.main {
+  padding: 18px 22px; overflow: hidden;
+  background:
+    radial-gradient(600px 300px at 80% 0%, rgba(20,184,166,.06), transparent 50%),
+    var(--bg);
+}
+.main .card {
+  background: var(--bg-card); border: 1px solid var(--line);
+  border-radius: 14px; padding: 16px; margin-bottom: 12px;
+  max-width: 720px;
+}
+.main h2 { margin: 0 0 10px; font-size: 14px; }
+.who-row { display: flex; gap: 14px; align-items: center; }
+.big-av {
+  width: 56px; height: 56px; border-radius: 16px;
+  background: linear-gradient(135deg, #334155, #1e293b);
+  display: grid; place-items: center;
+  font-weight: 800; color: var(--teal); font-size: 16px;
+}
+.task-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 12px; border-radius: 10px;
+  background: var(--bg-card-2); border: 1px solid var(--line-soft);
+  margin-bottom: 8px; font-size: 13px;
+}
+.task-row .badge {
+  font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 999px;
+  background: rgba(245,158,11,.15); color: var(--orange-hot);
+}
+
+/* Tray toast mock */
+.tray-toast {
+  position: absolute;
+  right: 28px; bottom: 28px;
+  width: 340px;
+  background: #1a2332;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px 14px;
+  box-shadow: var(--shadow);
+  z-index: 60;
+  display: flex; gap: 12px; align-items: flex-start;
+}
+.tray-toast .tico {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: linear-gradient(135deg, var(--teal), var(--teal-deep));
+  display: grid; place-items: center; flex-shrink: 0;
+  font-weight: 800; font-size: 11px; color: var(--mark-ink);
+}
+.tray-toast .tt { font-size: 12.5px; font-weight: 700; }
+.tray-toast .tb { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.tray-toast .tl {
+  position: absolute; top: -10px; left: 12px;
+  background: var(--bg-card); border: 1px solid var(--orange);
+  color: var(--orange-hot); font-size: 10px; font-weight: 700;
+  padding: 2px 8px; border-radius: 999px; text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+.title-bar {
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 0; pointer-events: none;
+}
+.concept-badge {
+  position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+  z-index: 100;
+  background: rgba(245,158,11,.12);
+  border: 1px solid rgba(245,158,11,.45);
+  color: var(--orange-hot);
+  font-size: 11px; font-weight: 700;
+  padding: 4px 14px; border-radius: 999px;
+  letter-spacing: .04em; text-transform: uppercase;
+  pointer-events: none;
+}
+</style>
+</head>
+<body>
+<div class="stage" id="stage">
+  <div class="concept-badge">Design concept · единый колокольчик уведомлений</div>
+  <div class="app">
+    <header class="appbar">
+      <div class="brand">
+        <div class="mark">GO</div>
+        <div>
+          <h1>Gilil On</h1>
+          <span class="tag">Lighting Supply CN ↔ RU</span>
+        </div>
+      </div>
+
+      <nav class="pills" aria-label="Разделы">
+        <button type="button" class="pill active"><span>⌂</span> Личная <span class="task-badge">3</span></button>
+        <button type="button" class="pill crm"><span>▣</span> CRM</button>
+        <button type="button" class="pill"><span>✉</span> Заявки</button>
+        <button type="button" class="pill"><span>▦</span> Тендеры</button>
+        <button type="button" class="pill"><span>☰</span> Новости</button>
+        <button type="button" class="pill"><span>▶</span> TV</button>
+        <button type="button" class="pill"><span>◎</span> Хранилище</button>
+        <button type="button" class="pill"><span>💬</span> Чаты</button>
+        <button type="button" class="pill"><span>✉</span> Почта</button>
+      </nav>
+
+      <div class="lang-switch">
+        <button type="button" class="lang-btn">中文</button>
+        <button type="button" class="lang-btn active">RU</button>
+        <button type="button" class="lang-btn">EN</button>
+      </div>
+      <div class="role-switch">
+        <button type="button" class="role-btn">Админ</button>
+        <button type="button" class="role-btn">Директор</button>
+        <button type="button" class="role-btn active">RU</button>
+        <button type="button" class="role-btn">CN</button>
+      </div>
+      <button type="button" class="theme-gear" title="Настройки · тема">⚙</button>
+
+      <!-- ★ NOTIFICATION BELL — placement: after gear, before userchip -->
+      <div class="notif-wrap" id="notif-wrap">
+        <button type="button" class="bell-btn" aria-expanded="true" aria-haspopup="true" title="Уведомления">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/>
+            <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
+          </svg>
+          <span class="bell-badge">7</span>
+        </button>
+
+        <div class="notif-panel" role="dialog" aria-label="Уведомления">
+          <div class="notif-head">
+            <h2>Уведомления</h2>
+            <button type="button" class="mark-all">Прочитать все</button>
+          </div>
+          <div class="notif-filters">
+            <button type="button" class="nf active">Все <span class="cnt">7</span></button>
+            <button type="button" class="nf">Сообщения <span class="cnt">3</span></button>
+            <button type="button" class="nf">Задачи <span class="cnt">2</span></button>
+            <button type="button" class="nf">Счета <span class="cnt">1</span></button>
+          </div>
+          <div class="notif-list">
+            <div class="nitem unread">
+              <div class="av msg">ВЛ</div>
+              <div class="body">
+                <div class="who">Ван Ли <span class="type-tag msg">чат</span></div>
+                <div class="what">Образцы LED Panel 60×60 — фото и сроки отгрузки</div>
+              </div>
+              <div class="meta-r"><span class="when">2 мин</span><span class="dot"></span></div>
+            </div>
+            <div class="nitem unread">
+              <div class="av task">✓</div>
+              <div class="body">
+                <div class="who">Согласование счёта <span class="type-tag task">задача</span></div>
+                <div class="what">INV-1042 · ЖК Фрунзенский · 2 450 000 ₽ — ждут RU</div>
+              </div>
+              <div class="meta-r"><span class="when">18 мин</span><span class="dot"></span></div>
+            </div>
+            <div class="nitem unread">
+              <div class="av inv">¥</div>
+              <div class="body">
+                <div class="who">Новый счёт от CN <span class="type-tag inv">счёт</span></div>
+                <div class="what">Supplier Zhongshan · PI-8891 загружен в CRM</div>
+              </div>
+              <div class="meta-r"><span class="when">1 ч</span><span class="dot"></span></div>
+            </div>
+            <div class="nitem unread">
+              <div class="av msg">МК</div>
+              <div class="body">
+                <div class="who">Мария К. <span class="type-tag msg">чат</span></div>
+                <div class="what">Уточните ETA по партии треков для 2025-RU</div>
+              </div>
+              <div class="meta-r"><span class="when">2 ч</span><span class="dot"></span></div>
+            </div>
+            <div class="nitem unread">
+              <div class="av lead">✉</div>
+              <div class="body">
+                <div class="who">Заявка с сайта <span class="type-tag lead">лид</span></div>
+                <div class="what">ООО «СветТех» · запрос коммерческого предложения</div>
+              </div>
+              <div class="meta-r"><span class="when">3 ч</span><span class="dot"></span></div>
+            </div>
+            <div class="nitem unread">
+              <div class="av mail">✉</div>
+              <div class="body">
+                <div class="who">Почта · factory@zs.cn <span class="type-tag mail">почта</span></div>
+                <div class="what">RE: Packing list · container #CN-441</div>
+              </div>
+              <div class="meta-r"><span class="when">вчера</span><span class="dot"></span></div>
+            </div>
+            <div class="nitem unread">
+              <div class="av task">✓</div>
+              <div class="body">
+                <div class="who">Дедлайн задачи <span class="type-tag task">задача</span></div>
+                <div class="what">Проверить образцы до завтра 11:00</div>
+              </div>
+              <div class="meta-r"><span class="when">вчера</span><span class="dot"></span></div>
+            </div>
+            <div class="nitem">
+              <div class="av msg">ЧВ</div>
+              <div class="body">
+                <div class="who">Чжан Вэй <span class="type-tag msg">чат</span></div>
+                <div class="what">Ок, прайс обновил в хранилище</div>
+              </div>
+              <div class="meta-r"><span class="when">2 дн</span><span class="dot"></span></div>
+            </div>
+          </div>
+          <div class="notif-foot">
+            <a href="#">Открыть все уведомления →</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="userchip">
+        <div class="av">АР</div>
+        <div class="meta">
+          <strong>Алексей</strong>
+          <span>RU Manager</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="body">
+      <aside class="sidebar">
+        <div class="sidebar-head">
+          <input type="search" placeholder="Поиск диалогов (RU / CN / проекты)…" readonly />
+        </div>
+        <div class="g-label">Команда RU</div>
+        <div class="chat-row"><div class="cav">АР</div><div><div class="nm">Алексей Р.</div><div class="sub">RU Manager · MSK</div></div></div>
+        <div class="chat-row"><div class="cav">МК</div><div><div class="nm">Мария К.</div><div class="sub">Sales · MSK</div></div></div>
+        <div class="chat-row"><div class="cav">ДС</div><div><div class="nm">Дмитрий С.</div><div class="sub">Logistics · EKB</div></div></div>
+        <div class="g-label">Команда CN</div>
+        <div class="chat-row"><div class="cav">ВЛ</div><div><div class="nm">Ван Ли</div><div class="sub">CN PM · CST</div></div></div>
+        <div class="chat-row"><div class="cav">ЧВ</div><div><div class="nm">Чжан Вэй</div><div class="sub">Sourcing · CST</div></div></div>
+        <div class="g-label">Проекты</div>
+        <div class="chat-row"><div class="cav">RU</div><div><div class="nm">2025-RU</div><div class="sub">ЖК · освещение</div></div></div>
+        <div class="chat-row"><div class="cav">LP</div><div><div class="nm">LED Platform</div><div class="sub">Каталог</div></div></div>
+      </aside>
+      <main class="main">
+        <div class="card">
+          <h2>Я · профиль</h2>
+          <div class="who-row">
+            <div class="big-av">АР</div>
+            <div>
+              <strong>Алексей Петров</strong><br>
+              <span style="color:var(--muted);font-size:13px">RU Manager · Москва (MSK)</span>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <h2>Мои задачи</h2>
+          <div class="task-row"><span>Согласовать счёт INV-1042</span><span class="badge">срочно</span></div>
+          <div class="task-row"><span>Проверить образцы до 11:00</span><span class="badge">завтра</span></div>
+          <div class="task-row"><span>Ответить на заявку СветТех</span><span class="badge">лид</span></div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Empty state inset -->
+  <div class="empty-panel">
+    <span class="empty-label">Состояние: пусто</span>
+    <div class="empty-ico">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/>
+        <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
+        <path d="M4 4l16 16" opacity=".45"/>
+      </svg>
+    </div>
+    <h3>Пока тихо</h3>
+    <p>Новых уведомлений нет.<br>Чаты, задачи и счета появятся здесь.</p>
+  </div>
+
+  <!-- Windows toast when minimized -->
+  <div class="tray-toast">
+    <span class="tl">Windows toast · свёрнуто</span>
+    <div class="tico">GO</div>
+    <div>
+      <div class="tt">Gilil On · новое сообщение</div>
+      <div class="tb">Ван Ли: Образцы LED Panel 60×60…</div>
+    </div>
+  </div>
+
+  <div class="callout c1">
+    <strong>Место колокольчика</strong>
+    Справа в appbar: после ⚙, перед userchip. Не в pills — навигация не теснится.
+  </div>
+  <div class="callout c2">
+    <strong>Панель ~360px</strong>
+    Фильтры Все / Сообщения / Задачи / Счета. Клик → раздел. Unread-точка + бейдж = сумма.
+  </div>
+  <div class="callout c3">
+    <strong>Пустое состояние</strong>
+    Иконка + «Пока тихо» — когда unread = 0.
+  </div>
+</div>
+</body>
+</html>

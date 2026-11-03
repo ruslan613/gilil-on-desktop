@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" role="img" aria-label="GililOn">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#163A5C"/>
+      <stop offset="55%" stop-color="#0E4A6E"/>
+      <stop offset="100%" stop-color="#08708E"/>
+    </linearGradient>
+    <radialGradient id="bloom" cx="42%" cy="32%" r="70%">
+      <stop offset="0%" stop-color="#2FC6F6" stop-opacity="0.55"/>
+      <stop offset="55%" stop-color="#2FC6F6" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#2FC6F6" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="brassPocket" cx="78%" cy="82%" r="40%">
+      <stop offset="0%" stop-color="#A8875A" stop-opacity="0.28"/>
+      <stop offset="100%" stop-color="#A8875A" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="specular" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.35"/>
+      <stop offset="35%" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="textGlow" x="-50%" y="-70%" width="200%" height="240%" color-interpolation-filters="sRGB">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="14" result="b1"/>
+      <feComponentTransfer in="b1" result="b1a"><feFuncA type="linear" slope="0.85"/></feComponentTransfer>
+      <feGaussianBlur in="SourceGraphic" stdDeviation="28" result="b2"/>
+      <feComponentTransfer in="b2" result="b2a"><feFuncA type="linear" slope="0.65"/></feComponentTransfer>
+      <feGaussianBlur in="SourceGraphic" stdDeviation="48" result="b3"/>
+      <feComponentTransfer in="b3" result="b3a"><feFuncA type="linear" slope="0.42"/></feComponentTransfer>
+      <feMerge>
+        <feMergeNode in="b3a"/><feMergeNode in="b2a"/><feMergeNode in="b1a"/><feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="tileOuterGlow" x="-18%" y="-18%" width="136%" height="136%" color-interpolation-filters="sRGB">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="28" result="g1"/>
+      <feFlood flood-color="#2FC6F6" flood-opacity="0.40" result="c1"/>
+      <feComposite in="c1" in2="g1" operator="in" result="glow1"/>
+      <feGaussianBlur in="SourceAlpha" stdDeviation="48" result="g2"/>
+      <feFlood flood-color="#2FC6F6" flood-opacity="0.25" result="c2"/>
+      <feComposite in="c2" in2="g2" operator="in" result="glow2"/>
+      <feMerge>
+        <feMergeNode in="glow2"/><feMergeNode in="glow1"/><feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="softShadow" x="-12%" y="-12%" width="124%" height="136%">
+      <feDropShadow dx="0" dy="10" stdDeviation="18" flood-color="#000000" flood-opacity="0.40"/>
+    </filter>
+    <clipPath id="tileClip">
+      <rect x="24" y="24" width="976" height="976" rx="219" ry="219"/>
+    </clipPath>
+  </defs>
+  <g filter="url(#tileOuterGlow)">
+    <rect x="24" y="24" width="976" height="976" rx="219" ry="219" fill="url(#bgGrad)" filter="url(#softShadow)"/>
+  </g>
+  <g clip-path="url(#tileClip)">
+    <rect x="24" y="24" width="976" height="976" fill="url(#bloom)"/>
+    <rect x="24" y="24" width="976" height="976" fill="url(#brassPocket)"/>
+    <rect x="24" y="24" width="976" height="976" fill="url(#specular)"/>
+    <!-- inner rim -->
+    <rect x="30" y="30" width="964" height="964" rx="213" ry="213"
+          fill="none" stroke="#FFFFFF" stroke-opacity="0.28" stroke-width="3"/>
+    <rect x="34" y="34" width="956" height="956" rx="209" ry="209"
+          fill="none" stroke="#2FC6F6" stroke-opacity="0.35" stroke-width="2"/>
+  </g>
+  <text x="512" y="560" text-anchor="middle"
+        font-family="Bebas Neue, Arial Narrow, Impact, sans-serif"
+        font-weight="400" font-size="200" letter-spacing="6"
+        fill="#2FC6F6" filter="url(#textGlow)">GILILON</text>
+  <text x="512" y="560" text-anchor="middle"
+        font-family="Bebas Neue, Arial Narrow, Impact, sans-serif"
+        font-weight="400" font-size="200" letter-spacing="6"
+        fill="#F8FAFC">GILILON</text>
+</svg>

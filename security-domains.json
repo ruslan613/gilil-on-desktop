@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "description": "Gilil On network allowlist. Runtime UI/API uses localhost:8788 only; npm/github entries are for future update/download hooks. Stage2 server does not call out.",
+  "allowHosts": [
+    "127.0.0.1",
+    "localhost",
+    "::1",
+    "registry.npmjs.org",
+    "github.com",
+    "objects.githubusercontent.com",
+    "cdn.npmmirror.com",
+    "release-assets.githubusercontent.com",
+    "api.github.com"
+  ],
+  "allowIpLiteralsLoopbackOnly": true,
+  "notes": [
+    "Runtime shell loads http://127.0.0.1:PORT/shell-v2.html and WS to the same host.",
+    "Override: copy this file to userData/gilil-on-data/security-domains.json and edit allowHosts.",
+    "electron-updater may fetch GitHub Releases (github.com / objects.githubusercontent.com / release-assets.githubusercontent.com / api.github.com)."
+  ]
+}

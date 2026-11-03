@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SRM TV — Gilil On · воронка тендеров</title>
+  <script>
+    (function () {
+      try {
+        var id = localStorage.getItem('gilil_theme') || 'dark';
+        if (id === 'beige') id = 'bitrix';
+        if (id === 'blue') id = 'cyan';
+        var ok = { dark: 1, bitrix: 1, cyan: 1 };
+        var q = new URLSearchParams(location.search).get('theme');
+        if (q === 'beige') q = 'bitrix';
+        if (q === 'blue') q = 'cyan';
+        if (q && ok[q]) id = q;
+        if (!ok[id]) id = 'dark';
+        document.documentElement.dataset.theme = id;
+        document.documentElement.dataset.surface = 'rich';
+      } catch (_) {
+        document.documentElement.dataset.theme = 'dark';
+        document.documentElement.dataset.surface = 'rich';
+      }
+    })();
+  </script>
+  <link rel="stylesheet" href="/themes.css" />
+  <style>
+    /* TV aliases → shell theme tokens from themes.css (data-theme=dark|bitrix|cyan) */
+    :root {
+      --card: var(--bg-card, #1a1612);
+      --card-2: var(--bg-card-2, #221c17);
+      --brass: var(--accent, #a8875a);
+      --brass-l: var(--accent-hot, #d9c39c);
+      --brass-d: var(--teal-deep, #86683f);
+      --ok: #86efac;
+      --warn: #fbbf24;
+      --hot: #fca5a5;
+      --info: #93c5fd;
+      --lost: #94a3b8;
+    }
+    html[data-theme="bitrix"] {
+      --ok: #5b8c00;
+      --warn: #c87d00;
+      --hot: #d94841;
+      --info: #006AC4;
+      --lost: #A8ADB4;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; height: 100%;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      min-height: 0;
+      max-height: 100%;
+      overflow-x: hidden;
+      overflow-y: auto;
+      padding: 18px 22px 14px;
+      background: var(--bg-grad, var(--bg));
+      background-color: var(--bg);
+      box-sizing: border-box;
+    }
+    header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      flex: 0 0 auto;
+    }
+    .brand {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .brand .eyebrow {
+      font-size: 12px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--brass);
+      font-weight: 700;
+    }
+    .brand h1 {
+      margin: 0;
+      font-size: clamp(28px, 3.2vw, 42px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+    }
+    .brand h1 span { color: var(--brass-l); }
+    .meta-bar {
+      text-align: right;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+    .meta-bar .clock {
+      font-size: clamp(22px, 2.4vw, 32px);
+      font-weight: 700;
+      color: var(--ink);
+      font-variant-numeric: tabular-nums;
+    }
+    .totals {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+      flex: 0 0 auto;
+    }
+    .tot {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 10px 16px;
+      min-width: 110px;
+    }
+    .tot .n {
+      font-size: clamp(26px, 2.8vw, 36px);
+      font-weight: 800;
+      line-height: 1.1;
+      color: var(--brass-l);
+    }
+    .tot .l {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--muted-2);
+      margin-top: 2px;
+    }
+    /* Funnel + tasks must share body height without painting over each other.
+       Cause of overlap: .col min-height:280px overflowed .funnel (flex:1) onto .tasks-strip. */
+    .funnel {
+      flex: 1 1 auto;
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      grid-auto-rows: minmax(0, 1fr);
+      gap: 12px;
+      min-height: 140px;
+      align-items: stretch;
+      overflow: auto;
+      position: relative;
+      z-index: 0;
+    }
+    @media (max-width: 1100px) {
+      .funnel { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+    @media (max-width: 720px) {
+      .funnel { grid-template-columns: 1fr; }
+    }
+    .col {
+      background: color-mix(in srgb, var(--card) 88%, transparent);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      min-width: 0;
+      overflow: hidden;
+    }
+    .col-head {
+      padding: 14px 14px 10px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+    }
+    .col-head h2 {
+      margin: 0;
+      font-size: clamp(16px, 1.5vw, 20px);
+      font-weight: 700;
+    }
+    .col-head .count {
+      font-size: clamp(22px, 2.2vw, 30px);
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+    }
+    .col[data-stage="found"] .count { color: var(--info); }
+    .col[data-stage="in_work"] .count { color: var(--warn); }
+    .col[data-stage="application"] .count { color: var(--brass-l); }
+    .col[data-stage="won"] .count { color: var(--ok); }
+    .col[data-stage="lost"] .count { color: var(--lost); }
+    .col-sum {
+      padding: 0 14px 10px;
+      font-size: 12px;
+      color: var(--muted-2);
+    }
+    .col-body {
+      padding: 8px 10px 12px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex: 1;
+    }
+    .card {
+      background: var(--card-2);
+      border: 1px solid color-mix(in srgb, var(--line) 80%, transparent);
+      border-radius: 12px;
+      padding: 10px 12px;
+    }
+    .card .t {
+      font-size: clamp(13px, 1.15vw, 15px);
+      font-weight: 650;
+      margin: 0 0 6px;
+      line-height: 1.25;
+    }
+    .card .t .no {
+      color: var(--brass);
+      font-weight: 700;
+      margin-right: 4px;
+    }
+    .card .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 10px;
+      font-size: 12px;
+      color: var(--muted);
+      align-items: center;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      border: 1px solid transparent;
+    }
+    .pill.sum { background: rgba(168,135,90,.15); color: var(--brass-l); border-color: rgba(168,135,90,.35); }
+    .pill.deadline { background: rgba(251,191,36,.12); color: var(--warn); border-color: rgba(251,191,36,.3); }
+    .pill.deadline.soon { background: rgba(248,113,113,.15); color: var(--hot); border-color: rgba(248,113,113,.35); }
+    .pill.status { background: rgba(148,163,184,.12); color: var(--muted); }
+    .empty {
+      color: var(--muted-2);
+      font-size: 13px;
+      padding: 18px 8px;
+      text-align: center;
+    }
+    .tasks-strip {
+      flex: 0 0 auto;
+      margin-top: 14px;
+      background: var(--bg-elev);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 12px 14px 14px;
+      position: relative;
+      z-index: 1;
+      max-height: min(240px, 36vh);
+      overflow: auto;
+      min-height: 0;
+    }
+    .tasks-strip h3 {
+      margin: 0 0 10px;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: .02em;
+      color: var(--brass-l);
+      text-transform: uppercase;
+    }
+    .tasks {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 10px;
+    }
+    .task {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px 12px;
+    }
+    .task .who {
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+    .task .what {
+      font-size: 12.5px;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .task .what b { color: var(--ink); font-weight: 600; }
+    .bar {
+      height: 8px;
+      background: var(--line-soft, #2a241c);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .bar > i {
+      display: block;
+      height: 100%;
+      background: linear-gradient(90deg, var(--brass-d), var(--brass-l));
+      border-radius: 999px;
+    }
+    .pct {
+      font-size: 11px;
+      color: var(--muted-2);
+      margin-top: 4px;
+      font-variant-numeric: tabular-nums;
+    }
+    .err {
+      color: var(--hot);
+      padding: 24px;
+      text-align: center;
+      font-size: 16px;
+    }
+    .pill.timer {
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.02em;
+    }
+    .pill.timer.overdue {
+      color: var(--hot);
+      border-color: color-mix(in srgb, var(--hot) 55%, var(--line));
+      background: color-mix(in srgb, var(--hot) 16%, transparent);
+    }
+    .col-head .stage-age {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+      font-variant-numeric: tabular-nums;
+    }
+    .footer-hint {
+      flex: 0 0 auto;
+      margin-top: 8px;
+      font-size: 11px;
+      color: var(--muted-2);
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="eyebrow">Gilil On · SRM</div>
+      <h1>TV <span>воронка тендеров</span></h1>
+    </div>
+    <div class="meta-bar">
+      <div class="clock" id="clock">—</div>
+      <div id="updated">Обновление…</div>
+    </div>
+  </header>
+
+  <div class="totals" id="totals"></div>
+  <div class="funnel" id="funnel"></div>
+
+  <section class="tasks-strip">
+    <h3>Задачи сотрудников</h3>
+    <div class="tasks" id="tasks"></div>
+  </section>
+  <div class="footer-hint">Автообновление каждые 45 с · GET /api/tv</div>
+
+  <script>
+    const REFRESH_MS = 45000;
+    const THEME_KEY = 'gilil_theme';
+    const THEME_IDS = ['dark', 'bitrix', 'cyan'];
+
+    function applyTvTheme(id) {
+      if (id === 'beige') id = 'bitrix';
+      if (id === 'blue') id = 'cyan';
+      const theme = THEME_IDS.includes(id) ? id : 'dark';
+      document.documentElement.dataset.theme = theme;
+      document.documentElement.dataset.surface = 'rich';
+      return theme;
+    }
+
+    function readShellTheme() {
+      try {
+        let saved = localStorage.getItem(THEME_KEY);
+        if (saved === 'beige') saved = 'bitrix';
+        if (saved === 'blue') saved = 'cyan';
+        return saved;
+      } catch (_) {
+        return null;
+      }
+    }
+
+    (function bootTheme() {
+      let id = readShellTheme();
+      try {
+        const q = new URLSearchParams(location.search).get('theme');
+        if (q) id = q;
+      } catch (_) {}
+      applyTvTheme(id || 'dark');
+      // Tell parent we are ready so shell can re-push current theme into iframe.
+      try {
+        if (window.parent && window.parent !== window) {
+          window.parent.postMessage({ type: 'gilil:tv-ready' }, location.origin);
+        }
+      } catch (_) {}
+    })();
+
+    window.addEventListener('storage', (e) => {
+      if (e.key === THEME_KEY) applyTvTheme(e.newValue || 'dark');
+    });
+
+    window.addEventListener('message', (e) => {
+      try {
+        if (e.origin !== location.origin) return;
+        const data = e.data;
+        if (data && data.type === 'gilil:theme' && data.theme) {
+          applyTvTheme(data.theme);
+        }
+      } catch (_) {}
+    });
+
+    // Keep in sync if shell writes theme while TV is open in iframe (same tab).
+    setInterval(() => {
+      const t = readShellTheme();
+      if (!t) return;
+      if (document.documentElement.dataset.theme !== t) applyTvTheme(t);
+    }, 1500);
+    const STAGE_ACCENT = {
+      found: 'info',
+      in_work: 'warn',
+      application: 'brass',
+      won: 'ok',
+      lost: 'lost',
+    };
+
+    function esc(s) {
+      return String(s == null ? '' : s)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function tickClock() {
+      const now = new Date();
+      const opts = { timeZone: 'Asia/Hong_Kong', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+      const dateOpts = { timeZone: 'Asia/Hong_Kong', weekday: 'short', day: 'numeric', month: 'short' };
+      document.getElementById('clock').textContent =
+        now.toLocaleTimeString('ru-RU', opts) + ' · ' + now.toLocaleDateString('ru-RU', dateOpts);
+    }
+
+    function deadlineMs(deadline) {
+      if (!deadline) return null;
+      const d = Date.parse(deadline.length === 10 ? deadline + 'T23:59:59' : deadline);
+      return Number.isFinite(d) ? d : null;
+    }
+
+    function daysLeft(deadline) {
+      const d = deadlineMs(deadline);
+      if (d == null) return null;
+      return Math.ceil((d - Date.now()) / 86400000);
+    }
+
+    /** Live funnel timer label: "3д 4ч" / "5ч 12м" / "просрочено 2д". */
+    function fmtCountdown(deadline) {
+      const d = deadlineMs(deadline);
+      if (d == null) return null;
+      let ms = d - Date.now();
+      const overdue = ms < 0;
+      ms = Math.abs(ms);
+      const days = Math.floor(ms / 86400000);
+      const hours = Math.floor((ms % 86400000) / 3600000);
+      const mins = Math.floor((ms % 3600000) / 60000);
+      let label;
+      if (days >= 1) label = days + 'д ' + hours + 'ч';
+      else if (hours >= 1) label = hours + 'ч ' + mins + 'м';
+      else label = mins + 'м';
+      return { overdue, label: overdue ? ('просрочено ' + label) : label, soon: !overdue && ms <= 5 * 86400000 };
+    }
+
+    function render(data) {
+      const totals = document.getElementById('totals');
+      const c = data.counts || {};
+      totals.innerHTML = [
+        { n: data.totals?.tenders ?? '—', l: 'Всего тендеров' },
+        { n: c.found ?? 0, l: 'Найдены' },
+        { n: c.in_work ?? 0, l: 'В работе' },
+        { n: c.application ?? 0, l: 'Заявки' },
+        { n: (c.won || 0) + ' / ' + (c.lost || 0), l: 'Выиграны / Проиграны' },
+      ].map((t) => `<div class="tot"><div class="n">${esc(t.n)}</div><div class="l">${esc(t.l)}</div></div>`).join('');
+
+      const funnel = document.getElementById('funnel');
+      funnel.innerHTML = (data.stages || []).map((stage) => {
+        const cards = (stage.items || []).map((it) => {
+          const cd = fmtCountdown(it.deadline);
+          const dl = it.deadline
+            ? `<span class="pill deadline timer${cd && cd.soon ? ' soon' : ''}${cd && cd.overdue ? ' overdue' : ''}" data-deadline="${esc(it.deadline)}" title="до ${esc(it.deadline)}">до ${esc(it.deadline)}${cd ? ' · ' + esc(cd.label) : ''}</span>`
+            : '';
+          return `<article class="card">
+            <p class="t"><span class="no">№ ${esc(it.tender_no)}</span>${esc(it.title)}</p>
+            <div class="row">
+              <span class="pill sum">${esc(it.sum_label)}</span>
+              ${dl}
+              <span class="pill status">${esc(it.status_label)}</span>
+              ${it.owner ? '<span>' + esc(it.owner.display_name) + '</span>' : ''}
+            </div>
+          </article>`;
+        }).join('') || '<div class="empty">Пусто</div>';
+        return `<section class="col" data-stage="${esc(stage.key)}">
+          <div class="col-head">
+            <h2>${esc(stage.label)}</h2>
+            <div class="count">${stage.count}</div>
+          </div>
+          <div class="col-sum">${esc(stage.sum_label)}</div>
+          <div class="col-body">${cards}</div>
+        </section>`;
+      }).join('');
+
+      const tasks = document.getElementById('tasks');
+      const list = data.employee_tasks || [];
+      if (!list.length) {
+        tasks.innerHTML = '<div class="empty">Нет открытых задач</div>';
+      } else {
+        tasks.innerHTML = list.map((tt) => {
+          const p = Math.max(0, Math.min(100, Number(tt.progress) || 0));
+          return `<div class="task">
+            <div class="who">${esc(tt.assignee?.display_name || '—')}</div>
+            <div class="what"><b>№ ${esc(tt.tender?.tender_no)}</b> · ${esc(tt.title)}</div>
+            <div class="bar"><i style="width:${p}%"></i></div>
+            <div class="pct">${p}% · ${esc(tt.tender?.status_label || '')}</div>
+          </div>`;
+        }).join('');
+      }
+
+      const u = data.updated_at ? new Date(data.updated_at) : new Date();
+      document.getElementById('updated').textContent =
+        'Данные: ' + u.toLocaleTimeString('ru-RU', { timeZone: 'Asia/Hong_Kong', hour: '2-digit', minute: '2-digit', second: '2-digit' }) +
+        ' (Asia/Hong_Kong) · обновление ~45 с';
+    }
+
+    async function load() {
+      try {
+        const res = await fetch('/api/tv', { cache: 'no-store' });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        if (!data.ok) throw new Error(data.error || 'bad_payload');
+        render(data);
+      } catch (e) {
+        document.getElementById('funnel').innerHTML =
+          '<div class="err">Не удалось загрузить /api/tv: ' + esc(e.message) + '</div>';
+      }
+    }
+
+    function tickTimers() {
+      document.querySelectorAll('[data-deadline]').forEach((el) => {
+        const deadline = el.getAttribute('data-deadline');
+        const cd = fmtCountdown(deadline);
+        if (!cd) return;
+        el.textContent = 'до ' + deadline + ' · ' + cd.label;
+        el.classList.toggle('soon', !!cd.soon);
+        el.classList.toggle('overdue', !!cd.overdue);
+      });
+    }
+
+    tickClock();
+    tickTimers();
+    setInterval(() => { tickClock(); tickTimers(); }, 1000);
+    load();
+    setInterval(load, REFRESH_MS);
+  </script>
+</body>
+</html>

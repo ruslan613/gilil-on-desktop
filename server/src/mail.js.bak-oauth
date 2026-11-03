@@ -1,0 +1,85 @@
+'use strict';
+
+/**
+ * Outbound mail for OTP.
+ * Real send when GMAIL_USER + GMAIL_APP_PASSWORD (or GMAIL_PASS) / SMTP_* is set;
+ * otherwise MOCK — log «почта не настроена», server stays up.
+ */
+
+function hasGmailCreds() {
+  return !!(
+    process.env.GMAIL_USER &&
+    (process.env.GMAIL_APP_PASSWORD || process.env.GMAIL_PASS)
+  );
+}
+
+function hasSmtpCreds() {
+  return !!(process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS);
+}
+
+function isMockMail() {
+  if (process.env.AUTH_OTP_MOCK === '1' || process.env.AUTH_OTP_MOCK === 'true') return true;
+  return !(hasGmailCreds() || hasSmtpCreds());
+}
+
+function allowMockCodeInResponse() {
+  const env = (process.env.NODE_ENV || 'development').toLowerCase();
+  return (
+    isMockMail() &&
+    (env === 'development' || env === 'dev' || env === 'mock' || process.env.AUTH_OTP_MOCK === '1')
+  );
+}
+
+async function sendMail({ to, subject, text, html }) {
+  if (isMockMail()) {
+    const reason = process.env.AUTH_OTP_MOCK === '1' || process.env.AUTH_OTP_MOCK === 'true'
+      ? 'AUTH_OTP_MOCK=1'
+      : 'почта не настроена (нет GMAIL_APP_PASSWORD / SMTP_PASS)';
+    console.log('[mail:MOCK] ──────────────────────────────────');
+    console.log('[mail:MOCK]', reason);
+    console.log('[mail:MOCK] to:', to);
+    console.log('[mail:MOCK] subject:', subject);
+    console.log('[mail:MOCK] text:', text);
+    console.log('[mail:MOCK] ──────────────────────────────────');
+    return { mock: true, reason };
+  }
+
+  // eslint-disable-next-line global-require
+  const nodemailer = require('nodemailer');
+  let transport;
+  let from;
+
+  if (hasGmailCreds()) {
+    transport = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.GMAIL_USER,
+        pass: process.env.GMAIL_APP_PASSWORD || process.env.GMAIL_PASS,
+      },
+    });
+    from = process.env.SMTP_FROM || process.env.GMAIL_USER;
+  } else {
+    transport = nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: Number(process.env.SMTP_PORT) || 587,
+      secure: String(process.env.SMTP_SECURE || '').toLowerCase() === 'true',
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      },
+    });
+    from = process.env.SMTP_FROM || process.env.SMTP_USER;
+  }
+
+  const info = await transport.sendMail({ from, to, subject, text, html });
+  console.log('[mail] sent', { to, messageId: info.messageId });
+  return { mock: false, messageId: info.messageId };
+}
+
+module.exports = {
+  isMockMail,
+  allowMockCodeInResponse,
+  sendMail,
+  hasGmailCreds,
+  hasSmtpCreds,
+};

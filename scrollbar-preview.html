@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Gilil On — превью скроллбара</title>
+<style>
+  :root {
+    --bg: #0c0a08;
+    --bg-elev: #14110e;
+    --bg-card: #1a1612;
+    --line: #3a3228;
+    --ink: #f1e6d4;
+    --muted: #b9ad9c;
+    --accent: #a8875a;
+    --accent-hot: #d9c39c;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: "Segoe UI", Inter, system-ui, sans-serif;
+    background:
+      radial-gradient(800px 420px at 15% 0%, rgba(168,135,90,0.12), transparent 55%),
+      var(--bg);
+    color: var(--ink);
+    padding: 28px 32px 40px;
+  }
+  h1 {
+    margin: 0 0 6px;
+    font-size: 1.35rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+  }
+  .lead {
+    margin: 0 0 22px;
+    color: var(--muted);
+    font-size: 13.5px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    max-width: 980px;
+  }
+  .panel {
+    background: var(--bg-elev);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 12px 40px rgba(0,0,0,.45);
+  }
+  .panel-head {
+    padding: 14px 16px 12px;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .panel-head strong { font-size: 14px; }
+  .panel-head span { font-size: 12px; color: var(--muted); }
+  .swatches { display: flex; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
+  .swatch {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 11px; color: var(--muted);
+  }
+  .swatch i {
+    width: 14px; height: 14px; border-radius: 4px;
+    border: 1px solid rgba(241,230,212,.2);
+    display: inline-block;
+  }
+  .scroll {
+    height: 320px;
+    overflow-y: auto;
+    padding: 12px 14px 18px;
+    background: linear-gradient(180deg, var(--bg) 0%, var(--bg-card) 100%);
+  }
+  .item {
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: var(--bg-card);
+    font-size: 13px;
+  }
+  .item em { color: var(--muted); font-style: normal; font-size: 12px; }
+  /* ——— Left: browser default / gray feel ——— */
+  .panel.current .scroll {
+    /* force a visible “gray default” look where possible */
+    scrollbar-width: thin;
+    scrollbar-color: #6b7280 #2a2a2a;
+  }
+  .panel.current .scroll::-webkit-scrollbar { width: 12px; }
+  .panel.current .scroll::-webkit-scrollbar-track { background: #2a2a2a; }
+  .panel.current .scroll::-webkit-scrollbar-thumb {
+    background: #6b7280;
+    border-radius: 8px;
+    border: 2px solid #2a2a2a;
+  }
+  .panel.current .scroll::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+  /* ——— Right: proposed Gilil brand ——— */
+  .panel.proposed .scroll {
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent) var(--bg-card);
+  }
+  .panel.proposed .scroll::-webkit-scrollbar { width: 12px; }
+  .panel.proposed .scroll::-webkit-scrollbar-track {
+    background: linear-gradient(180deg, #0c0a08, #1a1612);
+  }
+  .panel.proposed .scroll::-webkit-scrollbar-thumb {
+    background: var(--accent);
+    border-radius: 8px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+  .panel.proposed .scroll::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-hot);
+    background-clip: padding-box;
+  }
+  .note {
+    margin-top: 18px;
+    max-width: 980px;
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 11.5px;
+    color: var(--accent-hot);
+  }
+</style>
+</head>
+<body>
+  <h1>Gilil On — сравнение скроллбара</h1>
+  <p class="lead">Слева: текущий серый (дефолтный). Справа: предложение — тёплый charcoal + латунь бренда. CSS shell-v2.css пока не изменён.</p>
+  <div class="grid">
+    <section class="panel current">
+      <div class="panel-head">
+        <strong>Сейчас (серый)</strong>
+        <span>Типичный системный / нейтральный scrollbar</span>
+        <div class="swatches">
+          <span class="swatch"><i style="background:#2a2a2a"></i> track #2a2a2a</span>
+          <span class="swatch"><i style="background:#6b7280"></i> thumb #6b7280</span>
+          <span class="swatch"><i style="background:#9ca3af"></i> hover #9ca3af</span>
+        </div>
+      </div>
+      <div class="scroll" id="scroll-a"></div>
+    </section>
+    <section class="panel proposed">
+      <div class="panel-head">
+        <strong>Предложение (Gilil brand)</strong>
+        <span>track charcoal · thumb brass · hover champagne</span>
+        <div class="swatches">
+          <span class="swatch"><i style="background:linear-gradient(180deg,#0c0a08,#1a1612)"></i> track #0c0a08–#1a1612</span>
+          <span class="swatch"><i style="background:#a8875a"></i> thumb #a8875a</span>
+          <span class="swatch"><i style="background:#d9c39c"></i> hover #d9c39c</span>
+        </div>
+      </div>
+      <div class="scroll" id="scroll-b"></div>
+    </section>
+  </div>
+  <p class="note">
+    После подтверждения в <code>shell-v2.css</code> добавятся правила
+    <code>::-webkit-scrollbar</code> / <code>-track</code> / <code>-thumb</code> / <code>:hover</code>
+    и Firefox <code>scrollbar-color</code> на переменных
+    <code>--bg</code>, <code>--bg-card</code>, <code>--accent</code>, <code>--accent-hot</code>.
+    exe не пересобирается.
+  </p>
+  <script>
+    const lines = [
+      "Каталог светильников Gilil Lighting",
+      "Подбор по проекту · BOM · спецификация",
+      "Тёплый charcoal UI + champagne brass",
+      "Новости фабрики и поставки",
+      "Заказы · статусы · логистика",
+      "Документы и чертежи",
+      "Сравнение серий и материалов",
+      "Админ: пользователи и роли",
+      "Тема dark (бренд) по умолчанию",
+      "Темы UI: dark · beige · blue",
+      "Локальный desktop shell-v2",
+      "Скролл контента в панелях",
+      "Латунь акцента #a8875a",
+      "Hover champagne #d9c39c",
+      "Track #0c0a08 → #1a1612",
+      "Firefox scrollbar-color",
+      "WebKit ::-webkit-scrollbar",
+      "Без rebuild exe до OK",
+      "Превью до правки CSS",
+      "Подтвердите вариант справа"
+    ];
+    function fill(el) {
+      el.innerHTML = lines.map((t, i) =>
+        `<div class="item"><strong>${String(i + 1).padStart(2, "0")}</strong> · ${t}<br><em>строка для длинного скролла</em></div>`
+      ).join("");
+    }
+    fill(document.getElementById("scroll-a"));
+    fill(document.getElementById("scroll-b"));
+  </script>
+</body>
+</html>

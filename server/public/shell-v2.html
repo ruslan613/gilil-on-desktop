@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gilil On · Shell v2 (демо)</title>
+  <link rel="stylesheet" href="/shell-v2.css" />
+  <link rel="stylesheet" href="/themes.css" />
+  <link rel="stylesheet" href="/splash.css" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <meta name="theme-color" content="#0c0a08" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="apple-touch-icon" href="/icons/gilil-on-512.png" />
+  <link rel="icon" type="image/png" href="/icons/gilil-on-512.png" />
+  <script>
+    (function () {
+      try {
+        var id = localStorage.getItem('gilil_theme') || 'dark';
+        if (id === 'beige') id = 'bitrix';
+        if (id === 'blue') id = 'cyan';
+        var ok = { dark:1, bitrix:1, cyan:1 }; /* UI: dark | bitrix | cyan */
+        var q = new URLSearchParams(location.search).get('theme');
+        if (q === 'beige') q = 'bitrix';
+        if (q === 'blue') q = 'cyan';
+        if (q && ok[q]) id = q;
+        if (!ok[id]) id = 'dark';
+        document.documentElement.dataset.theme = id;
+        document.documentElement.dataset.surface = 'rich';
+        try { localStorage.setItem('gilil_theme', id); } catch (_) {}
+      } catch (e) {
+        document.documentElement.dataset.theme = 'dark';
+        document.documentElement.dataset.surface = 'rich';
+      }
+    })();
+  </script>
+</head>
+<body>
+
+<!-- Cold-start splash (CSS/JS). Themes for splash: dark | bitrix | cyan -->
+<div id="gilil-splash" class="gilil-splash" role="presentation" aria-hidden="false">
+  <div class="gilil-splash__inner">
+    <div class="gilil-splash__mark" aria-hidden="true">
+      <span class="gilil-splash__go"><span class="mark-gilil">Gilil</span><span class="mark-on">On</span></span>
+      <span class="gilil-splash__ring"></span>
+    </div>
+    <div class="gilil-splash__word"><span class="mark-gilil">Gilil</span><span class="mark-on">On</span></div>
+    <p class="gilil-splash__sub">Lighting Supply</p>
+    <div class="gilil-splash__bar"><i></i></div>
+  </div>
+</div>
+
+<!-- OTP + demo login gate -->
+<div id="login-gate">
+  <div class="login-card">
+    <div class="mark" aria-label="GililOn"><span class="mark-gilil">Gilil</span><span class="mark-on">On</span></div>
+    <p class="sub" data-i18n="login.sub">Lighting Supply CN ↔ RU · 演示 shell v2（布局 2）</p>
+
+    <form id="otp-form" class="otp-form" autocomplete="on">
+      <label class="otp-label" for="otp-email" data-i18n="login.email">Email</label>
+      <input type="email" id="otp-email" name="email" class="otp-input" required
+             placeholder="name@company.com" autocomplete="username email" />
+
+      <button type="button" class="btn-enter" id="btn-otp-send" data-i18n="login.send_code">Отправить код</button>
+
+      <div id="otp-code-block" class="otp-code-block hidden">
+        <label class="otp-label" for="otp-code" data-i18n="login.code">Код из письма</label>
+        <input type="text" id="otp-code" name="code" class="otp-input otp-code-input" inputmode="numeric"
+               pattern="[0-9]{6}" maxlength="6" placeholder="••••••" autocomplete="one-time-code" />
+        <button type="button" class="btn-enter" id="btn-otp-verify" data-i18n="login.verify">Войти</button>
+        <button type="button" class="btn-resend" id="btn-otp-resend" disabled>
+          <span data-i18n="login.resend">Отправить снова</span>
+          <span id="otp-resend-timer"></span>
+        </button>
+      </div>
+
+      <label class="remember-me" for="remember-me">
+        <input type="checkbox" id="remember-me" name="remember" />
+        <span data-i18n="login.remember">Запомнить меня</span>
+      </label>
+
+      <p id="otp-status" class="otp-status" role="status" aria-live="polite"></p>
+      <p id="otp-mock-hint" class="otp-mock-hint hidden"></p>
+    </form>
+
+    <button type="button" class="btn-demo-enter" id="btn-enter" data-i18n="login.enter_demo">Демо-вход</button>
+    <p class="hint" data-i18n="login.hint" data-i18n-html="1">演示登录：<strong>ru1 · 阿列克谢 · RU Manager</strong> · 无需密码</p>
+  </div>
+</div>
+
+<div id="app-shell" class="hidden">
+  <header class="appbar">
+    <div class="brand" title="Gilil On">
+      <div class="mark" aria-label="GililOn"><span class="mark-gilil">Gilil</span><span class="mark-on">On</span></div>
+    </div>
+
+    <div class="nav-stack" id="nav-stack">
+      <nav class="pills" id="pills" aria-label="Разделы">
+        <button type="button" class="pill" data-team="projects"><span class="ico">▣</span> <span data-i18n="chats.projects">Проекты</span></button>
+        <button type="button" class="pill" data-section="tasks-plans"><span class="ico">✓</span> <span data-i18n="nav.tasks_plans">Задачи и планы</span><span class="pill-badge" id="pill-tasks-plans-badge" hidden>0</span></button>
+        <button type="button" class="pill" data-section="calendar"><span class="ico">📅</span> <span data-i18n="nav.calendar">Календарь</span></button>
+        <button type="button" class="pill" data-section="tenders"><span class="ico">▦</span> <span data-i18n="nav.tenders">Тендеры</span></button>
+        <button type="button" class="pill" data-section="leads"><span class="ico">✉</span> <span data-i18n="nav.leads">Заявки</span> <span class="pill-badge" id="pill-leads-badge" hidden>0</span></button>
+        <button type="button" class="pill" data-section="mail"><span class="ico">✉</span> <span data-i18n="nav.mail">Почта</span><span class="pill-badge" id="pill-mail-badge" hidden>0</span></button>
+        <button type="button" class="pill" data-section="news"><span class="ico">☰</span> <span data-i18n="nav.news">Новости</span></button>
+        <button type="button" class="pill" data-section="storage"><span class="ico">◎</span> <span data-i18n="nav.storage">Хранилище</span></button>
+        <button type="button" class="pill" data-section="supply" id="pill-supply"><span class="ico">⇄</span> <span data-i18n="nav.supply">Gilil Supply</span></button>
+        <button type="button" class="pill" data-section="crm"><span class="ico">▣</span> <span data-i18n="nav.crm">CRM</span></button>
+        <button type="button" class="pill mail-stats-pill" data-section="mail-stats" id="pill-mail-stats" hidden><span class="ico">▥</span> <span data-i18n="nav.mail_stats">Статистика почты</span></button>
+        <button type="button" class="pill" data-section="activity" id="pill-activity" hidden><span class="ico">◷</span> <span data-i18n="nav.activity">Журнал</span></button>
+      </nav>
+    </div>
+
+    <div class="theme-popover-wrap" id="theme-popover-wrap">
+      <button type="button" class="theme-gear" id="btn-theme-gear" aria-expanded="false" aria-haspopup="true" aria-controls="theme-popover" title="Настройки" data-i18n-title="theme.gear_title">⚙</button>
+      <div class="theme-popover hidden" id="theme-popover" role="dialog" aria-label="Тема оформления">
+        <h3 data-i18n="theme.title">Тема оформления</h3>
+        <select class="theme-select" id="theme-select" aria-label="Тема">
+          <option value="dark" data-i18n="theme.dark">Тёмная</option>
+          <option value="bitrix" data-i18n="theme.bitrix">Битрикс24 · светлая</option>
+          <option value="cyan" data-i18n="theme.cyan">Мобильная · Cyan</option>
+        </select>
+        <label class="fld lang-settings-fld" style="display:block;margin:10px 0 0">
+          <span data-i18n="lang.label">Язык интерфейса</span>
+          <select class="theme-select lang-select" id="lang-select" aria-label="Language"></select>
+        </label>
+        <label class="notif-sound-row" style="display:flex;align-items:center;gap:8px;margin:10px 0 4px;font-size:12.5px;color:var(--muted);cursor:pointer">
+          <input type="checkbox" id="notif-sound-toggle" checked />
+          <span data-i18n="notif.sound">Звук уведомлений</span>
+        </label>
+        <div class="settings-links" style="display:flex;flex-direction:column;gap:4px;margin:10px 0 8px">
+          <button type="button" class="btn ghost settings-link-btn" id="btn-settings-tv" data-i18n="nav.tv_funnel" style="display:block;width:100%;text-align:left">▶ Воронка ТВ</button>
+          <button type="button" class="btn ghost settings-link-btn" id="btn-settings-funnel" data-i18n="nav.funnel" style="display:block;width:100%;text-align:left">↗ Воронка заказа</button>
+          <button type="button" class="btn ghost settings-link-btn" id="btn-settings-usefulness" data-i18n="nav.usefulness" style="display:block;width:100%;text-align:left">★ Полезность</button>
+          <button type="button" class="btn ghost settings-link-btn" id="btn-settings-director" data-i18n="nav.director_workload" style="display:block;width:100%;text-align:left">▣ Директор · нагрузка</button>
+          <a class="btn ghost settings-link-btn" id="btn-settings-als" href="/als-studio.html" style="display:block;width:100%;text-align:left;text-decoration:none">✦ AI Lighting Studio</a>
+          <button type="button" class="btn ghost settings-link-btn" id="btn-settings-manual" data-i18n="settings.manual" style="display:block;width:100%;text-align:left">📖 Инструкция по Gilil On</button>
+        </div>
+        <div class="theme-swatches" id="theme-swatches" role="listbox" aria-label="Темы">
+          <button type="button" class="theme-swatch" data-theme-id="dark" title="Тёмная" aria-checked="true" role="option"></button>
+          <button type="button" class="theme-swatch" data-theme-id="bitrix" title="Битрикс24 · светлая" aria-checked="false" role="option"></button>
+          <button type="button" class="theme-swatch" data-theme-id="cyan" title="Мобильная · Cyan" aria-checked="false" role="option"></button>
+        </div>
+      </div>
+    </div>
+    <div class="notif-wrap" id="notif-wrap">
+      <button type="button" class="bell-btn" id="btn-notif-bell" aria-expanded="false" aria-haspopup="true" aria-controls="notif-panel" title="Уведомления" data-i18n-title="notif.title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+        </svg>
+        <span class="bell-badge" id="bell-badge" hidden>0</span>
+      </button>
+      <div class="notif-panel hidden" id="notif-panel" role="dialog" aria-label="Уведомления">
+        <div class="notif-head">
+          <h2 data-i18n="notif.title">Уведомления</h2>
+          <button type="button" class="mark-all" id="btn-notif-read-all" data-i18n="notif.read_all">Прочитать все</button>
+        </div>
+        <div class="notif-filters" id="notif-filters" role="tablist">
+          <button type="button" class="nf active" data-notif-filter="all" role="tab">Все <span class="cnt" id="nf-cnt-all" hidden>0</span></button>
+          <button type="button" class="nf" data-notif-filter="message" role="tab">Сообщения <span class="cnt" id="nf-cnt-message" hidden>0</span></button>
+          <button type="button" class="nf" data-notif-filter="task" role="tab">Задачи <span class="cnt" id="nf-cnt-task" hidden>0</span></button>
+          <button type="button" class="nf" data-notif-filter="invoice" role="tab">Счета <span class="cnt" id="nf-cnt-invoice" hidden>0</span></button>
+        </div>
+        <div class="notif-list" id="notif-list"></div>
+      </div>
+    </div>
+    <div class="profile-wrap" id="profile-wrap">
+      <button type="button" class="userchip" id="userchip" aria-pressed="false" title="Профиль" data-i18n-title="nav.personal">
+        <div class="av" id="user-av">АР</div>
+        <div class="meta">
+          <strong id="user-name">阿列克谢</strong>
+          <span id="user-role">RU Manager</span>
+        </div>
+        <span class="task-badge chip-task-badge hidden" id="chip-task-badge" aria-hidden="true">0</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Desktop auto-update banner (hidden unless Electron reports an update) -->
+  <div id="update-banner" class="update-banner hidden" role="status" aria-live="polite" hidden>
+    <div class="update-banner-inner">
+      <span class="update-banner-ico" aria-hidden="true">↑</span>
+      <span class="update-banner-text" id="update-banner-text">Обновление доступно</span>
+      <div class="update-banner-progress hidden" id="update-banner-progress" hidden>
+        <div class="update-banner-bar"><div class="update-banner-bar-fill" id="update-banner-bar-fill" style="width:0%"></div></div>
+        <span class="update-banner-pct" id="update-banner-pct">0%</span>
+      </div>
+      <div class="update-banner-actions">
+        <button type="button" class="btn update-btn" id="btn-update-download" data-i18n="update.download">Загрузить</button>
+        <button type="button" class="btn update-btn primary hidden" id="btn-update-install" data-i18n="update.install" hidden>Установить и перезапустить</button>
+        <button type="button" class="btn ghost update-btn-dismiss" id="btn-update-dismiss" title="Скрыть" aria-label="Скрыть">×</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="body">
+    <!-- Left: chats grouped -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <div class="team-vis-wrap" id="team-vis-wrap">
+          <button type="button" class="team-vis-btn" id="team-vis-btn" aria-haspopup="listbox" aria-expanded="false" aria-controls="team-vis-menu">
+            <span class="team-vis-ico" aria-hidden="true">👥</span>
+            <span id="team-vis-label">Обе команды</span>
+            <span class="team-vis-caret" aria-hidden="true">▾</span>
+          </button>
+          <div class="team-vis-menu hidden" id="team-vis-menu" role="listbox" aria-label="Видимость команд">
+            <button type="button" class="team-vis-opt" role="option" data-vis="ru" data-i18n="chats.team_ru">Команда RU</button>
+            <button type="button" class="team-vis-opt" role="option" data-vis="cn" data-i18n="chats.team_cn">Команда CN</button>
+            <button type="button" class="team-vis-opt" role="option" data-vis="both" data-i18n="chats.teams_both" aria-selected="true">Обе команды</button>
+          </div>
+        </div>
+        <input type="search" id="chat-search" placeholder="搜索对话（RU / CN / 项目）…  ⌘K" data-i18n-placeholder="chats.search" />
+      </div>
+      <div class="chat-groups" id="chat-groups"></div>
+    </aside>
+
+    <!-- Center content -->
+    <main class="main">
+      <!-- Personal / Личное — full work area (not a popup) -->
+      <section class="section" id="sec-personal">
+        <div class="section-pad personal-section-pad">
+          <div class="personal-section-head">
+            <h1 class="personal-section-title" data-i18n="nav.personal">Личная</h1>
+          </div>
+
+          <div class="personal-grid">
+            <div>
+              <div class="card" style="margin-bottom:14px">
+                <h2 data-i18n="personal.who">我是谁</h2>
+                <div class="who">
+                  <div class="big-av" id="who-av">АР</div>
+                  <dl>
+                    <dt data-i18n="personal.lbl_name">姓名</dt><dd id="who-name">阿列克谢·彼得罗夫</dd>
+                    <dt data-i18n="personal.lbl_role">角色</dt><dd id="who-role">RU Manager</dd>
+                    <dt data-i18n="personal.lbl_company">公司</dt><dd id="who-company">Гелин</dd>
+                    <dt data-i18n="personal.lbl_team">团队 / 城市</dt><dd id="who-team">俄罗斯 · 莫斯科 (MSK)</dd>
+                    <dt data-i18n="personal.lbl_login">登录名</dt><dd id="who-login">ru1（演示）</dd>
+                  </dl>
+                </div>
+              </div>
+              <div class="card" id="director-rating-card" style="margin-bottom:14px">
+                <h2 data-i18n="personal.director_rating">Оценка директора</h2>
+                <div class="who director-rating-body">
+                  <dl>
+                    <dt data-i18n="personal.lbl_score">Оценка</dt><dd id="who-score">—</dd>
+                    <dt data-i18n="personal.lbl_director_comment">Комментарий директора</dt><dd id="who-score-comment">—</dd>
+                    <dt data-i18n="personal.lbl_score_at">Дата оценки</dt><dd id="who-score-at">—</dd>
+                    <dt data-i18n="personal.lbl_hire_date">Дата приёма</dt><dd id="who-hire-date">—</dd>
+                    <dt data-i18n="personal.lbl_time_in_app">Время в программе</dt><dd id="who-time-in-app">—</dd>
+                  </dl>
+                </div>
+              </div>
+              <div class="card theme-settings-card" style="margin-bottom:14px">
+                <h2 data-i18n="theme.settings">Настройки</h2>
+                <label class="fld" style="display:block;margin:0">
+                  <span data-i18n="theme.label">Тема оформления</span>
+                  <select class="theme-select" id="theme-select-personal" aria-label="Тема">
+                    <option value="dark" data-i18n="theme.dark">Тёмная</option>
+                    <option value="bitrix" data-i18n="theme.bitrix">Битрикс24 · светлая</option>
+                    <option value="cyan" data-i18n="theme.cyan">Мобильная · Cyan</option>
+                  </select>
+                </label>
+                <label class="fld lang-settings-fld" style="display:block;margin-top:12px">
+                  <span data-i18n="lang.label">Язык интерфейса</span>
+                  <select class="theme-select lang-select" id="lang-select-personal" aria-label="Language"></select>
+                </label>
+                <p class="theme-hint" data-i18n="theme.hint">Выбор сохраняется в браузере (localStorage).</p>
+                <label class="notif-sound-row" style="display:flex;align-items:center;gap:8px;margin-top:10px;font-size:12.5px;color:var(--muted);cursor:pointer">
+                  <input type="checkbox" id="notif-sound-toggle-personal" checked />
+                  <span data-i18n="notif.sound">Звук уведомлений</span>
+                </label>
+                <button type="button" class="btn ghost settings-link-btn" id="btn-settings-manual-personal" data-i18n="settings.manual" style="display:block;width:100%;text-align:left;margin-top:10px">📖 Инструкция по Gilil On</button>
+              </div>
+              <div class="card">
+                <h2><span data-i18n="personal.tasks_summary">任务汇总</span> <span class="hint-pill" data-i18n="personal.today">今天</span></h2>
+                <div class="stats-row">
+                  <div class="stat ok"><div class="n" id="stat-active">3</div><div class="l" data-i18n="personal.stat_active">进行中</div></div>
+                  <div class="stat"><div class="n" id="stat-wait">1</div><div class="l" data-i18n="personal.stat_wait">待审批</div></div>
+                  <div class="stat hot"><div class="n" id="stat-overdue">2</div><div class="l" data-i18n="personal.stat_overdue">已逾期</div></div>
+                  <div class="stat ok"><div class="n" id="stat-done">1</div><div class="l" data-i18n="personal.stat_done">已完成</div></div>
+                </div>
+                <p style="margin:0;font-size:12px;color:var(--muted)" data-i18n="personal.demo_note" data-i18n-html="1">任务<strong>不</strong>在顶部菜单 — 徽标在「个人」上，右下角红色按钮。今日未勾选的任务标红。</p>
+              </div>
+            </div>
+
+            <div>
+              <div class="card" style="margin-bottom:14px">
+                <h2><span data-i18n="personal.plan_today">今日计划</span> <span class="hint-pill" data-i18n="personal.plan_hint">勾选 → 总监机器人</span></h2>
+                <div class="plan-list" id="plan-list"></div>
+                <div class="director-note" data-i18n="personal.plan_note">✓ 勾选立即发给总监机器人（演示：toast「已发送给总监机器人」）。</div>
+              </div>
+
+              <div class="card tasks-panel">
+                <h2><span data-i18n="personal.tasks_today">今日任务</span> <span class="hint-pill" style="color:#fca5a5;border-color:rgba(239,68,68,.4)" data-i18n="personal.tasks_hot">标红提醒</span></h2>
+                <div class="task-filters" id="task-filters">
+                  <button type="button" class="tf active" data-filter="all" data-i18n="personal.filter_all">全部</button>
+                  <button type="button" class="tf" data-filter="regular" data-i18n="personal.filter_regular">普通</button>
+                  <button type="button" class="tf" data-filter="invoice"><span data-i18n="personal.filter_invoice">账单</span> <span class="tf-n" id="tf-invoice-n">2</span></button>
+                </div>
+                <div id="invoice-alert" class="invoice-alert hidden" role="alert"></div>
+                <div id="tasks-list"></div>
+                <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+                  <button type="button" class="btn danger" id="btn-demo-beep" data-i18n="personal.demo_beep">演示：蜂鸣（逾期 &gt;1小时）</button>
+                  <button type="button" class="btn ghost" id="btn-open-tasks" data-i18n="personal.open_first">打开第一个任务</button>
+                  <button type="button" class="btn teal" id="btn-new-invoice" data-i18n="personal.new_invoice">+ 新建账单</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        
+        </div>
+      </section>
+
+            <!-- CRM -->
+      <section class="section" id="sec-crm">
+        <div class="crm-layout">
+          <div class="crm-list">
+            <h2><span data-i18n="nav.crm">CRM</span> <span id="crm-scope-label" style="color:var(--muted);font-weight:500;font-size:12px">роль…</span></h2>
+            <div class="crm-side-filters" id="crm-side-filters"></div>
+            <div id="crm-cards"></div>
+            <div id="crm-admin-box" class="crm-admin-box hidden">
+              <h2 data-i18n="crm.admin">管理后台</h2>
+              <p style="margin:0;font-size:12px;color:var(--muted)" data-i18n="crm.admin_hint">用户与设置管理 — 仅管理员（鲁斯兰）。</p>
+              <button type="button" class="btn ghost" id="btn-admin-users" style="margin-top:8px" data-i18n="crm.users">用户</button>
+              <div id="smtp-allowlist-panel" class="smtp-allowlist-panel" style="margin-top:16px;padding-top:12px;border-top:1px solid var(--border, rgba(127,127,127,.25))">
+                <h3 style="margin:0 0 6px;font-size:14px" data-i18n="smtp.allowlist_title">Доступ к почте SMTP</h3>
+                <p style="margin:0 0 8px;font-size:12px;color:var(--muted)" data-i18n="smtp.allowlist_hint">Только адреса из списка могут получать OTP / использовать общий почтовый ящик. App Password не показывается.</p>
+                <div id="smtp-allowlist-list" class="smtp-allowlist-list" style="display:flex;flex-direction:column;gap:6px;margin-bottom:8px"></div>
+                <form id="smtp-allowlist-form" style="display:flex;flex-wrap:wrap;gap:6px;align-items:center">
+                  <input type="email" id="smtp-allowlist-email" required placeholder="email@example.com" style="flex:1;min-width:160px;padding:6px 8px;border-radius:8px;border:1px solid var(--border, #444);background:var(--panel, transparent);color:inherit" data-i18n-placeholder="smtp.email_ph" />
+                  <input type="text" id="smtp-allowlist-label" placeholder="метка" style="width:120px;padding:6px 8px;border-radius:8px;border:1px solid var(--border, #444);background:var(--panel, transparent);color:inherit" data-i18n-placeholder="smtp.label_ph" />
+                  <button type="submit" class="btn primary" id="smtp-allowlist-add" data-i18n="smtp.add">Добавить</button>
+                </form>
+                <div id="smtp-allowlist-status" style="margin-top:6px;font-size:12px;color:var(--muted)"></div>
+              </div>
+            </div>
+          </div>
+          <div class="crm-detail" id="crm-detail"></div>
+        </div>
+      </section>
+
+
+      <!-- Заявки с сайта -->
+      <section class="section" id="sec-leads">
+        <div class="crm-layout">
+          <div class="crm-list">
+            <h2><span data-i18n="nav.leads">Заявки</span> <span id="leads-count-label" style="color:var(--muted);font-weight:500;font-size:12px"></span></h2>
+            <div class="crm-side-filters" id="leads-filters"></div>
+            <div id="leads-cards"></div>
+          </div>
+          <div class="crm-detail" id="leads-detail">
+            <p style="color:var(--muted);font-size:13px" data-i18n="leads.pick">Выберите заявку слева</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Тендеры -->
+      <section class="section" id="sec-tenders">
+        <div class="embed-wrap">
+          <div class="embed-bar">
+            <span data-i18n="tenders.bar">招标 · 内嵌面板</span>
+            <a href="/tenders-dashboard.html" target="_blank" rel="noopener" data-i18n="tenders.open">单独打开 ↗</a>
+            <a href="/crm.html" target="_blank" rel="noopener" data-i18n="tenders.crm">招标 CRM ↗</a>
+          </div>
+          <div class="simple-panel">
+            <div class="simple-grid" id="tenders-grid"></div>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- Задачи и планы -->
+      <section class="section" id="sec-tasks-plans">
+        <div class="embed-wrap">
+          <div class="embed-bar">
+            <span data-i18n="nav.tasks_plans">Задачи и планы</span>
+            <button type="button" class="btn teal" id="btn-tp-add" data-i18n="tp.add">+ Добавить задачу</button>
+          </div>
+          <div class="simple-panel tp-panel">
+            <h2 style="margin:0 0 12px;font-size:18px" data-i18n="nav.tasks_plans">Задачи и планы</h2>
+            <p style="margin:0 0 14px;color:var(--muted);font-size:13px" data-i18n="tp.sub">Анализ задач и планов · имя · статус · срок · ответственный</p>
+            <div class="tp-table-wrap">
+              <table class="tp-table" id="tp-table">
+                <thead>
+                  <tr>
+                    <th data-i18n="tp.col_name">Задача</th>
+                    <th data-i18n="tp.col_status">Статус</th>
+                    <th data-i18n="tp.col_due">Срок</th>
+                    <th data-i18n="tp.col_owner">Ответственный</th>
+                  </tr>
+                </thead>
+                <tbody id="tp-tbody"></tbody>
+              </table>
+            </div>
+            <div id="tp-empty" class="hidden" style="padding:16px;color:var(--muted);font-size:13px" data-i18n="tp.empty">Нет задач</div>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- Календарь -->
+      <section class="section" id="sec-calendar">
+        <div class="embed-wrap">
+          <div class="embed-bar">
+            <span data-i18n="nav.calendar">Календарь</span>
+            <button type="button" class="btn teal" id="btn-cal-add" data-i18n="cal.add">+ Добавить событие</button>
+          </div>
+          <div class="simple-panel cal-panel">
+            <div class="cal-head">
+              <button type="button" class="btn ghost cal-nav" id="btn-cal-prev" aria-label="Prev">‹</button>
+              <h2 class="cal-month-title" id="cal-month-title">—</h2>
+              <button type="button" class="btn ghost cal-nav" id="btn-cal-next" aria-label="Next">›</button>
+              <button type="button" class="btn ghost" id="btn-cal-today" data-i18n="cal.today">Сегодня</button>
+            </div>
+            <div class="cal-weekdays" id="cal-weekdays" aria-hidden="true"></div>
+            <div class="cal-grid" id="cal-grid" role="grid"></div>
+            <div class="cal-day-panel">
+              <h3 class="cal-day-title" id="cal-day-title">—</h3>
+              <div id="cal-day-list" class="cal-day-list"></div>
+              <div id="cal-day-empty" class="cal-day-empty" data-i18n="cal.day_empty">Нет событий на этот день</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Новости -->
+      <section class="section" id="sec-news">
+        <div class="embed-wrap">
+          <div class="embed-bar">
+            <span data-i18n="news.bar">新闻</span>
+            <a href="/news.html" target="_blank" rel="noopener" data-i18n="news.open">打开 news.html ↗</a>
+          </div>
+          <iframe src="/news.html?embed=1" title="Новости" loading="lazy"></iframe>
+        </div>
+      </section>
+
+      <!-- TV -->
+      <section class="section" id="sec-tv">
+        <div class="embed-wrap">
+          <div class="embed-bar">
+            <span data-i18n="tv.bar">CRM TV 大屏</span>
+            <a href="/crm-tv.html" target="_blank" rel="noopener" data-i18n="tv.open">打开 crm-tv.html ↗</a>
+          </div>
+          <div class="simple-panel">
+            <h2 style="margin:0 0 8px" data-i18n="tv.title">CRM TV</h2>
+            <p style="margin:0;color:var(--muted);font-size:13px" data-i18n="tv.desc">招标漏斗大屏展示。下方为预览；完整全屏见链接。</p>
+            <div class="simple-grid" id="tv-stats"></div>
+            <div class="tv-preview-frame">
+              <iframe src="/crm-tv.html" title="SRM TV" loading="lazy" referrerpolicy="no-referrer"></iframe>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Хранилище -->
+      <!-- Gilil Supply Stage 2 (8797) — RU↔CN chat / JWT / storage isolation -->
+      <section class="section" id="sec-supply">
+        <div class="section-pad supply-stage2-pad">
+          <div class="supply-stage2-bar">
+            <div>
+              <h2 style="margin:0" data-i18n="nav.supply">Gilil Supply</h2>
+              <p class="muted" style="margin:4px 0 0;font-size:12.5px" data-i18n="supply.hint">Stage 2 · JWT роли admin/director/ru/cn · WS чат · изоляция хранилища · порт 8797</p>
+            </div>
+            <div class="supply-stage2-actions">
+              <label class="muted" style="font-size:12px">API
+                <input id="supply-base-url" type="text" value="http://127.0.0.1:8797" style="min-width:220px;margin-left:6px" />
+              </label>
+              <button type="button" class="btn ghost" id="btn-supply-reload" data-i18n="supply.reload">Обновить</button>
+              <a class="btn ghost" id="btn-supply-open" href="http://127.0.0.1:8797/" target="_blank" rel="noopener">↗</a>
+            </div>
+          </div>
+          <iframe id="supply-frame" class="supply-stage2-frame" title="Gilil Supply Stage 2" src="http://127.0.0.1:8797/"></iframe>
+        </div>
+      </section>
+
+      <section class="section" id="sec-storage">
+        <div class="section-pad">
+          <div class="storage-layout">
+            <div class="card">
+              <h2><span data-i18n="storage.mine">我的存储</span> <span class="hint-pill" data-i18n="storage.mine_hint">ru1 项目</span></h2>
+              <p style="margin:0 0 12px;font-size:12.5px;color:var(--muted)" data-i18n="storage.mine_desc" data-i18n-html="1">按项目分类：<span class="proj-chip order">client_order</span> 客户订单 · <span class="proj-chip tender">tender</span> 招标</p>
+              <div class="tree" id="personal-tree"></div>
+            </div>
+            <div class="card">
+              <h2><span data-i18n="storage.shared">RU 共享文件夹</span> <span class="hint-pill" data-i18n="storage.shared_hint">自动整理</span></h2>
+              <p style="margin:0 0 12px;font-size:12.5px;color:var(--muted)" data-i18n="storage.shared_desc" data-i18n-html="1">文档类型 + 文件夹 <code style="color:var(--teal)">tenders/&lt;编号&gt;/</code></p>
+              <div class="tree" id="shared-tree"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Чаты (full) — макет 2: Команда RU / CN / Проекты + поиск -->
+      <section class="section active" id="sec-chats">
+        <div class="chat-thread">
+          <div class="chat-thread-head">
+            <div class="embed-bar" id="chat-thread-title" data-i18n="chats.select">请选择左侧对话</div>
+            <button type="button" class="btn ghost" id="btn-create-project" title="Новый проект" style="margin-left:8px;white-space:nowrap">＋ Проект</button>
+            <div class="chat-tools" id="chat-tools">
+              <input type="search" id="chat-msg-search" placeholder="按文本搜索…" data-i18n-placeholder="chats.msg_search" />
+              <label class="chat-date-lab"><span data-i18n="chats.from">自</span> <input type="date" id="chat-date-from" /></label>
+              <label class="chat-date-lab"><span data-i18n="chats.to">至</span> <input type="date" id="chat-date-to" /></label>
+              <button type="button" class="tf" id="chat-filter-media" aria-pressed="false" data-i18n="chats.media">📎 媒体</button>
+              <button type="button" class="tf" id="chat-filter-photo" aria-pressed="false" data-i18n="chats.photo">🖼 图片</button>
+              <button type="button" class="tf" id="chat-filter-clear" data-i18n="chats.clear">重置</button>
+            </div>
+          </div>
+          <div id="chat-leak-banner" class="chat-leak-banner hidden" role="alert"></div>
+          <div id="project-card" class="project-card hidden" aria-live="polite">
+            <div class="pcard-grid">
+              <label class="pcard-fld"><span data-i18n="pcard.company">Компания</span><input id="pcard-company" type="text" /></label>
+              <label class="pcard-fld"><span data-i18n="pcard.tender_no">№ тендера</span><input id="pcard-tender" type="text" /></label>
+              <label class="pcard-fld pcard-wide"><span data-i18n="pcard.description">Что / описание</span><input id="pcard-desc" type="text" /></label>
+              <label class="pcard-fld"><span data-i18n="pcard.curator">Куратор</span><input id="pcard-curator" type="text" /></label>
+              <label class="pcard-fld"><span data-i18n="pcard.docs">Документы</span><input id="pcard-docs" type="text" /></label>
+              <label class="pcard-fld"><span data-i18n="pcard.manager">Менеджер</span><input id="pcard-manager" type="text" /></label>
+              <div class="pcard-fld pcard-wide pcard-plan" id="pcard-plan-wrap" data-director-only="1">
+                <span data-i18n="pcard.plan_status">Статус выполнения плана</span>
+                <div class="pcard-plan-row" id="pcard-plan-row" aria-live="polite">
+                  <span class="pcard-plan-pct" id="pcard-plan-pct">—</span>
+                  <span class="pcard-plan-badge" id="pcard-plan-badge" data-status="">—</span>
+                  <span class="pcard-plan-meta muted" id="pcard-plan-meta"></span>
+                </div>
+              </div>
+            </div>
+            <div class="pcard-members" id="pcard-members"></div>
+            <div class="pcard-actions">
+              <button type="button" class="btn primary" id="pcard-save" data-i18n="pcard.save">Сохранить</button>
+            </div>
+          </div>
+          <div class="chat-msgs" id="chat-msgs"></div>
+          <div class="chat-compose">
+            <div id="chat-quick-replies" class="chat-quick-replies hidden" role="group" aria-label="Быстрые ответы директору">
+              <span class="cqr-lab" data-i18n="cqr.label">Статус:</span>
+              <button type="button" class="cqr-chip" data-reply-status="read" data-i18n="cqr.read">Прочёл</button>
+              <button type="button" class="cqr-chip" data-reply-status="replied" data-i18n="cqr.replied">Ответил</button>
+              <button type="button" class="cqr-chip" data-reply-status="in_progress" data-i18n="cqr.in_progress">В работе</button>
+              <button type="button" class="cqr-chip" data-reply-status="done" data-i18n="cqr.done">Готово</button>
+            </div>
+            <div class="chat-compose-row">
+              <input type="text" id="chat-input" placeholder="消息…" maxlength="2000" data-i18n-placeholder="chats.input" />
+              <button type="button" id="chat-voice-btn" class="chat-voice-btn" title="Голос" aria-pressed="false" data-i18n-title="chats.voice">🎤</button>
+              <button type="button" id="chat-send" data-i18n="chats.send">发送</button>
+            </div>
+            <div id="chat-voice-bar" class="chat-voice-bar hidden" aria-live="polite">
+              <span class="chat-voice-dot" aria-hidden="true"></span>
+              <span id="chat-voice-timer">0:00</span>
+              <button type="button" id="chat-voice-cancel" class="btn ghost" data-i18n="chats.voice_cancel">取消</button>
+              <button type="button" id="chat-voice-stop" class="btn primary" data-i18n="chats.voice_stop">停止</button>
+            </div>
+            <div id="chat-voice-preview" class="chat-voice-preview hidden">
+              <audio id="chat-voice-audio" controls preload="metadata"></audio>
+              <div class="chat-voice-preview-actions">
+                <button type="button" id="chat-voice-send" class="btn primary" data-i18n="chats.voice_send">发送语音</button>
+                <button type="button" id="chat-voice-to-text" class="btn ghost" data-i18n="chats.voice_to_text">转文字</button>
+                <button type="button" id="chat-voice-discard" class="btn ghost" data-i18n="chats.voice_cancel">取消</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Mail -->
+      <section class="section" id="sec-mail">
+        <div class="section-pad">
+          <div class="crm-head" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+            <h2 style="margin:0" data-i18n="nav.mail">邮件</h2>
+            <span id="mail-mode-label" style="color:var(--muted);font-size:12px" data-i18n="mail.mode_ph">模式…</span>
+            <div style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap">
+              <button type="button" class="btn ghost" id="btn-mail-sync" data-i18n="mail.sync">同步</button>
+              <button type="button" class="btn ghost" id="btn-mail-templates" data-i18n="mail.templates">模板</button>
+            </div>
+          </div>
+          <div id="mail-notif-strip" class="mail-notif-strip"></div>
+          <div class="mail-tabs">
+            <button type="button" class="tf active" data-mail-tab="in" data-i18n="mail.in">收件箱</button>
+            <button type="button" class="tf" data-mail-tab="out" data-i18n="mail.out">已发送</button>
+            <button type="button" class="tf" data-mail-tab="waiting" data-i18n="mail.waiting">待回复</button>
+          </div>
+          <div id="mail-list" class="mail-list"></div>
+          <div id="mail-detail" class="mail-detail hidden"></div>
+        </div>
+      </section>
+
+      <!-- Mail stats (admin/director) -->
+      <section class="section" id="sec-mail-stats">
+        <div class="section-pad">
+          <div class="crm-head" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+            <h2 style="margin:0" data-i18n="nav.mail_stats">邮件统计</h2>
+            <div class="mail-period">
+              <button type="button" class="tf" data-mail-period="day" data-i18n="mail.day">日</button>
+              <button type="button" class="tf active" data-mail-period="week" data-i18n="mail.week">周</button>
+              <button type="button" class="tf" data-mail-period="month" data-i18n="mail.month">月</button>
+            </div>
+          </div>
+          <div id="mail-stats-metrics" class="mail-metrics"></div>
+          <div class="mail-stats-grid">
+            <div>
+              <h3 data-i18n="mail.by_managers">按经理</h3>
+              <div id="mail-stats-managers"></div>
+            </div>
+            <div>
+              <h3 data-i18n="mail.by_projects">按项目（瓶颈）</h3>
+              <div id="mail-stats-projects"></div>
+            </div>
+          </div>
+          <h3 data-i18n="mail.dynamics">动态</h3>
+          <div id="mail-stats-chart" class="mail-chart"></div>
+        </div>
+      </section>
+
+      <section class="section" id="sec-funnel">
+        <div class="panel">
+          <h2 data-i18n="nav.funnel">Воронка заказа</h2>
+          <p class="muted">Этап 2 · GET /api/funnels</p>
+          <div id="funnel-list" class="stage2-panel">Загрузка…</div>
+        </div>
+      </section>
+      <section class="section" id="sec-activity">
+        <div class="panel">
+          <h2 data-i18n="nav.activity">Журнал активности</h2>
+          <p class="muted">Этап 2 · GET /api/activity (только general_admin)</p>
+          <div id="activity-list" class="stage2-panel">Загрузка…</div>
+        </div>
+      </section>
+      <section class="section" id="sec-usefulness">
+        <div class="panel">
+          <h2 data-i18n="nav.usefulness">Коэффициент полезности</h2>
+          <p class="muted">Этап 2 · GET /api/usefulness (директор / админ)</p>
+          <div id="usefulness-list" class="stage2-panel">Загрузка…</div>
+        </div>
+      </section>
+
+
+    </main>
+  </div>
+</div>
+
+<!-- Floating tasks FAB (NOT in top menu) -->
+<button type="button" class="fab-tasks hidden" id="fab-tasks" title="今日任务" data-i18n-title="fab.tasks_title">
+  ✦ <span data-i18n="fab.tasks">任务</span> <span class="n" id="fab-count">3</span>
+</button>
+
+<!-- Task detail modal -->
+<div class="modal-back hidden" id="task-modal">
+  <div class="modal" role="dialog" aria-modal="true">
+    <button type="button" class="close-x" id="task-modal-close" aria-label="关闭" data-i18n-aria="tm.close_aria">×</button>
+    <h3 id="tm-title" data-i18n="tm.default_title">任务</h3>
+    <p id="tm-desc" style="color:var(--muted);margin:0 0 8px;font-size:13px"></p>
+    <div id="tm-invoice-block" class="invoice-block hidden">
+      <div class="invoice-meta">
+        <div class="tbox"><label data-i18n="tm.lbl_company">公司</label><div id="tm-company">—</div></div>
+        <div class="tbox"><label data-i18n="tm.lbl_amount">金额</label><div id="tm-amount" class="amount-hl">—</div></div>
+        <div class="tbox"><label data-i18n="tm.lbl_invno">账单号</label><div id="tm-invno">—</div></div>
+        <div class="tbox"><label data-i18n="tm.lbl_creator">创建人</label><div id="tm-creator">—</div></div>
+      </div>
+      <div class="invoice-stepper" id="tm-stepper"></div>
+      <p id="tm-status-line" class="inv-status-line"></p>
+    </div>
+    <div id="tm-regular-block">
+      <div class="timing-grid">
+        <div class="tbox"><label data-i18n="tm.lbl_taken">接手时间</label><div id="tm-taken">—</div></div>
+        <div class="tbox"><label data-i18n="tm.lbl_closed">勾选关闭</label><div id="tm-closed">—</div></div>
+      </div>
+      <p style="font-size:12px;color:var(--muted);margin:0" data-i18n="tm.regular_hint">勾选会发给总监机器人。超过 1 小时未勾选 — 声音提醒。</p>
+    </div>
+    <div class="actions" id="tm-actions-regular">
+      <button type="button" class="btn teal" id="tm-check" data-i18n="tm.check_on">勾选完成</button>
+      <button type="button" class="btn danger" id="tm-beep" data-i18n="tm.beep">蜂鸣（演示）</button>
+      <button type="button" class="btn ghost" id="tm-close2" data-i18n="tm.close">关闭</button>
+    </div>
+    <div class="actions hidden" id="tm-actions-invoice">
+      <button type="button" class="btn teal" id="tm-approve" data-i18n="tm.approve">批准</button>
+      <button type="button" class="btn danger" id="tm-reject" data-i18n="tm.reject">拒绝</button>
+      <button type="button" class="btn ghost" id="tm-close3" data-i18n="tm.close">关闭</button>
+    </div>
+  </div>
+</div>
+
+<!-- New invoice modal -->
+<div class="modal-back hidden" id="invoice-create-modal">
+  <div class="modal" role="dialog" aria-modal="true">
+    <button type="button" class="close-x" id="inv-create-close" aria-label="关闭" data-i18n-aria="tm.close_aria">×</button>
+    <h3 data-i18n="invcreate.title">新建账单</h3>
+    <p style="color:var(--muted);margin:0 0 12px;font-size:13px" data-i18n="invcreate.chain">流程：经理 → 总监 → 鲁斯兰</p>
+    <label class="fld"><span data-i18n="invcreate.company">收款公司</span><input id="inv-company" type="text" placeholder="有限公司 …" data-i18n-placeholder="invcreate.ph_company" /></label>
+    <label class="fld"><span data-i18n="invcreate.amount">金额 (₽)</span><input id="inv-amount" type="number" min="1" step="1" placeholder="890000" /></label>
+    <label class="fld"><span data-i18n="invcreate.desc">编号 / 账单说明</span><input id="inv-desc" type="text" placeholder="INV-2026-050 · 按报价付款" data-i18n-placeholder="invcreate.ph_desc" /></label>
+    <div class="actions">
+      <button type="button" class="btn teal" id="inv-create-submit" data-i18n="invcreate.submit">创建账单</button>
+      <button type="button" class="btn ghost" id="inv-create-cancel" data-i18n="invcreate.cancel">取消</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- Calendar event modal -->
+<div class="modal-back hidden" id="cal-event-modal">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="cal-ev-heading">
+    <button type="button" class="close-x" id="cal-ev-close" aria-label="Закрыть" data-i18n-aria="tm.close_aria">×</button>
+    <h3 id="cal-ev-heading" data-i18n="cal.modal_title">Добавить событие</h3>
+    <p style="color:var(--muted);margin:0 0 12px;font-size:13px" data-i18n="cal.modal_hint">Название · дата · время · проект или задача</p>
+    <label class="fld"><span data-i18n="cal.lbl_title">Название</span><input id="cal-ev-title" type="text" maxlength="200" /></label>
+    <label class="fld"><span data-i18n="cal.lbl_date">Дата</span><input id="cal-ev-date" type="date" /></label>
+    <label class="fld"><span data-i18n="cal.lbl_time">Время</span><input id="cal-ev-time" type="time" /></label>
+    <label class="fld"><span data-i18n="cal.lbl_project">Проект</span><select id="cal-ev-project"><option value="">—</option></select></label>
+    <label class="fld"><span data-i18n="cal.lbl_task">Задача</span><select id="cal-ev-task"><option value="">—</option></select></label>
+    <div class="actions">
+      <button type="button" class="btn teal" id="cal-ev-submit" data-i18n="cal.save">Сохранить</button>
+      <button type="button" class="btn ghost" id="cal-ev-cancel" data-i18n="cal.cancel">Отмена</button>
+    </div>
+  </div>
+</div>
+
+<!-- Task from chat modal (P0-3) -->
+<div class="modal-back hidden" id="task-from-chat-modal">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="tfc-heading">
+    <button type="button" class="close-x" id="tfc-close" aria-label="Закрыть" data-i18n-aria="tm.close_aria">×</button>
+    <h3 id="tfc-heading" data-i18n="tfc.title">Задача из чата</h3>
+    <p style="color:var(--muted);margin:0 0 12px;font-size:13px" data-i18n="tfc.hint">Создать задачу, не выходя из диалога</p>
+    <label class="fld"><span data-i18n="tfc.lbl_title">Заголовок</span><input id="tfc-title" type="text" maxlength="240" /></label>
+    <label class="fld"><span data-i18n="tfc.lbl_desc">Описание</span><textarea id="tfc-desc" rows="3" maxlength="2000"></textarea></label>
+    <label class="fld"><span data-i18n="tfc.lbl_assignee">Исполнитель</span><select id="tfc-assignee"></select></label>
+    <label class="fld chk-row"><input type="checkbox" id="tfc-notify" checked /> <span data-i18n="tfc.notify">Уведомить исполнителя</span></label>
+    <div class="actions">
+      <button type="button" class="btn teal" id="tfc-submit" data-i18n="tfc.submit">Создать задачу</button>
+      <button type="button" class="btn ghost" id="tfc-cancel" data-i18n="tfc.cancel">Отмена</button>
+    </div>
+  </div>
+</div>
+
+<!-- Global ⌘K command palette (P0-4) -->
+<div class="cmdk-back hidden" id="cmdk-back" role="dialog" aria-modal="true" aria-label="Command palette">
+  <div class="cmdk" id="cmdk">
+    <div class="cmdk-head">
+      <span class="cmdk-ico" aria-hidden="true">⌘K</span>
+      <input type="search" id="cmdk-input" placeholder="Поиск: чаты, задачи, счета, проекты…" autocomplete="off" data-i18n-placeholder="cmdk.ph" />
+      <kbd class="cmdk-esc">Esc</kbd>
+    </div>
+    <div class="cmdk-hints" id="cmdk-hints">
+      <span data-type="chat">Чаты</span>
+      <span data-type="task">Задачи</span>
+      <span data-type="invoice">Счета</span>
+      <span data-type="project">Проекты</span>
+      <span data-type="crm">CRM</span>
+      <span data-type="tender">Тендеры</span>
+      <span data-type="mail">Почта</span>
+    </div>
+    <div class="cmdk-list" id="cmdk-list" role="listbox"></div>
+    <div class="cmdk-empty hidden" id="cmdk-empty" data-i18n="cmdk.empty">Ничего не найдено</div>
+    <div class="cmdk-foot"><span data-i18n="cmdk.foot">↑↓ выбрать · Enter открыть · Esc закрыть</span></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script src="/splash.js"></script>
+<script src="supply-stage2.js" defer></script>
+    <script src="/shell-v2.js"></script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('/sw.js').catch(function () {});
+    });
+  }
+</script>
+
+    <!-- Create project modal -->
+<div class="modal-back hidden" id="create-project-modal">
+  <div class="modal" role="dialog" aria-modal="true" style="max-width:480px">
+    <button type="button" class="close-x" id="cp-close" aria-label="Close">✕</button>
+    <h3 data-i18n="pcard.create_title">Новый проект</h3>
+    <label class="fld"><span data-i18n="pcard.name">Название</span><input id="cp-name" type="text" /></label>
+    <label class="fld"><span data-i18n="pcard.company">Компания</span><input id="cp-company" type="text" /></label>
+    <label class="fld"><span data-i18n="pcard.tender_no">№ тендера</span><input id="cp-tender" type="text" /></label>
+    <label class="fld"><span data-i18n="pcard.description">Что / описание</span><input id="cp-desc" type="text" /></label>
+    <label class="fld"><span data-i18n="pcard.curator">Куратор</span><input id="cp-curator" type="text" /></label>
+    <label class="fld"><span data-i18n="pcard.docs">Документы (отв.)</span><input id="cp-docs" type="text" /></label>
+    <label class="fld"><span data-i18n="pcard.manager_ru">Менеджер RU</span><select id="cp-mgr-ru"></select></label>
+    <label class="fld"><span data-i18n="pcard.manager_cn">Менеджер CN</span><select id="cp-mgr-cn"></select></label>
+    <p class="muted" style="font-size:12px;margin:8px 0 0" data-i18n="pcard.general_note">Генерал добавляется на все проекты автоматически и не может быть удалён.</p>
+    <div class="actions">
+      <button type="button" class="btn ghost" id="cp-cancel" data-i18n="pcard.cancel">Отмена</button>
+      <button type="button" class="btn primary" id="cp-submit" data-i18n="pcard.create">Создать</button>
+    </div>
+  </div>
+</div>
+
+    <!-- Director workload section -->
+    <section class="section" id="sec-director">
+      <div class="section-pad">
+        <h2 data-i18n="nav.director_workload">Директор · нагрузка сотрудников</h2>
+        <p class="muted" data-i18n="director.hint">План и загрузка подчинённых. При пропуске плана — эскалация Генералу.</p>
+        <div id="director-workload-list" class="stage2-panel">Загрузка…</div>
+      </div>
+    </section>
+
+</body>
+</html>

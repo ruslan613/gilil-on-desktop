@@ -1,0 +1,26 @@
+{
+  "name": "gilil-on-desktop-server",
+  "version": "2.0.0",
+  "description": "Gilil On Stage 2 \u2014 Node + WS + AES-256 + JWT roles + SQLite",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "smoke": "node scripts/smoke.js",
+    "seed": "node -e \"require('./src/db').initDb()\"",
+    "smoke:supply": "node scripts/smoke-supply-stage2.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "better-sqlite3": "^11.7.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "nodemailer": "^10.3.1",
+    "ws": "^8.18.0"
+  }
+}

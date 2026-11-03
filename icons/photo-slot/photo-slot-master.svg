@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" role="img" aria-label="GililOn photo-slot">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#163A5C"/>
+      <stop offset="55%" stop-color="#0E4A6E"/>
+      <stop offset="100%" stop-color="#08708E"/>
+    </linearGradient>
+    <radialGradient id="bloom" cx="42%" cy="32%" r="70%">
+      <stop offset="0%" stop-color="#2FC6F6" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#2FC6F6" stop-opacity="0"/>
+    </radialGradient>
+    <mask id="hole">
+      <rect width="1024" height="1024" fill="white"/>
+      <circle cx="512" cy="476" r="253" fill="black"/>
+    </mask>
+  </defs>
+  <!-- Tile with transparent photo hole -->
+  <g mask="url(#hole)">
+    <rect x="24" y="24" width="976" height="976" rx="219" ry="219" fill="url(#bgGrad)"/>
+    <rect x="24" y="24" width="976" height="976" rx="219" ry="219" fill="url(#bloom)"/>
+  </g>
+  <!-- Rings -->
+  <circle cx="512" cy="476" r="267" fill="none" stroke="#A8875A" stroke-width="8"/>
+  <circle cx="512" cy="476" r="259" fill="none" stroke="#2FC6F6" stroke-width="7"/>
+  <circle cx="512" cy="476" r="254" fill="none" stroke="#F8FAFC" stroke-opacity="0.7" stroke-width="2"/>
+  <!-- Drop photo here: circle r=253 at (512,476) -->
+  <text x="512" y="807" text-anchor="middle"
+        font-family="Bebas Neue, Arial Narrow, Impact, sans-serif"
+        font-size="92" letter-spacing="4" fill="#F8FAFC">GILILON</text>
+</svg>

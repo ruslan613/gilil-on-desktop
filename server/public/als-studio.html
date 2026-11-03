@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI Lighting Studio — Gilil Supply</title>
+  <script>
+    (function () {
+      try {
+        var id = localStorage.getItem('gilil_theme') || 'dark';
+        if (id === 'beige') id = 'bitrix';
+        if (id === 'blue') id = 'cyan';
+        var ok = { dark: 1, bitrix: 1, cyan: 1 };
+        var q = new URLSearchParams(location.search).get('theme');
+        if (q === 'beige') q = 'bitrix';
+        if (q === 'blue') q = 'cyan';
+        if (q && ok[q]) id = q;
+        if (!ok[id]) id = 'dark';
+        document.documentElement.dataset.theme = id;
+        document.documentElement.dataset.surface = 'rich';
+      } catch (_) {
+        document.documentElement.dataset.theme = 'dark';
+        document.documentElement.dataset.surface = 'rich';
+      }
+    })();
+  </script>
+  <link rel="stylesheet" href="/themes.css" />
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; min-height: 100%;
+      background: var(--bg-grad, var(--bg));
+      background-color: var(--bg);
+      color: var(--ink);
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      line-height: 1.45;
+    }
+    .wrap { max-width: 780px; margin: 0 auto; padding: 24px 16px 56px; }
+    header h1 { font-size: 1.55rem; margin: 0 0 4px; letter-spacing: -0.02em; }
+    header p { margin: 0 0 18px; color: var(--muted); font-size: 0.95rem; }
+    header a { color: var(--accent); }
+    .card {
+      background: var(--card, var(--bg-card));
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px 16px;
+      margin-bottom: 12px;
+    }
+    .card h2 { margin: 0 0 12px; font-size: 1.05rem; }
+    label.fld { display: block; margin: 0 0 10px; font-size: 0.85rem; color: var(--muted); }
+    label.fld > span { display: block; margin-bottom: 4px; }
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: var(--bg-card-2, var(--chip, #1a1612));
+      color: var(--ink);
+      border-radius: 10px;
+      padding: 8px 10px;
+      font: inherit;
+    }
+    textarea { min-height: 110px; resize: vertical; }
+    .row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+    @media (max-width: 640px) { .row { grid-template-columns: 1fr; } }
+    .btn {
+      border: 1px solid var(--line);
+      background: var(--accent, #c9a227);
+      color: #111;
+      font-weight: 600;
+      padding: 9px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 0.92rem;
+    }
+    .btn.ghost { background: transparent; color: var(--ink); }
+    .msg { margin: 8px 0 0; font-size: 0.88rem; color: var(--muted); }
+    .msg.err { color: #e07070; }
+    .msg.ok { color: #6ecf8e; }
+    .item { position: relative; }
+    .item .meta {
+      display: flex; flex-wrap: wrap; gap: 6px 10px;
+      font-size: 0.78rem; color: var(--muted); margin-bottom: 6px;
+    }
+    .chip {
+      display: inline-block; padding: 2px 8px; border-radius: 999px;
+      border: 1px solid var(--line); background: var(--bg-card-2, transparent);
+      font-size: 0.75rem;
+    }
+    .chip.pass { border-color: #3d8f5a; color: #6ecf8e; }
+    .chip.fail { border-color: #a04545; color: #e07070; }
+    .chip.agent { border-color: #6a8cff; color: #9bb0ff; }
+    .item h3 { margin: 0 0 6px; font-size: 1rem; }
+    .item .body { white-space: pre-wrap; font-size: 0.9rem; }
+    .item .paths, .item .run {
+      margin-top: 8px; font-size: 0.8rem; color: var(--muted);
+      word-break: break-all;
+    }
+    .toolbar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; align-items: center; }
+    #auth-warn { display: none; }
+    #auth-warn.show { display: block; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>AI Lighting Studio</h1>
+      <p>Статус работ в Gilil Supply / Gilil On · проект «AI Lighting Studio» · <a href="/shell-v2.html">← в оболочку</a></p>
+    </header>
+
+    <div class="card" id="auth-warn">
+      <strong>Нужен вход.</strong> Откройте <a href="/shell-v2.html">Gilil On</a>, войдите, затем обновите эту страницу (токен из localStorage).
+    </div>
+
+    <div class="card">
+      <h2>Ручное обновление</h2>
+      <form id="form">
+        <div class="row">
+          <label class="fld"><span>Неделя</span>
+            <select name="week" id="week">
+              <option value="week1">week1</option>
+              <option value="week2" selected>week2</option>
+              <option value="week3">week3</option>
+              <option value="week4">week4</option>
+              <option value="week5">week5</option>
+              <option value="week6">week6</option>
+              <option value="week7">week7</option>
+              <option value="week8">week8</option>
+            </select>
+          </label>
+          <label class="fld"><span>Статус</span>
+            <select name="status" id="status">
+              <option value="in_progress" selected>in_progress</option>
+              <option value="done">done</option>
+              <option value="blocked">blocked</option>
+            </select>
+          </label>
+          <label class="fld"><span>Приёмка</span>
+            <select name="accept" id="accept">
+              <option value="" selected>— нет —</option>
+              <option value="PASS">PASS</option>
+              <option value="FAIL">FAIL</option>
+            </select>
+          </label>
+        </div>
+        <label class="fld"><span>Заголовок</span>
+          <input name="title" id="title" maxlength="500" placeholder="Кратко: что сделано" />
+        </label>
+        <label class="fld"><span>Заметка / комментарий</span>
+          <textarea name="body" id="body" placeholder="Прогресс, PASS/FAIL комментарий, детали…"></textarea>
+        </label>
+        <button type="submit" class="btn">Сохранить в Gilil Supply</button>
+        <div class="msg" id="form-msg"></div>
+      </form>
+    </div>
+
+    <div class="toolbar">
+      <button type="button" class="btn ghost" id="btn-reload">Обновить список</button>
+      <span class="msg" id="list-msg"></span>
+    </div>
+    <div id="list"></div>
+  </div>
+  <script>
+    function getToken() {
+      try {
+        return (
+          localStorage.getItem('gilil_access_token') ||
+          localStorage.getItem('gilil_token') ||
+          sessionStorage.getItem('gilil_access_token') ||
+          sessionStorage.getItem('gilil_token') ||
+          ''
+        );
+      } catch (_) { return ''; }
+    }
+    function authHeaders() {
+      var t = getToken();
+      var h = { Accept: 'application/json', 'Content-Type': 'application/json' };
+      if (t) h.Authorization = 'Bearer ' + t;
+      return h;
+    }
+    function chipAccept(a) {
+      if (a === 'PASS') return '<span class="chip pass">PASS</span>';
+      if (a === 'FAIL') return '<span class="chip fail">FAIL</span>';
+      return '';
+    }
+    function esc(s) {
+      return String(s == null ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+    async function loadList() {
+      var msg = document.getElementById('list-msg');
+      var warn = document.getElementById('auth-warn');
+      if (!getToken()) {
+        warn.classList.add('show');
+        msg.textContent = 'нет токена';
+        return;
+      }
+      warn.classList.remove('show');
+      msg.textContent = 'загрузка…';
+      try {
+        var r = await fetch('/api/als/updates?limit=50', { headers: authHeaders() });
+        var data = await r.json().catch(function () { return {}; });
+        if (!r.ok) {
+          msg.textContent = 'ошибка ' + r.status + (data.error ? ': ' + data.error : '');
+          if (r.status === 401) warn.classList.add('show');
+          return;
+        }
+        var items = data.items || [];
+        msg.textContent = items.length + ' обновл.';
+        var root = document.getElementById('list');
+        if (!items.length) {
+          root.innerHTML = '<div class="card"><p class="msg">Пока нет обновлений.</p></div>';
+          return;
+        }
+        root.innerHTML = items.map(function (it) {
+          var paths = '';
+          if (it.paths && it.paths.length) {
+            paths = '<div class="paths"><strong>Пути:</strong><br>' +
+              (Array.isArray(it.paths) ? it.paths : [it.paths]).map(esc).join('<br>') + '</div>';
+          }
+          var run = it.how_to_run
+            ? '<div class="run"><strong>Запуск:</strong><br><code>' + esc(it.how_to_run) + '</code></div>'
+            : '';
+          return (
+            '<article class="card item">' +
+            '<div class="meta">' +
+              '<span class="chip">' + esc(it.week) + '</span>' +
+              '<span class="chip">' + esc(it.status) + '</span>' +
+              chipAccept(it.accept) +
+              (it.source === 'agent' ? '<span class="chip agent">agent</span>' : '<span class="chip">user</span>') +
+              '<span>' + esc(it.created_at) + '</span>' +
+              (it.author ? '<span>@' + esc(it.author) + '</span>' : '') +
+            '</div>' +
+            '<h3>' + esc(it.title || '(без заголовка)') + '</h3>' +
+            (it.body ? '<div class="body">' + esc(it.body) + '</div>' : '') +
+            paths + run +
+            '</article>'
+          );
+        }).join('');
+      } catch (e) {
+        msg.textContent = 'сеть: ' + (e && e.message ? e.message : e);
+      }
+    }
+    document.getElementById('btn-reload').addEventListener('click', loadList);
+    document.getElementById('form').addEventListener('submit', async function (ev) {
+      ev.preventDefault();
+      var out = document.getElementById('form-msg');
+      if (!getToken()) {
+        out.className = 'msg err';
+        out.textContent = 'Сначала войдите в Gilil On';
+        document.getElementById('auth-warn').classList.add('show');
+        return;
+      }
+      out.className = 'msg';
+      out.textContent = 'сохранение…';
+      var payload = {
+        week: document.getElementById('week').value,
+        status: document.getElementById('status').value,
+        accept: document.getElementById('accept').value,
+        title: document.getElementById('title').value.trim(),
+        body: document.getElementById('body').value
+      };
+      try {
+        var r = await fetch('/api/als/updates', {
+          method: 'POST',
+          headers: authHeaders(),
+          body: JSON.stringify(payload)
+        });
+        var data = await r.json().catch(function () { return {}; });
+        if (!r.ok) {
+          out.className = 'msg err';
+          out.textContent = 'ошибка ' + r.status + ': ' + (data.error || JSON.stringify(data));
+          return;
+        }
+        out.className = 'msg ok';
+        out.textContent = 'Сохранено в Gilil Supply (id=' + (data.item && data.item.id) + ')';
+        document.getElementById('body').value = '';
+        loadList();
+      } catch (e) {
+        out.className = 'msg err';
+        out.textContent = String(e && e.message ? e.message : e);
+      }
+    });
+    loadList();
+  </script>
+</body>
+</html>

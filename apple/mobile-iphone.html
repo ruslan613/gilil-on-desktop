@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=390, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="theme-color" content="#0c0a08" />
+<title>Gilil On · iPhone</title>
+<style>
+:root {
+  --bg: #0F172A;
+  --bg-elev: #111827;
+  --bg-card: #1A2336;
+  --bg-card-2: #1e2a40;
+  --line: #243044;
+  --line-soft: #1e293b;
+  --ink: #e5e7eb;
+  --muted: #94a3b8;
+  --muted-2: #64748b;
+  --cyan: #2FC6F6;
+  --cyan-dim: rgba(47,198,246,.16);
+  --cyan-deep: #0891b2;
+  --cyan-ink: #042f3a;
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,.16);
+  --amber: #f59e0b;
+  --amber-dim: rgba(245,158,11,.16);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,.18);
+  --blue: #3b82f6;
+  --radius: 14px;
+  --radius-sm: 10px;
+  --pill: 999px;
+  --safe-top: 47px;
+  --safe-bot: 34px;
+  --header-h: 52px;
+  --tab-h: 56px;
+  --font: -apple-system, "SF Pro Text", "Segoe UI", "Inter", system-ui, sans-serif;
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { margin: 0; height: 100%; }
+body {
+  font-family: var(--font);
+  background: #020617;
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.4;
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: 16px;
+  overflow: hidden;
+}
+button, input { font: inherit; color: inherit; }
+.hidden { display: none !important; }
+
+/* ——— Phone frame ——— */
+.phone {
+  width: 390px;
+  height: 844px;
+  background: var(--bg);
+  border-radius: 44px;
+  overflow: hidden;
+  position: relative;
+  box-shadow:
+    0 0 0 2px #1e293b,
+    0 0 0 6px #0b1220,
+    0 28px 80px rgba(0,0,0,.55);
+  display: flex;
+  flex-direction: column;
+}
+.phone::before {
+  content: "";
+  position: absolute;
+  top: 10px; left: 50%; transform: translateX(-50%);
+  width: 126px; height: 34px;
+  background: #000;
+  border-radius: 20px;
+  z-index: 100;
+  pointer-events: none;
+}
+.status-bar {
+  height: var(--safe-top);
+  padding: 12px 28px 0;
+  display: flex; align-items: flex-start; justify-content: space-between;
+  font-size: 14px; font-weight: 650;
+  color: var(--ink);
+  position: relative; z-index: 50;
+  flex-shrink: 0;
+  background: var(--bg-elev);
+}
+.status-bar .right {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12px;
+}
+.status-bar svg { display: block; }
+
+/* App chrome */
+.app {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  position: relative;
+  background: var(--bg);
+}
+.appbar {
+  height: var(--header-h);
+  padding: 0 14px;
+  display: flex; align-items: center; gap: 10px;
+  background: var(--bg-elev);
+  border-bottom: 1px solid var(--line-soft);
+  flex-shrink: 0;
+  z-index: 40;
+}
+.brand {
+  display: flex; align-items: center; gap: 9px;
+  flex: 1; min-width: 0;
+}
+.brand img {
+  width: 32px; height: 32px; border-radius: 9px;
+  object-fit: cover;
+  box-shadow: 0 0 0 1px rgba(47,198,246,.25);
+}
+.brand .titles { min-width: 0; }
+.brand h1 {
+  margin: 0; font-size: 16px; font-weight: 750; letter-spacing: -.02em;
+  display: flex; align-items: baseline; gap: 5px;
+}
+.brand h1 span.accent { color: var(--cyan); }
+.brand .tag {
+  font-size: 10.5px; color: var(--muted-2); font-weight: 500;
+  margin-top: 1px;
+}
+.bell-btn {
+  appearance: none; border: 1px solid rgba(47,198,246,.45);
+  width: 36px; height: 36px; border-radius: 11px;
+  background: var(--cyan-dim); color: var(--cyan);
+  display: grid; place-items: center; cursor: pointer;
+  position: relative; flex-shrink: 0;
+}
+.bell-btn:active { transform: scale(.96); }
+.bell-btn .badge {
+  position: absolute; top: -5px; right: -5px;
+  min-width: 17px; height: 17px; padding: 0 4px;
+  border-radius: var(--pill);
+  background: var(--red); color: #fff;
+  font-size: 10px; font-weight: 750;
+  display: grid; place-items: center;
+  box-shadow: 0 0 0 2px var(--bg-elev), 0 0 10px rgba(239,68,68,.45);
+}
+
+/* Screens stack */
+.screens {
+  flex: 1; min-height: 0; position: relative;
+  overflow: hidden;
+}
+.screen {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  background: var(--bg);
+  opacity: 0; pointer-events: none;
+  transform: translateX(8px);
+  transition: opacity .18s ease, transform .18s ease;
+}
+.screen.active {
+  opacity: 1; pointer-events: auto;
+  transform: translateX(0);
+}
+.screen.slide-in {
+  transform: translateX(100%);
+}
+.screen.slide-in.active {
+  transform: translateX(0);
+}
+
+/* Search */
+.search-wrap {
+  padding: 10px 14px 6px;
+  flex-shrink: 0;
+}
+.search {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 9px 12px;
+}
+.search svg { color: var(--muted-2); flex-shrink: 0; }
+.search input {
+  flex: 1; border: none; outline: none; background: transparent;
+  color: var(--ink); font-size: 14px; min-width: 0;
+}
+.search input::placeholder { color: var(--muted-2); }
+
+/* Chat list */
+.scroll {
+  flex: 1; overflow-y: auto; overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 8px;
+}
+.scroll::-webkit-scrollbar { width: 0; }
+.group-label {
+  padding: 12px 16px 6px;
+  font-size: 11px; font-weight: 700;
+  letter-spacing: .06em; text-transform: uppercase;
+  color: var(--muted-2);
+  display: flex; align-items: center; gap: 8px;
+}
+.group-label::after {
+  content: ""; flex: 1; height: 1px; background: var(--line-soft);
+}
+.chat-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 14px;
+  cursor: pointer;
+  border-bottom: 1px solid transparent;
+}
+.chat-row:active { background: rgba(255,255,255,.03); }
+.avatar {
+  width: 46px; height: 46px; border-radius: 14px;
+  display: grid; place-items: center;
+  font-weight: 750; font-size: 14px;
+  flex-shrink: 0; color: #fff;
+  position: relative;
+}
+.avatar.online::after {
+  content: "";
+  position: absolute; bottom: -1px; right: -1px;
+  width: 12px; height: 12px; border-radius: 50%;
+  background: var(--green);
+  border: 2px solid var(--bg);
+}
+.chat-meta { flex: 1; min-width: 0; }
+.chat-top {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 8px;
+  margin-bottom: 3px;
+}
+.chat-name { font-weight: 650; font-size: 14.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.chat-time { font-size: 11.5px; color: var(--muted-2); flex-shrink: 0; }
+.chat-bottom {
+  display: flex; align-items: center; gap: 8px;
+}
+.chat-preview {
+  flex: 1; min-width: 0;
+  font-size: 13px; color: var(--muted);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.unread {
+  min-width: 20px; height: 20px; padding: 0 6px;
+  border-radius: var(--pill);
+  background: var(--cyan); color: var(--cyan-ink);
+  font-size: 11px; font-weight: 750;
+  display: grid; place-items: center; flex-shrink: 0;
+}
+.pill-tag {
+  font-size: 10px; font-weight: 700; padding: 2px 7px;
+  border-radius: var(--pill); flex-shrink: 0;
+}
+.pill-tag.ru { background: rgba(59,130,246,.18); color: #93c5fd; }
+.pill-tag.cn { background: rgba(245,158,11,.16); color: #fcd34d; }
+.pill-tag.prj { background: var(--cyan-dim); color: var(--cyan); }
+
+/* Tab bar */
+.tabbar {
+  height: calc(var(--tab-h) + var(--safe-bot));
+  padding: 6px 8px var(--safe-bot);
+  background: var(--bg-elev);
+  border-top: 1px solid var(--line-soft);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  flex-shrink: 0;
+  z-index: 40;
+}
+.tab {
+  appearance: none; border: none; background: transparent;
+  color: var(--muted-2); cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 3px; padding: 4px; border-radius: 12px;
+  font-size: 10.5px; font-weight: 650;
+  position: relative;
+}
+.tab svg { width: 22px; height: 22px; }
+.tab.active { color: var(--cyan); }
+.tab .dot {
+  position: absolute; top: 2px; right: calc(50% - 18px);
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--red);
+  box-shadow: 0 0 0 2px var(--bg-elev);
+}
+.tab:active { background: rgba(255,255,255,.03); }
+
+/* Thread */
+.thread-bar {
+  height: 48px; padding: 0 8px 0 4px;
+  display: flex; align-items: center; gap: 4px;
+  background: var(--bg-elev);
+  border-bottom: 1px solid var(--line-soft);
+  flex-shrink: 0;
+}
+.icon-btn {
+  appearance: none; border: none; background: transparent;
+  width: 40px; height: 40px; border-radius: 12px;
+  color: var(--cyan); display: grid; place-items: center; cursor: pointer;
+}
+.icon-btn:active { background: rgba(255,255,255,.04); }
+.thread-peer { flex: 1; min-width: 0; }
+.thread-peer .name { font-weight: 700; font-size: 15px; }
+.thread-peer .sub { font-size: 11.5px; color: var(--muted); }
+.messages {
+  flex: 1; overflow-y: auto; padding: 14px 12px 10px;
+  display: flex; flex-direction: column; gap: 8px;
+  background:
+    radial-gradient(600px 280px at 80% 0%, rgba(47,198,246,.06), transparent 55%),
+    var(--bg);
+}
+.day-sep {
+  align-self: center;
+  font-size: 11px; color: var(--muted-2); font-weight: 600;
+  background: var(--bg-card); border: 1px solid var(--line-soft);
+  padding: 4px 10px; border-radius: var(--pill); margin: 4px 0 8px;
+}
+.msg {
+  max-width: 82%;
+  display: flex; flex-direction: column; gap: 4px;
+  position: relative;
+}
+.msg.them { align-self: flex-start; }
+.msg.me { align-self: flex-end; }
+.bubble {
+  padding: 9px 12px; border-radius: 16px;
+  font-size: 14px; line-height: 1.45;
+  position: relative;
+}
+.msg.them .bubble {
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-bottom-left-radius: 5px;
+  color: var(--ink);
+}
+.msg.me .bubble {
+  background: linear-gradient(160deg, #1a6b82, #0e4a5c);
+  border: 1px solid rgba(47,198,246,.35);
+  border-bottom-right-radius: 5px;
+  color: #ecfeff;
+}
+.msg .meta-row {
+  display: flex; align-items: center; gap: 6px;
+  padding: 0 4px;
+}
+.msg.me .meta-row { justify-content: flex-end; }
+.msg .who { font-size: 11px; font-weight: 650; color: var(--cyan); }
+.msg .when { font-size: 10.5px; color: var(--muted-2); }
+.msg .lang {
+  font-size: 9.5px; font-weight: 700; padding: 1px 5px;
+  border-radius: var(--pill);
+  background: rgba(255,255,255,.06); color: var(--muted);
+}
+.task-from-msg {
+  appearance: none; border: 1px solid rgba(47,198,246,.4);
+  background: var(--cyan-dim); color: var(--cyan);
+  font-size: 11px; font-weight: 650;
+  padding: 5px 9px; border-radius: 9px;
+  cursor: pointer; align-self: flex-start;
+  display: inline-flex; align-items: center; gap: 5px;
+  margin-top: 2px;
+}
+.msg.me .task-from-msg { align-self: flex-end; }
+.task-from-msg:active { filter: brightness(1.1); }
+.composer {
+  padding: 8px 10px calc(8px + env(safe-area-inset-bottom, 0px));
+  display: flex; align-items: flex-end; gap: 8px;
+  background: var(--bg-elev);
+  border-top: 1px solid var(--line-soft);
+  flex-shrink: 0;
+}
+.composer .field {
+  flex: 1; min-width: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 9px 14px;
+  min-height: 40px; max-height: 100px;
+  outline: none; resize: none;
+  color: var(--ink); font-size: 14px;
+  line-height: 1.35;
+}
+.composer .send {
+  appearance: none; border: none;
+  width: 40px; height: 40px; border-radius: 14px;
+  background: linear-gradient(160deg, var(--cyan), var(--cyan-deep));
+  color: var(--cyan-ink);
+  display: grid; place-items: center; cursor: pointer; flex-shrink: 0;
+  box-shadow: 0 6px 16px rgba(47,198,246,.25);
+}
+.composer .send:active { transform: scale(.95); }
+
+/* Tasks */
+.filter-row {
+  display: flex; gap: 6px; padding: 10px 14px 4px;
+  overflow-x: auto; flex-shrink: 0;
+}
+.filter-row::-webkit-scrollbar { height: 0; }
+.chip {
+  appearance: none; border: 1px solid var(--line);
+  background: var(--bg-card); color: var(--muted);
+  padding: 6px 12px; border-radius: var(--pill);
+  font-size: 12px; font-weight: 650; white-space: nowrap; cursor: pointer;
+}
+.chip.active {
+  border-color: rgba(47,198,246,.5);
+  background: var(--cyan-dim); color: var(--cyan);
+}
+.task-card, .inv-card {
+  margin: 8px 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 12px 13px;
+}
+.task-card:active, .inv-card:active { border-color: rgba(47,198,246,.35); }
+.task-top, .inv-top {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 10px;
+  margin-bottom: 6px;
+}
+.task-title, .inv-title {
+  font-weight: 650; font-size: 14.5px; line-height: 1.3;
+}
+.st {
+  font-size: 10.5px; font-weight: 750; padding: 3px 8px;
+  border-radius: var(--pill); white-space: nowrap; flex-shrink: 0;
+}
+.st.new { background: rgba(59,130,246,.18); color: #93c5fd; }
+.st.progress { background: var(--amber-dim); color: #fcd34d; }
+.st.done { background: var(--green-dim); color: #86efac; }
+.st.draft { background: rgba(148,163,184,.14); color: #cbd5e1; }
+.st.sent { background: rgba(59,130,246,.18); color: #93c5fd; }
+.st.paid { background: var(--green-dim); color: #86efac; }
+.task-meta, .inv-meta {
+  display: flex; flex-wrap: wrap; gap: 8px 12px;
+  font-size: 12px; color: var(--muted);
+  margin-top: 8px;
+}
+.task-meta span, .inv-meta span {
+  display: inline-flex; align-items: center; gap: 4px;
+}
+.deadline.overdue { color: #fca5a5; font-weight: 650; }
+.amount {
+  font-size: 16px; font-weight: 750; letter-spacing: -.02em;
+  color: var(--ink);
+}
+.amount .cur { color: var(--cyan); font-weight: 650; font-size: 13px; margin-left: 2px; }
+.inv-sub { font-size: 12.5px; color: var(--muted); margin-top: 2px; }
+
+/* More */
+.profile-card {
+  margin: 14px;
+  background: linear-gradient(145deg, #1a2a40, var(--bg-card));
+  border: 1px solid rgba(47,198,246,.25);
+  border-radius: 18px;
+  padding: 16px;
+  display: flex; align-items: center; gap: 14px;
+}
+.profile-av {
+  width: 56px; height: 56px; border-radius: 16px;
+  background: linear-gradient(135deg, var(--cyan), var(--cyan-deep));
+  color: var(--cyan-ink); font-weight: 800; font-size: 18px;
+  display: grid; place-items: center;
+  box-shadow: 0 8px 24px rgba(47,198,246,.2);
+}
+.profile-info h2 { margin: 0 0 2px; font-size: 17px; font-weight: 750; }
+.profile-info .role {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 12px; font-weight: 650; color: var(--cyan);
+  background: var(--cyan-dim); padding: 3px 9px; border-radius: var(--pill);
+  margin-top: 4px;
+}
+.section-title {
+  padding: 14px 16px 6px;
+  font-size: 11px; font-weight: 700;
+  letter-spacing: .06em; text-transform: uppercase;
+  color: var(--muted-2);
+}
+.settings-list {
+  margin: 0 14px 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.set-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 13px 14px;
+  border-bottom: 1px solid var(--line-soft);
+  cursor: pointer;
+}
+.set-row:last-child { border-bottom: none; }
+.set-row:active { background: rgba(255,255,255,.03); }
+.set-ico {
+  width: 34px; height: 34px; border-radius: 10px;
+  display: grid; place-items: center; flex-shrink: 0;
+  font-size: 15px;
+}
+.set-body { flex: 1; min-width: 0; }
+.set-body .lbl { font-weight: 650; font-size: 14px; }
+.set-body .hint { font-size: 12px; color: var(--muted-2); margin-top: 1px; }
+.set-val { font-size: 13px; color: var(--muted); font-weight: 600; }
+.lang-seg {
+  display: flex; gap: 3px; padding: 3px;
+  background: rgba(0,0,0,.28); border-radius: var(--pill);
+  border: 1px solid var(--line);
+}
+.lang-seg button {
+  appearance: none; border: none; padding: 5px 10px;
+  border-radius: var(--pill); background: transparent;
+  color: var(--muted); font-size: 11.5px; font-weight: 750; cursor: pointer;
+}
+.lang-seg button.active {
+  background: var(--cyan-dim); color: var(--cyan);
+}
+
+/* Notifications sheet */
+.overlay {
+  position: absolute; inset: 0; z-index: 80;
+  background: rgba(2,6,23,.55);
+  opacity: 0; pointer-events: none;
+  transition: opacity .2s ease;
+}
+.overlay.open { opacity: 1; pointer-events: auto; }
+.sheet {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 90;
+  background: var(--bg-elev);
+  border-radius: 22px 22px 0 0;
+  border: 1px solid var(--line);
+  border-bottom: none;
+  max-height: 72%;
+  transform: translateY(110%);
+  transition: transform .28s cubic-bezier(.2,.8,.2,1);
+  display: flex; flex-direction: column;
+  padding-bottom: var(--safe-bot);
+  box-shadow: 0 -16px 48px rgba(0,0,0,.4);
+}
+.sheet.open { transform: translateY(0); }
+.sheet-handle {
+  width: 36px; height: 4px; border-radius: 2px;
+  background: var(--muted-2); margin: 10px auto 6px;
+}
+.sheet-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 4px 16px 10px;
+}
+.sheet-head h3 { margin: 0; font-size: 16px; font-weight: 750; }
+.sheet-head .mark-all {
+  appearance: none; border: none; background: transparent;
+  color: var(--cyan); font-size: 12.5px; font-weight: 650; cursor: pointer;
+}
+.notif-list { overflow-y: auto; padding: 0 10px 10px; }
+.notif-item {
+  display: flex; gap: 11px; padding: 11px 10px;
+  border-radius: 12px; cursor: pointer;
+}
+.notif-item:active { background: rgba(255,255,255,.03); }
+.notif-item.unread { background: rgba(47,198,246,.06); }
+.notif-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--cyan); margin-top: 6px; flex-shrink: 0;
+}
+.notif-item:not(.unread) .notif-dot { background: transparent; }
+.notif-body { flex: 1; min-width: 0; }
+.notif-body .t { font-weight: 650; font-size: 13.5px; }
+.notif-body .d { font-size: 12.5px; color: var(--muted); margin-top: 2px; }
+.notif-body .ago { font-size: 11px; color: var(--muted-2); margin-top: 4px; }
+
+/* Toast */
+.toast {
+  position: absolute; left: 50%; bottom: calc(var(--tab-h) + var(--safe-bot) + 12px);
+  transform: translateX(-50%) translateY(20px);
+  background: var(--bg-card-2);
+  border: 1px solid rgba(47,198,246,.35);
+  color: var(--ink);
+  padding: 10px 16px; border-radius: 12px;
+  font-size: 13px; font-weight: 650;
+  box-shadow: 0 12px 32px rgba(0,0,0,.4);
+  opacity: 0; pointer-events: none; z-index: 95;
+  white-space: nowrap;
+  transition: opacity .2s, transform .2s;
+}
+.toast.show {
+  opacity: 1; transform: translateX(-50%) translateY(0);
+}
+.toast.thread-mode {
+  bottom: 90px;
+}
+
+/* Empty / helpers */
+.home-indicator {
+  position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%);
+  width: 126px; height: 5px; border-radius: 3px;
+  background: rgba(255,255,255,.28); z-index: 99; pointer-events: none;
+}
+.stats-row {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+  padding: 10px 14px 2px;
+}
+.stat {
+  background: var(--bg-card); border: 1px solid var(--line);
+  border-radius: 12px; padding: 10px; text-align: center;
+}
+.stat .n { font-size: 18px; font-weight: 800; color: var(--cyan); letter-spacing: -.03em; }
+.stat .l { font-size: 10.5px; color: var(--muted-2); font-weight: 600; margin-top: 2px; }
+
+/* Full-bleed for PNG capture */
+html.shot, html.shot body {
+  padding: 0 !important;
+  margin: 0 !important;
+  background: var(--bg) !important;
+  display: block !important;
+  width: 390px !important;
+  height: 844px !important;
+  overflow: hidden !important;
+}
+html.shot .phone {
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  width: 390px !important;
+  height: 844px !important;
+}
+html.shot .phone::before { display: none !important; }
+html.shot .home-indicator { display: none !important; }
+
+
+/* ——— Splash (dark|beige|blue) ——— */
+#gilil-splash {
+  position: absolute; inset: 0; z-index: 200;
+  display: grid; place-items: center;
+  background:
+    radial-gradient(420px 260px at 50% 38%, var(--splash-glow, rgba(168,135,90,.16)), transparent 62%),
+    var(--splash-bg, #0c0a08);
+  color: var(--splash-ink, #f1e6d4);
+  transition: opacity .45s ease, visibility .45s ease;
+  pointer-events: none; border-radius: inherit;
+}
+#gilil-splash.gilil-splash--hide { opacity: 0; visibility: hidden; }
+.gilil-splash__inner { text-align: center; padding: 20px; }
+.gilil-splash__mark {
+  position: relative; width: 76px; height: 76px; margin: 0 auto 14px;
+  border-radius: 20px;
+  background: linear-gradient(145deg, var(--splash-accent-hot,#d9c39c), var(--splash-accent,#a8875a) 45%, var(--splash-deep,#86683f));
+  box-shadow: 0 14px 36px color-mix(in srgb, var(--splash-accent,#a8875a) 30%, transparent);
+  display: grid; place-items: center;
+  animation: gilil-splash-pulse 1.35s ease-in-out infinite;
+}
+.gilil-splash__go { font-weight: 800; font-size: 24px; color: var(--splash-mark-ink,#1c1814); }
+.gilil-splash__ring {
+  position: absolute; inset: -9px; border-radius: 26px;
+  border: 1.5px solid color-mix(in srgb, var(--splash-accent,#a8875a) 55%, transparent);
+  animation: gilil-splash-ring 1.35s ease-out infinite;
+}
+.gilil-splash__word { font-size: 1.15rem; font-weight: 700; letter-spacing: .05em;
+  opacity: 0; animation: gilil-splash-fadein .7s ease .25s forwards; }
+.gilil-splash__word span { color: var(--splash-accent-hot,#d9c39c); font-weight: 800; }
+.gilil-splash__bar {
+  margin: 14px auto 0; width: 100px; height: 3px; border-radius: 99px;
+  background: rgba(255,255,255,.08); overflow: hidden;
+  opacity: 0; animation: gilil-splash-fadein .5s ease .5s forwards;
+}
+.gilil-splash__bar > i {
+  display: block; height: 100%; width: 40%; border-radius: inherit;
+  background: linear-gradient(90deg, var(--splash-accent,#a8875a), var(--splash-accent-hot,#d9c39c));
+  animation: gilil-splash-bar 1.2s ease-in-out infinite;
+}
+html[data-splash="bitrix"] {
+  --splash-bg: #F8FAFB; --splash-ink: #333333; --splash-accent: #006AC4;
+  --splash-accent-hot: #1A8AD4; --splash-deep: #004E91; --splash-mark-ink: #FFFFFF;
+  --splash-glow: rgba(0,106,196,.14);
+}
+html[data-splash="cyan"] {
+  --splash-bg: #0F172A; --splash-ink: #e5e7eb; --splash-accent: #2FC6F6;
+  --splash-accent-hot: #67d8f8; --splash-deep: #0891b2; --splash-mark-ink: #042f3a;
+  --splash-glow: rgba(47,198,246,.16);
+}
+html[data-splash="dark"], html:not([data-splash]) {
+  --splash-bg: #0c0a08; --splash-ink: #f1e6d4; --splash-accent: #a8875a;
+  --splash-accent-hot: #d9c39c; --splash-deep: #86683f; --splash-mark-ink: #1c1814;
+  --splash-glow: rgba(168,135,90,.16);
+}
+@keyframes gilil-splash-pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.045)} }
+@keyframes gilil-splash-ring { 0%{transform:scale(.92);opacity:.65} 100%{transform:scale(1.18);opacity:0} }
+@keyframes gilil-splash-fadein { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none} }
+@keyframes gilil-splash-bar { 0%{transform:translateX(-120%)} 100%{transform:translateX(320%)} }
+
+</style>
+</head>
+<body>
+<div class="phone" id="phone">
+  <div id="gilil-splash" role="presentation" aria-hidden="false">
+    <div class="gilil-splash__inner">
+      <div class="gilil-splash__mark" aria-hidden="true">
+        <span class="gilil-splash__go">GO</span>
+        <span class="gilil-splash__ring"></span>
+      </div>
+      <div class="gilil-splash__word">Gilil <span>On</span></div>
+      <div class="gilil-splash__bar"><i></i></div>
+    </div>
+  </div>
+
+  <div class="status-bar">
+    <span>10:15</span>
+    <div class="right">
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="0.5"/><rect x="4.5" y="5" width="3" height="7" rx="0.5"/><rect x="9" y="2.5" width="3" height="9.5" rx="0.5"/><rect x="13.5" y="0" width="3" height="12" rx="0.5" opacity=".35"/></svg>
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><path d="M8 3.2c1.8 0 3.4.7 4.6 1.9l1.2-1.2A8.2 8.2 0 0 0 8 1a8.2 8.2 0 0 0-5.8 2.9l1.2 1.2A6.4 6.4 0 0 1 8 3.2zm0 3.2c.9 0 1.7.3 2.4.9l1.2-1.2A5 5 0 0 0 8 4.8a5 5 0 0 0-3.6 1.5l1.2 1.2c.7-.6 1.5-.9 2.4-.9zM8 11l2-2.1A2.9 2.9 0 0 0 8 8a2.9 2.9 0 0 0-2 0.9L8 11z"/></svg>
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="currentColor"><rect x="0" y="1" width="21" height="10" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.2"/><rect x="22" y="3.5" width="2" height="5" rx="0.6" opacity=".5"/><rect x="1.5" y="2.5" width="15" height="7" rx="1.2"/></svg>
+    </div>
+  </div>
+
+  <div class="app" id="app">
+    <header class="appbar" id="appbar">
+      <div class="brand">
+        <img src="icons/gilil-on-512.png" alt="Gilil On" width="32" height="32" />
+        <div class="titles">
+          <h1>Gilil<span class="accent">On</span></h1>
+          <div class="tag">Supply · RU ↔ CN</div>
+        </div>
+      </div>
+      <button class="bell-btn" id="bellBtn" aria-label="Уведомления" type="button">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+        <span class="badge" id="bellBadge">3</span>
+      </button>
+    </header>
+
+    <div class="screens" id="screens">
+      <!-- CHATS -->
+      <section class="screen active" id="screen-chats" data-tab="chats">
+        <div class="search-wrap">
+          <div class="search">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+            <input type="search" id="chatSearch" placeholder="Поиск диалогов…" autocomplete="off" />
+          </div>
+        </div>
+        <div class="scroll" id="chatList"></div>
+      </section>
+
+      <!-- THREAD -->
+      <section class="screen slide-in" id="screen-thread">
+        <div class="thread-bar">
+          <button class="icon-btn" id="backBtn" type="button" aria-label="Назад">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+          </button>
+          <div class="thread-peer">
+            <div class="name" id="threadName">—</div>
+            <div class="sub" id="threadSub">онлайн · перевод RU↔CN</div>
+          </div>
+          <button class="icon-btn" type="button" aria-label="Ещё" style="color:var(--muted)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+          </button>
+        </div>
+        <div class="messages" id="messages"></div>
+        <div class="composer">
+          <textarea class="field" id="composer" rows="1" placeholder="Сообщение…"></textarea>
+          <button class="send" id="sendBtn" type="button" aria-label="Отправить">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+          </button>
+        </div>
+      </section>
+
+      <!-- TASKS -->
+      <section class="screen" id="screen-tasks" data-tab="tasks">
+        <div class="stats-row">
+          <div class="stat"><div class="n" id="stNew">2</div><div class="l">Новые</div></div>
+          <div class="stat"><div class="n" id="stProg">3</div><div class="l">В работе</div></div>
+          <div class="stat"><div class="n" id="stDone">2</div><div class="l">Готово</div></div>
+        </div>
+        <div class="filter-row" id="taskFilters">
+          <button class="chip active" data-f="all" type="button">Все</button>
+          <button class="chip" data-f="new" type="button">Новая</button>
+          <button class="chip" data-f="progress" type="button">В работе</button>
+          <button class="chip" data-f="done" type="button">Готово</button>
+        </div>
+        <div class="scroll" id="taskList"></div>
+      </section>
+
+      <!-- INVOICES -->
+      <section class="screen" id="screen-invoices" data-tab="invoices">
+        <div class="stats-row">
+          <div class="stat"><div class="n">1</div><div class="l">Черновик</div></div>
+          <div class="stat"><div class="n">2</div><div class="l">Отправлен</div></div>
+          <div class="stat"><div class="n">2</div><div class="l">Оплачен</div></div>
+        </div>
+        <div class="filter-row" id="invFilters">
+          <button class="chip active" data-f="all" type="button">Все</button>
+          <button class="chip" data-f="draft" type="button">Черновик</button>
+          <button class="chip" data-f="sent" type="button">Отправлен</button>
+          <button class="chip" data-f="paid" type="button">Оплачен</button>
+        </div>
+        <div class="scroll" id="invList"></div>
+      </section>
+
+      <!-- MORE -->
+      <section class="screen" id="screen-more" data-tab="more">
+        <div class="scroll">
+          <div class="profile-card">
+            <div class="profile-av">РГ</div>
+            <div class="profile-info">
+              <h2>Руслан Гилиль</h2>
+              <div style="font-size:12.5px;color:var(--muted)">gilil@gilil.supply</div>
+              <div class="role">● Админ · demo</div>
+            </div>
+          </div>
+
+          <div class="section-title">Настройки</div>
+          <div class="settings-list">
+            <div class="set-row" style="cursor:default">
+              <div class="set-ico" style="background:var(--cyan-dim);color:var(--cyan)">文</div>
+              <div class="set-body">
+                <div class="lbl">Язык интерфейса</div>
+                <div class="hint">RU / CN / EN</div>
+              </div>
+              <div class="lang-seg" id="langSeg">
+                <button type="button" class="active" data-lang="RU">RU</button>
+                <button type="button" data-lang="CN">CN</button>
+                <button type="button" data-lang="EN">EN</button>
+              </div>
+            </div>
+            <div class="set-row" id="themeRow">
+              <div class="set-ico" style="background:rgba(245,158,11,.16);color:#fcd34d">◐</div>
+              <div class="set-body">
+                <div class="lbl">Тема</div>
+                <div class="hint">Скоро · светлая Bitrix-подобная</div>
+              </div>
+              <div class="set-val">Тёмная ▾</div>
+            </div>
+            <div class="set-row">
+              <div class="set-ico" style="background:rgba(59,130,246,.18);color:#93c5fd">🔔</div>
+              <div class="set-body">
+                <div class="lbl">Уведомления</div>
+                <div class="hint">Пуш · чаты · задачи · счета</div>
+              </div>
+              <div class="set-val">Вкл</div>
+            </div>
+            <div class="set-row">
+              <div class="set-ico" style="background:var(--green-dim);color:#86efac">⇄</div>
+              <div class="set-body">
+                <div class="lbl">Автоперевод RU↔CN</div>
+                <div class="hint">В диалогах и задачах</div>
+              </div>
+              <div class="set-val">Вкл</div>
+            </div>
+          </div>
+
+          <div class="section-title">О приложении</div>
+          <div class="settings-list">
+            <div class="set-row" style="cursor:default">
+              <div class="set-ico" style="background:var(--cyan-dim);color:var(--cyan)">G</div>
+              <div class="set-body">
+                <div class="lbl">Gilil On Mobile</div>
+                <div class="hint">iPhone · 390×844 · shell-v2</div>
+              </div>
+              <div class="set-val">v1.0</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <nav class="tabbar" id="tabbar">
+      <button class="tab active" data-tab="chats" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Чаты
+        <span class="dot" id="tabChatDot"></span>
+      </button>
+      <button class="tab" data-tab="tasks" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        Задачи
+      </button>
+      <button class="tab" data-tab="invoices" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M8 15h4"/></svg>
+        Счета
+      </button>
+      <button class="tab" data-tab="more" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+        Ещё
+      </button>
+    </nav>
+
+    <div class="overlay" id="overlay"></div>
+    <div class="sheet" id="notifSheet" role="dialog" aria-label="Уведомления">
+      <div class="sheet-handle"></div>
+      <div class="sheet-head">
+        <h3>Уведомления</h3>
+        <button class="mark-all" id="markAll" type="button">Прочитать все</button>
+      </div>
+      <div class="notif-list" id="notifList"></div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+  </div>
+  <div class="home-indicator"></div>
+</div>
+
+<script>
+(function () {
+  const AV = {
+    ap: ["#1d4ed8", "#3b82f6"],
+    as: ["#7c3aed", "#a78bfa"],
+    dk: ["#0f766e", "#2dd4bf"],
+    wl: ["#c2410c", "#fb923c"],
+    ln: ["#b45309", "#fbbf24"],
+    zw: ["#be123c", "#fb7185"],
+    pr: ["#0891b2", "#2FC6F6"],
+    wh: ["#334155", "#94a3b8"],
+  };
+
+  const chats = [
+    { id: "c1", group: "ru", name: "Анна Петрова", role: "Менеджер RU", initials: "АП", av: "ap", online: true, time: "10:02", preview: "КП по складу Альфа готово к проверке", unread: 2, tag: "ru" },
+    { id: "c2", group: "ru", name: "Анна Смирнова", role: "Менеджер RU", initials: "АС", av: "as", online: false, time: "Вчера", preview: "Нужен статус по тендеру 4661969", unread: 0, tag: "ru" },
+    { id: "c3", group: "ru", name: "Дмитрий Козлов", role: "Директор RU", initials: "ДК", av: "dk", online: true, time: "09:41", preview: "Согласуйте счёт INV-2408 до обеда", unread: 1, tag: "ru" },
+    { id: "c4", group: "cn", name: "Ван Ли / Wang Li", role: "Менеджер CN", initials: "王", av: "wl", online: true, time: "10:08", preview: "样品已发货，运单 SF1234567890", unread: 3, tag: "cn" },
+    { id: "c5", group: "cn", name: "Ли На / Li Na", role: "Закупки CN", initials: "李", av: "ln", online: false, time: "09:15", preview: "报价更新：高棚灯 150W × 40", unread: 0, tag: "cn" },
+    { id: "c6", group: "cn", name: "Zhang Wei", role: "Логистика CN", initials: "ZW", av: "zw", online: true, time: "Пн", preview: "集装箱下周到海参崴", unread: 0, tag: "cn" },
+    { id: "c7", group: "prj", name: "Склад Альфа · освещение", role: "Проект", initials: "СА", av: "pr", online: false, time: "10:11", preview: "Анна П.: финальное КП + спецификация", unread: 5, tag: "prj" },
+    { id: "c8", group: "prj", name: "Тендер 4661969 · B2B", role: "Проект", initials: "46", av: "wh", online: false, time: "Вч", preview: "Документы НМЦК загружены", unread: 0, tag: "prj" },
+    { id: "c9", group: "prj", name: "Офис Шэньчжэнь · шоурум", role: "Проект", initials: "SZ", av: "pr", online: false, time: "Пт", preview: "Li Na: трек-системы на образце", unread: 1, tag: "prj" },
+  ];
+
+  const threads = {
+    c1: [
+      { id: "m1", who: "them", name: "Анна П.", lang: "RU", text: "Доброе утро! КП по складу Альфа собрала — 120 светильников high-bay 150W.", time: "09:48" },
+      { id: "m2", who: "me", name: "Вы", lang: "RU", text: "Отлично. Проверьте маржу и срок поставки из CN.", time: "09:52" },
+      { id: "m3", who: "them", name: "Анна П.", lang: "RU", text: "Маржа 18%. Поставка 28 дней с завода Foshan. Нужна задача Ван Ли на подтверждение остатков.", time: "10:02", canTask: true },
+    ],
+    c4: [
+      { id: "m1", who: "them", name: "Wang Li", lang: "CN", text: "样品已发货，运单 SF1234567890。预计 5 天到莫斯科。", time: "09:50" },
+      { id: "m2", who: "me", name: "Вы", lang: "RU", text: "Спасибо! Передайте трек Анне — она ждёт образцы для клиента.", time: "09:58" },
+      { id: "m3", who: "them", name: "Wang Li", lang: "CN", text: "好的。另外高棚灯报价更新了，请确认数量 40 套。", time: "10:08", canTask: true },
+      { id: "m4", who: "me", name: "Вы", lang: "RU", text: "Ок, создам задачу на проверку количества.", time: "10:09" },
+    ],
+    c7: [
+      { id: "m1", who: "them", name: "Анна П.", lang: "RU", text: "В группу: финальное КП + спецификация по Альфе.", time: "09:30" },
+      { id: "m2", who: "them", name: "Wang Li", lang: "CN", text: "工厂确认交期 28 天，可提前 3 天发货。", time: "09:55" },
+      { id: "m3", who: "me", name: "Вы", lang: "RU", text: "Принято. Жду счёт INV-2408 на согласование.", time: "10:05" },
+      { id: "m4", who: "them", name: "Дмитрий К.", lang: "RU", text: "Счёт в работе. Нужна задача на оплату после отправки клиенту.", time: "10:11", canTask: true },
+    ],
+  };
+
+  const tasks = [
+    { id: "t1", title: "Подтвердить остатки high-bay 150W на складе Foshan", status: "new", deadline: "1 ноя", overdue: false, assignee: "Ван Ли", project: "Склад Альфа" },
+    { id: "t2", title: "Сверить количество 40 комплектов в обновлённом КП", status: "new", deadline: "31 окт", overdue: true, assignee: "Анна П.", project: "Склад Альфа" },
+    { id: "t3", title: "Загрузить документы НМЦК в тендер 4661969", status: "progress", deadline: "2 ноя", overdue: false, assignee: "Анна С.", project: "Тендер 4661969" },
+    { id: "t4", title: "Отследить образец SF1234567890 до Москвы", status: "progress", deadline: "5 ноя", overdue: false, assignee: "Zhang Wei", project: "Шоурум SZ" },
+    { id: "t5", title: "Согласовать счёт INV-2408 с директором", status: "progress", deadline: "31 окт", overdue: true, assignee: "Дмитрий К.", project: "Склад Альфа" },
+    { id: "t6", title: "Перевести спецификацию RU→CN для завода", status: "done", deadline: "28 окт", overdue: false, assignee: "Ли На", project: "Склад Альфа" },
+    { id: "t7", title: "Запросить фото упаковки трек-систем", status: "done", deadline: "27 окт", overdue: false, assignee: "Li Na", project: "Шоурум SZ" },
+  ];
+
+  const invoices = [
+    { id: "i1", title: "INV-2410 · Черновик", desc: "Аванс 30% · освещение склада Альфа", amount: "486 000", cur: "₽", status: "draft", date: "31 окт", party: "ООО Альфа Логистик" },
+    { id: "i2", title: "INV-2408 · Отправлен", desc: "Финальное КП · high-bay 150W × 120", amount: "1 620 000", cur: "₽", status: "sent", date: "30 окт", party: "ООО Альфа Логистик" },
+    { id: "i3", title: "CN-8842 · Отправлен", desc: "Закупка образцов + shipping", amount: "18 640", cur: "¥", status: "sent", date: "29 окт", party: "Foshan Light Co." },
+    { id: "i4", title: "INV-2391 · Оплачен", desc: "Офис Шэньчжэнь · трек-системы", amount: "312 500", cur: "₽", status: "paid", date: "22 окт", party: "ООО Гилиль Трейд" },
+    { id: "i5", title: "CN-8710 · Оплачен", desc: "Производство партии high-bay", amount: "96 800", cur: "¥", status: "paid", date: "18 окт", party: "Foshan Light Co." },
+  ];
+
+  const notifs = [
+    { id: "n1", unread: true, t: "Новое сообщение · Ван Ли", d: "样品已发货，运单 SF1234567890", ago: "7 мин" },
+    { id: "n2", unread: true, t: "Задача просрочена", d: "Сверить количество 40 комплектов — дедлайн сегодня", ago: "25 мин" },
+    { id: "n3", unread: true, t: "Счёт отправлен", d: "INV-2408 · 1 620 000 ₽ клиенту Альфа", ago: "1 ч" },
+    { id: "n4", unread: false, t: "Статус задачи обновлён", d: "Перевод спецификации → Готово (Ли На)", ago: "Вчера" },
+    { id: "n5", unread: false, t: "Новый диалог в проекте", d: "Склад Альфа · Анна П. добавила КП", ago: "Вчера" },
+  ];
+
+  const statusLabel = { new: "Новая", progress: "В работе", done: "Готово", draft: "Черновик", sent: "Отправлен", paid: "Оплачен" };
+  const groupLabel = { ru: "Команда RU", cn: "Команда CN", prj: "Проекты" };
+
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+
+  let currentTab = "chats";
+  let taskFilter = "all";
+  let invFilter = "all";
+  let threadOpen = false;
+
+  function avStyle(key) {
+    const [a, b] = AV[key] || AV.pr;
+    return `background:linear-gradient(135deg,${a},${b})`;
+  }
+
+  function renderChats(q = "") {
+    const list = $("#chatList");
+    const query = q.trim().toLowerCase();
+    const filtered = chats.filter(c =>
+      !query || c.name.toLowerCase().includes(query) || c.preview.toLowerCase().includes(query)
+    );
+    const order = ["ru", "cn", "prj"];
+    let html = "";
+    order.forEach(g => {
+      const items = filtered.filter(c => c.group === g);
+      if (!items.length) return;
+      html += `<div class="group-label">${groupLabel[g]}</div>`;
+      items.forEach(c => {
+        html += `<div class="chat-row" data-id="${c.id}">
+          <div class="avatar ${c.online ? "online" : ""}" style="${avStyle(c.av)}">${c.initials}</div>
+          <div class="chat-meta">
+            <div class="chat-top">
+              <div class="chat-name">${c.name}</div>
+              <div class="chat-time">${c.time}</div>
+            </div>
+            <div class="chat-bottom">
+              <div class="chat-preview">${c.preview}</div>
+              ${c.unread ? `<span class="unread">${c.unread}</span>` : `<span class="pill-tag ${c.tag}">${c.tag.toUpperCase()}</span>`}
+            </div>
+          </div>
+        </div>`;
+      });
+    });
+    list.innerHTML = html || `<div style="padding:40px;text-align:center;color:var(--muted-2)">Ничего не найдено</div>`;
+    $$(".chat-row", list).forEach(row => {
+      row.addEventListener("click", () => openThread(row.dataset.id));
+    });
+  }
+
+  function renderTasks() {
+    const list = $("#taskList");
+    const items = tasks.filter(t => taskFilter === "all" || t.status === taskFilter);
+    list.innerHTML = items.map(t => `
+      <div class="task-card">
+        <div class="task-top">
+          <div class="task-title">${t.title}</div>
+          <span class="st ${t.status}">${statusLabel[t.status]}</span>
+        </div>
+        <div class="task-meta">
+          <span class="deadline ${t.overdue ? "overdue" : ""}">📅 ${t.deadline}${t.overdue ? " · просрочено" : ""}</span>
+          <span>👤 ${t.assignee}</span>
+          <span>📁 ${t.project}</span>
+        </div>
+      </div>
+    `).join("");
+    $("#stNew").textContent = tasks.filter(t => t.status === "new").length;
+    $("#stProg").textContent = tasks.filter(t => t.status === "progress").length;
+    $("#stDone").textContent = tasks.filter(t => t.status === "done").length;
+  }
+
+  function renderInvoices() {
+    const list = $("#invList");
+    const items = invoices.filter(i => invFilter === "all" || i.status === invFilter);
+    list.innerHTML = items.map(i => `
+      <div class="inv-card">
+        <div class="inv-top">
+          <div>
+            <div class="inv-title">${i.title}</div>
+            <div class="inv-sub">${i.desc}</div>
+          </div>
+          <span class="st ${i.status}">${statusLabel[i.status]}</span>
+        </div>
+        <div class="amount">${i.amount}<span class="cur">${i.cur}</span></div>
+        <div class="inv-meta">
+          <span>🏢 ${i.party}</span>
+          <span>📅 ${i.date}</span>
+        </div>
+      </div>
+    `).join("");
+  }
+
+  function renderNotifs() {
+    const list = $("#notifList");
+    list.innerHTML = notifs.map(n => `
+      <div class="notif-item ${n.unread ? "unread" : ""}" data-id="${n.id}">
+        <div class="notif-dot"></div>
+        <div class="notif-body">
+          <div class="t">${n.t}</div>
+          <div class="d">${n.d}</div>
+          <div class="ago">${n.ago}</div>
+        </div>
+      </div>
+    `).join("");
+    const count = notifs.filter(n => n.unread).length;
+    const badge = $("#bellBadge");
+    if (count) { badge.textContent = count; badge.style.display = ""; }
+    else badge.style.display = "none";
+  }
+
+  function openThread(id) {
+    const chat = chats.find(c => c.id === id) || chats[0];
+    const msgs = threads[id] || threads.c1;
+    $("#threadName").textContent = chat.name;
+    $("#threadSub").textContent = `${chat.role} · ${chat.online ? "онлайн" : "не в сети"} · перевод RU↔CN`;
+    const box = $("#messages");
+    box.innerHTML = `<div class="day-sep">Сегодня</div>` + msgs.map(m => `
+      <div class="msg ${m.who}" data-mid="${m.id}">
+        <div class="meta-row">
+          ${m.who === "them" ? `<span class="who">${m.name}</span>` : ""}
+          <span class="lang">${m.lang}</span>
+          <span class="when">${m.time}</span>
+        </div>
+        <div class="bubble">${m.text}</div>
+        ${m.canTask ? `<button class="task-from-msg" type="button" data-text="${encodeURIComponent(m.text)}">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          Создать задачу
+        </button>` : ""}
+      </div>
+    `).join("");
+    $$(".task-from-msg", box).forEach(btn => {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        createTaskFromMsg(decodeURIComponent(btn.dataset.text || ""));
+      });
+    });
+    // long-press on bubbles
+    $$(".bubble", box).forEach(b => {
+      let timer;
+      b.addEventListener("touchstart", () => { timer = setTimeout(() => createTaskFromMsg(b.textContent), 480); }, { passive: true });
+      b.addEventListener("touchend", () => clearTimeout(timer));
+      b.addEventListener("mousedown", () => { timer = setTimeout(() => createTaskFromMsg(b.textContent), 480); });
+      b.addEventListener("mouseup", () => clearTimeout(timer));
+      b.addEventListener("mouseleave", () => clearTimeout(timer));
+    });
+    box.scrollTop = box.scrollHeight;
+
+    $("#appbar").classList.add("hidden");
+    $("#tabbar").classList.add("hidden");
+    $$(".screen").forEach(s => s.classList.remove("active"));
+    $("#screen-thread").classList.add("active");
+    threadOpen = true;
+  }
+
+  function closeThread() {
+    $("#screen-thread").classList.remove("active");
+    $("#appbar").classList.remove("hidden");
+    $("#tabbar").classList.remove("hidden");
+    $(`#screen-${currentTab}`).classList.add("active");
+    threadOpen = false;
+  }
+
+  function createTaskFromMsg(text) {
+    const short = (text || "Задача из чата").slice(0, 72) + (text && text.length > 72 ? "…" : "");
+    tasks.unshift({
+      id: "t" + Date.now(),
+      title: short,
+      status: "new",
+      deadline: "2 ноя",
+      overdue: false,
+      assignee: "Вы",
+      project: "Из чата",
+    });
+    showToast("Задача создана · Новая");
+    renderTasks();
+  }
+
+  function showToast(text) {
+    const t = $("#toast");
+    t.textContent = text;
+    t.classList.toggle("thread-mode", threadOpen);
+    t.classList.add("show");
+    clearTimeout(showToast._tm);
+    showToast._tm = setTimeout(() => t.classList.remove("show"), 2200);
+  }
+
+  function switchTab(tab) {
+    if (threadOpen) closeThread();
+    currentTab = tab;
+    $$(".tab").forEach(b => b.classList.toggle("active", b.dataset.tab === tab));
+    $$(".screen[data-tab]").forEach(s => s.classList.toggle("active", s.dataset.tab === tab));
+    $("#screen-thread").classList.remove("active");
+    $("#appbar").classList.remove("hidden");
+    $("#tabbar").classList.remove("hidden");
+  }
+
+  function openNotifs(open) {
+    $("#overlay").classList.toggle("open", open);
+    $("#notifSheet").classList.toggle("open", open);
+  }
+
+  // Events
+  $$(".tab").forEach(b => b.addEventListener("click", () => switchTab(b.dataset.tab)));
+  $("#backBtn").addEventListener("click", closeThread);
+  $("#bellBtn").addEventListener("click", () => openNotifs(true));
+  $("#overlay").addEventListener("click", () => openNotifs(false));
+  $("#markAll").addEventListener("click", () => {
+    notifs.forEach(n => n.unread = false);
+    renderNotifs();
+    showToast("Все уведомления прочитаны");
+  });
+  $("#chatSearch").addEventListener("input", e => renderChats(e.target.value));
+
+  $$("#taskFilters .chip").forEach(c => c.addEventListener("click", () => {
+    taskFilter = c.dataset.f;
+    $$("#taskFilters .chip").forEach(x => x.classList.toggle("active", x === c));
+    renderTasks();
+  }));
+  $$("#invFilters .chip").forEach(c => c.addEventListener("click", () => {
+    invFilter = c.dataset.f;
+    $$("#invFilters .chip").forEach(x => x.classList.toggle("active", x === c));
+    renderInvoices();
+  }));
+  $$("#langSeg button").forEach(b => b.addEventListener("click", () => {
+    $$("#langSeg button").forEach(x => x.classList.toggle("active", x === b));
+    showToast("Язык: " + b.dataset.lang);
+  }));
+  $("#themeRow").addEventListener("click", () => showToast("Тема · скоро (заглушка)"));
+
+  $("#sendBtn").addEventListener("click", () => {
+    const field = $("#composer");
+    const text = field.value.trim();
+    if (!text) return;
+    const box = $("#messages");
+    const now = new Date();
+    const time = now.getHours().toString().padStart(2,"0") + ":" + now.getMinutes().toString().padStart(2,"0");
+    const el = document.createElement("div");
+    el.className = "msg me";
+    el.innerHTML = `<div class="meta-row"><span class="lang">RU</span><span class="when">${time}</span></div>
+      <div class="bubble"></div>
+      <button class="task-from-msg" type="button">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        Создать задачу
+      </button>`;
+    el.querySelector(".bubble").textContent = text;
+    el.querySelector(".task-from-msg").addEventListener("click", () => createTaskFromMsg(text));
+    box.appendChild(el);
+    field.value = "";
+    box.scrollTop = box.scrollHeight;
+  });
+
+  // Init
+  renderChats();
+  renderTasks();
+  renderInvoices();
+  renderNotifs();
+
+  // Preview modes for screenshots: ?preview=chats|thread|tasks|invoices|more|notifs
+  const params = new URLSearchParams(location.search);
+  const preview = params.get("preview");
+  if (params.get("shot") === "1") document.documentElement.classList.add("shot");
+  if (preview === "chats") switchTab("chats");
+  else if (preview === "thread") { switchTab("chats"); openThread("c4"); }
+  else if (preview === "tasks") switchTab("tasks");
+  else if (preview === "invoices") switchTab("invoices");
+  else if (preview === "more") switchTab("more");
+  else if (preview === "notifs") { switchTab("chats"); openNotifs(true); }
+
+  // Expose for headless control
+  window.GililMobile = { switchTab, openThread, openNotifs, closeThread };
+})();
+</script>
+
+<script>
+(function () {
+  var ok = { dark: 1, bitrix: 1, cyan: 1 };
+  var theme = 'dark';
+  try {
+    var saved = localStorage.getItem('gilil_theme') || 'dark';
+    if (saved === 'blue') saved = 'cyan';
+    if (saved === 'beige') saved = 'bitrix';
+    if (ok[saved]) theme = saved;
+    var q = new URLSearchParams(location.search).get('theme');
+    if (q === 'blue') q = 'cyan';
+    if (q === 'beige') q = 'bitrix';
+    if (q && ok[q]) theme = q;
+  } catch (_) {}
+  document.documentElement.setAttribute('data-splash', theme);
+  var el = document.getElementById('gilil-splash');
+  if (!el) return;
+  var MIN = 1450, start = Date.now(), done = false;
+  function dismiss() {
+    if (done) return;
+    done = true;
+    var wait = Math.max(0, MIN - (Date.now() - start));
+    setTimeout(function () {
+      el.classList.add('gilil-splash--hide');
+      setTimeout(function () { if (el && el.parentNode) el.parentNode.removeChild(el); }, 480);
+    }, wait);
+  }
+  if (document.readyState === 'complete') dismiss();
+  else window.addEventListener('load', dismiss);
+  setTimeout(dismiss, MIN + 2500);
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gilil On</title>
+  <style>
+    :root, html[data-theme="dark"] {
+      --bg: #0c0a08;
+      --ink: #f1e6d4;
+      --muted: #8b7d6e;
+      --accent: #a8875a;
+      --accent-hot: #d9c39c;
+      --accent-glow: rgba(168, 135, 90, 0.16);
+      --teal-deep: #86683f;
+      --mark-ink: #1c1814;
+      --elev-out: 6px 6px 14px rgba(0,0,0,.55), -4px -4px 12px rgba(241,230,212,.04), inset 0 1px 0 rgba(241,230,212,.06);
+      --elev-in: inset 4px 4px 10px rgba(0,0,0,.55), inset -3px -3px 8px rgba(241,230,212,.035);
+      --noise-opacity: 0.045;
+    }
+    html[data-theme="bitrix"] {
+      --bg: #F8FAFB;
+      --ink: #333333;
+      --muted: #525C69;
+      --accent: #006AC4;
+      --accent-hot: #1A8AD4;
+      --accent-glow: rgba(0, 106, 196, 0.14);
+      --teal-deep: #004E91;
+      --mark-ink: #FFFFFF;
+      --elev-out: 6px 6px 14px rgba(51,71,91,.14), -4px -4px 12px rgba(255,255,255,.95), inset 0 1px 0 #fff;
+      --elev-in: inset 4px 4px 10px rgba(51,71,91,.12), inset -3px -3px 8px rgba(255,255,255,.9);
+      --noise-opacity: 0.03;
+    }
+    html[data-theme="cyan"] {
+      --bg: #0F172A;
+      --ink: #e5e7eb;
+      --muted: #94a3b8;
+      --accent: #2FC6F6;
+      --accent-hot: #67d8f8;
+      --accent-glow: rgba(47, 198, 246, 0.16);
+      --teal-deep: #0891b2;
+      --mark-ink: #042f3a;
+      --elev-out: 6px 6px 14px rgba(2,6,23,.65), -4px -4px 12px rgba(148,163,184,.05), inset 0 1px 0 rgba(255,255,255,.05);
+      --elev-in: inset 4px 4px 10px rgba(2,6,23,.65), inset -3px -3px 8px rgba(148,163,184,.04);
+      --noise-opacity: 0.04;
+    }
+    * { box-sizing: border-box; margin: 0; }
+    html, body {
+      width: 100%; height: 100%;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      overflow: hidden;
+      -webkit-app-region: drag;
+      user-select: none;
+    }
+    body {
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(520px 300px at 50% 38%, var(--accent-glow), transparent 62%),
+        radial-gradient(640px 400px at 90% 90%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 55%),
+        linear-gradient(165deg, color-mix(in srgb, var(--bg) 70%, #fff 4%), var(--bg) 48%, color-mix(in srgb, var(--bg) 85%, #000 15%));
+      position: relative;
+    }
+    body::before {
+      content: "";
+      position: fixed; inset: 0; pointer-events: none; z-index: 1;
+      opacity: var(--noise-opacity, 0.04);
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+      background-size: 180px 180px;
+      mix-blend-mode: overlay;
+    }
+    .inner {
+      position: relative; z-index: 2;
+      text-align: center; padding: 32px 36px;
+      border-radius: 28px;
+      background: color-mix(in srgb, var(--bg) 45%, transparent);
+      box-shadow: var(--elev-out);
+    }
+    .mark {
+      position: relative;
+      width: 96px; height: 96px; margin: 0 auto 18px;
+      border-radius: 24px;
+      background: linear-gradient(145deg, var(--accent-hot), var(--accent) 45%, var(--teal-deep));
+      box-shadow:
+        0 0 0 1px color-mix(in srgb, var(--accent) 40%, transparent),
+        0 20px 50px color-mix(in srgb, var(--accent) 30%, transparent),
+        inset 0 1px 0 rgba(255,255,255,.28),
+        inset 0 -2px 8px rgba(0,0,0,.22),
+        var(--elev-out);
+      display: grid; place-items: center;
+      animation: pulse 1.35s ease-in-out infinite;
+    }
+    .mark span {
+      font-weight: 800; font-size: 30px; letter-spacing: .04em;
+      color: var(--mark-ink);
+    }
+    .ring {
+      position: absolute; inset: -11px; border-radius: 30px;
+      border: 1.5px solid color-mix(in srgb, var(--accent) 55%, transparent);
+      opacity: .55;
+      animation: ring 1.35s ease-out infinite;
+    }
+    .word {
+      font-size: 1.4rem; font-weight: 700; letter-spacing: .06em;
+      opacity: 0; animation: fadein .7s ease .2s forwards;
+    }
+    .word b { color: var(--accent-hot); font-weight: 800; }
+    .sub {
+      margin-top: 8px; font-size: 11px; color: var(--muted);
+      letter-spacing: .14em; text-transform: uppercase;
+      opacity: 0; animation: fadein .7s ease .4s forwards;
+    }
+    .bar {
+      margin: 18px auto 0; width: 128px; height: 4px; border-radius: 99px;
+      background: color-mix(in srgb, var(--ink) 12%, transparent);
+      overflow: hidden; opacity: 0; animation: fadein .5s ease .5s forwards;
+      box-shadow: var(--elev-in);
+    }
+    .bar i {
+      display: block; height: 100%; width: 40%; border-radius: inherit;
+      background: linear-gradient(90deg, var(--accent), var(--accent-hot));
+      animation: bar 1.2s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.045)} }
+    @keyframes ring { 0%{transform:scale(.92);opacity:.65} 100%{transform:scale(1.2);opacity:0} }
+    @keyframes fadein { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes bar { 0%{transform:translateX(-120%)} 100%{transform:translateX(320%)} }
+  </style>
+</head>
+<body>
+  <div class="inner">
+    <div class="mark" aria-hidden="true">
+      <span>GO</span>
+      <div class="ring"></div>
+    </div>
+    <div class="word">Gilil <b>On</b></div>
+    <div class="sub">Lighting Supply</div>
+    <div class="bar"><i></i></div>
+  </div>
+  <script>
+    (function () {
+      var ok = { dark: 1, bitrix: 1, cyan: 1 };
+      var theme = 'dark';
+      try {
+        var q = new URLSearchParams(location.search).get('theme');
+        if (q === 'blue') q = 'cyan';
+        if (q === 'beige') q = 'bitrix';
+        if (q && ok[q]) theme = q;
+      } catch (_) {}
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+</body>
+</html>

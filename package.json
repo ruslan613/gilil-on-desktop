@@ -1,0 +1,150 @@
+{
+  "name": "gilil-on-desktop",
+  "version": "1.1.1",
+  "description": "Gilil On \u2014 Windows desktop shell (Electron) + Stage 2 server",
+  "main": "main.js",
+  "author": "Gilil",
+  "license": "UNLICENSED",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "predist": "node scripts/sync-manual-docs.js && node scripts/prep-win-native.js",
+    "dist": "electron-builder --win nsis portable",
+    "postdist": "node scripts/restore-linux-native.js",
+    "dist:nsis": "electron-builder --win nsis",
+    "dist:portable": "electron-builder --win portable",
+    "smoke:update": "node scripts/smoke-auto-update.js"
+  },
+  "dependencies": {
+    "electron-updater": "^6.8.11"
+  },
+  "devDependencies": {
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "com.gilil.on",
+    "productName": "Gilil On",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "splash-electron.html",
+      "package.json",
+      "security-domains.json",
+      "tray-icon.png",
+      "icons/gilil-on-windows.ico",
+      "icons/gilil-on-512.png",
+      "icons/tray-icon.png",
+      "auto-updater.js"
+    ],
+    "extraResources": [
+      {
+        "from": "vendor/node-win-x64",
+        "to": "node",
+        "filter": [
+          "**/*",
+          "!node_modules/**",
+          "!*.md",
+          "!CHANGELOG.md",
+          "!README.md",
+          "!LICENSE",
+          "!install_tools.bat",
+          "!nodevars.bat",
+          "!npm",
+          "!npm.cmd",
+          "!npx",
+          "!npx.cmd",
+          "!corepack",
+          "!corepack.cmd"
+        ]
+      },
+      {
+        "from": "server",
+        "to": "server",
+        "filter": [
+          "**/*",
+          "!data/**",
+          "!**/*.md",
+          "!scripts/smoke.js",
+          "!node_modules/better-sqlite3/build/Release/*.bak",
+          "!node_modules/better-sqlite3/build/Release/*.linux-*",
+          "!node_modules/**/README*",
+          "!node_modules/**/CHANGELOG*",
+          "!node_modules/**/*.md",
+          "!node_modules/.cache/**"
+        ]
+      },
+      {
+        "from": "docs",
+        "to": "docs",
+        "filter": [
+          "**/*",
+          "!.keep"
+        ]
+      }
+    ],
+    "win": {
+      "icon": "icons/gilil-on-windows.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "signAndEditExecutable": false,
+      "publish": [
+        "github"
+      ]
+    },
+    "portable": {
+      "artifactName": "GililOn-${version}-win.exe"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": "always",
+      "createStartMenuShortcut": true,
+      "shortcutName": "Gilil On",
+      "artifactName": "GililOn-${version}-win-setup.exe"
+    },
+    "extraFiles": [
+      {
+        "from": "docs",
+        "to": ".",
+        "filter": [
+          "*.docx",
+          "*.pdf",
+          "*.DOCX",
+          "*.PDF"
+        ]
+      }
+    ],
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "ruslan613",
+        "repo": "gilil-on-desktop",
+        "releaseType": "release"
+      }
+    ],
+    "generateUpdatesFilesForAllChannels": true
+  },
+  "allowScripts": {
+    "electron@33.4.11": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ruslan613/gilil-on-desktop.git"
+  }
+}

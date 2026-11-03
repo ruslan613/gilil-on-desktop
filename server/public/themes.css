@@ -1,0 +1,463 @@
+/* Gilil On — color themes (shell-v2)
+   Apply via document.documentElement.dataset.theme = id
+   Default / missing = dark (Gilil Lighting brand: warm charcoal + champagne brass). */
+/* UI switcher offers only: dark | bitrix | cyan. Legacy beige/blue kept in CSS (dead); unknown → dark. */
+
+
+:root,
+html[data-theme="dark"] {
+  /* Gilil Lighting brand dark B2B — warm charcoal + champagne brass */
+  /* Source: site style.css / gilil-app theme.ts */
+  --bg: #0c0a08;
+  --bg-elev: #14110e;
+  --bg-card: #1a1612;
+  --bg-card-2: #221c17;
+  --card: var(--bg-card);
+  --line: #3a3228;
+  --line-soft: #2a241c;
+  --hover-line: #4d4338;
+  --hover-bg: rgba(241, 230, 212, 0.04);
+  --hover-bg-2: rgba(241, 230, 212, 0.07);
+  --shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+
+  --ink: #f1e6d4;
+  --text: var(--ink);
+  --muted: #b9ad9c;
+  --muted-2: #8b7d6e;
+
+  /* dual accent: brass structure + warmer brass CTAs */
+  --orange: #c4a574;
+  --orange-hot: #e0c898;
+  --teal: #a8875a;
+  --teal-dim: rgba(168, 135, 90, 0.20);
+  --teal-deep: #86683f;
+  --mark-ink: #1c1814;
+
+  --accent: #a8875a;
+  --accent-hot: #d9c39c;
+  --accent-dim: rgba(168, 135, 90, 0.20);
+  --accent-ink: #1c1814;
+  --accent-glow: rgba(168, 135, 90, 0.14);
+  --cta: #a8875a;
+  --cta-hot: #d9c39c;
+  --cta-ink: #1c1814;
+
+  --green: #22c55e;
+  --red: #ef4444;
+  --red-glow: rgba(239, 68, 68, 0.45);
+  --blue: #3b82f6;
+
+  /* Scrollbar (WebKit + Firefox via shell-v2.css) */
+  --scrollbar-thumb: #a8875a;
+  --scrollbar-thumb-hover: #d9c39c;
+  --scrollbar-track: #0c0a08;
+
+  /* Rich surface (texture + neomorphism) — dark: soft dark shadows + brass highlights */
+  --elev-out:
+    8px 8px 18px rgba(0, 0, 0, 0.72),
+    -5px -5px 14px rgba(196, 165, 116, 0.07),
+    inset 0 1px 0 rgba(241, 230, 212, 0.10);
+  --elev-in:
+    inset 5px 5px 12px rgba(0, 0, 0, 0.7),
+    inset -4px -4px 10px rgba(196, 165, 116, 0.05);
+  --elev-out-soft:
+    4px 4px 10px rgba(0, 0, 0, 0.55),
+    -3px -3px 8px rgba(196, 165, 116, 0.05);
+  --elev-accent:
+    0 0 0 1px color-mix(in srgb, var(--accent) 40%, transparent),
+    6px 6px 16px rgba(0, 0, 0, 0.55),
+    -3px -3px 10px rgba(168, 135, 90, 0.14),
+    inset 0 1px 0 rgba(241, 230, 212, 0.16);
+  --noise: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.7'/%3E%3C/svg%3E");
+  --noise-opacity: 0.075;
+  --bg-grad:
+    radial-gradient(920px 520px at 18% 8%, rgba(168, 135, 90, 0.16), transparent 58%),
+    radial-gradient(780px 480px at 92% 88%, rgba(134, 104, 63, 0.12), transparent 52%),
+    linear-gradient(165deg, #16120e 0%, #0c0a08 42%, #080604 100%);
+  color-scheme: dark;
+}
+
+/* ——— Cyan (mobile-iphone palette) ——— */
+html[data-theme="cyan"],
+html[data-theme="blue"] /* legacy alias → cyan */ {
+  /* Source: mobile-iphone.html :root — slate + #2FC6F6 (NOT #3b82f6 / NOT teal) */
+  --bg: #0F172A;
+  --bg-elev: #111827;
+  --bg-card: #1A2336;
+  --bg-card-2: #1e2a40;
+  --card: var(--bg-card);
+  --line: #243044;
+  --line-soft: #1e293b;
+  --hover-line: #334155;
+  --hover-bg: rgba(255, 255, 255, 0.03);
+  --hover-bg-2: rgba(255, 255, 255, 0.05);
+  --shadow: 0 12px 40px rgba(2, 6, 23, 0.55);
+  --ink: #e5e7eb;
+  --text: var(--ink);
+  --muted: #94a3b8;
+  --muted-2: #64748b;
+
+  --accent: #2FC6F6;
+  --accent-hot: #67e8f9;
+  --accent-dim: rgba(47, 198, 246, 0.16);
+  --accent-ink: #042f3a;
+  --accent-glow: rgba(47, 198, 246, 0.14);
+  --teal: #2FC6F6;
+  --teal-dim: rgba(47, 198, 246, 0.16);
+  --teal-deep: #0891b2;
+  --mark-ink: #042f3a;
+  --orange: #2FC6F6;
+  --orange-hot: #67e8f9;
+  --cta: #2FC6F6;
+  --cta-hot: #67e8f9;
+  --cta-ink: #042f3a;
+
+  --scrollbar-thumb: #2FC6F6;
+  --scrollbar-thumb-hover: #67e8f9;
+  --scrollbar-track: #0F172A;
+
+  /* Rich surface — cyan: dark soft shadows + cyan highlights */
+  --elev-out:
+    8px 8px 18px rgba(2, 6, 23, 0.78),
+    -5px -5px 14px rgba(47, 198, 246, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  --elev-in:
+    inset 5px 5px 12px rgba(2, 6, 23, 0.75),
+    inset -4px -4px 10px rgba(47, 198, 246, 0.05);
+  --elev-out-soft:
+    4px 4px 10px rgba(2, 6, 23, 0.6),
+    -3px -3px 8px rgba(47, 198, 246, 0.05);
+  --elev-accent:
+    0 0 0 1px color-mix(in srgb, var(--accent) 45%, transparent),
+    6px 6px 16px rgba(2, 6, 23, 0.55),
+    -3px -3px 10px rgba(47, 198, 246, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  --noise: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.7'/%3E%3C/svg%3E");
+  --noise-opacity: 0.065;
+  --bg-grad:
+    radial-gradient(920px 520px at 18% 8%, rgba(47, 198, 246, 0.18), transparent 58%),
+    radial-gradient(780px 480px at 92% 88%, rgba(8, 145, 178, 0.14), transparent 52%),
+    linear-gradient(165deg, #152038 0%, #0F172A 42%, #0a101c 100%);
+  color-scheme: dark;
+}
+
+
+/* ——— Green ——— */
+html[data-theme="green"] {
+  --bg: #0a100e;
+  --bg-elev: #0f1a14;
+  --bg-card: #132018;
+  --bg-card-2: #1a2a20;
+  --card: var(--bg-card);
+  --line: #1e3a2a;
+  --line-soft: #162820;
+  --hover-line: #2a4a38;
+  --hover-bg: rgba(255, 255, 255, 0.03);
+  --hover-bg-2: rgba(255, 255, 255, 0.05);
+  --ink: #e5e7eb;
+  --text: var(--ink);
+  --muted: #94a3b8;
+  --muted-2: #64748b;
+
+  --accent: #22c55e;
+  --accent-hot: #4ade80;
+  --accent-dim: rgba(34, 197, 94, 0.18);
+  --accent-ink: #052e16;
+  --accent-glow: rgba(34, 197, 94, 0.12);
+  --teal: #22c55e;
+  --teal-dim: rgba(34, 197, 94, 0.18);
+  --teal-deep: #15803d;
+  --mark-ink: #052e16;
+  --orange: #22c55e;
+  --orange-hot: #4ade80;
+  --cta: #22c55e;
+  --cta-hot: #4ade80;
+  --cta-ink: #052e16;
+
+  /* Scrollbar (WebKit + Firefox via shell-v2.css) */
+  --scrollbar-thumb: #a8875a;
+  --scrollbar-thumb-hover: #d9c39c;
+  --scrollbar-track: #0a100e;
+  color-scheme: dark;
+}
+
+/* ——— Amber ——— */
+html[data-theme="amber"] {
+  /* Brighter gold variant on brand warm charcoal */
+  --bg: #0c0a08;
+  --bg-elev: #14110e;
+  --bg-card: #1a1612;
+  --bg-card-2: #221c17;
+  --card: var(--bg-card);
+  --line: #3a3228;
+  --line-soft: #2a241c;
+  --hover-line: #4d4338;
+  --hover-bg: rgba(241, 230, 212, 0.04);
+  --hover-bg-2: rgba(241, 230, 212, 0.07);
+  --ink: #f1e6d4;
+  --text: var(--ink);
+  --muted: #b9ad9c;
+  --muted-2: #8b7d6e;
+
+  --accent: #c4a574;
+  --accent-hot: #e0c898;
+  --accent-dim: rgba(196, 165, 116, 0.20);
+  --accent-ink: #1c1814;
+  --accent-glow: rgba(196, 165, 116, 0.14);
+  --teal: #c4a574;
+  --teal-dim: rgba(196, 165, 116, 0.20);
+  --teal-deep: #86683f;
+  --mark-ink: #1c1814;
+  --orange: #c4a574;
+  --orange-hot: #e0c898;
+  --cta: #c4a574;
+  --cta-hot: #e0c898;
+  --cta-ink: #1c1814;
+
+  /* Scrollbar (WebKit + Firefox via shell-v2.css) */
+  --scrollbar-thumb: #a8875a;
+  --scrollbar-thumb-hover: #d9c39c;
+  --scrollbar-track: #0c0a08;
+  color-scheme: dark;
+}
+
+/* ——— Purple ——— */
+html[data-theme="purple"] {
+  --bg: #0c0a12;
+  --bg-elev: #14101c;
+  --bg-card: #1a1526;
+  --bg-card-2: #221a30;
+  --card: var(--bg-card);
+  --line: #2e2440;
+  --line-soft: #241c34;
+  --hover-line: #3d3254;
+  --hover-bg: rgba(255, 255, 255, 0.03);
+  --hover-bg-2: rgba(255, 255, 255, 0.05);
+  --ink: #e5e7eb;
+  --text: var(--ink);
+  --muted: #a8a0b8;
+  --muted-2: #7a7190;
+
+  --accent: #a855f7;
+  --accent-hot: #c084fc;
+  --accent-dim: rgba(168, 85, 247, 0.18);
+  --accent-ink: #1e0a2e;
+  --accent-glow: rgba(168, 85, 247, 0.12);
+  --teal: #a855f7;
+  --teal-dim: rgba(168, 85, 247, 0.18);
+  --teal-deep: #7e22ce;
+  --mark-ink: #1e0a2e;
+  --orange: #a855f7;
+  --orange-hot: #c084fc;
+  --cta: #a855f7;
+  --cta-hot: #c084fc;
+  --cta-ink: #1e0a2e;
+
+  /* Scrollbar (WebKit + Firefox via shell-v2.css) */
+  --scrollbar-thumb: #a8875a;
+  --scrollbar-thumb-hover: #d9c39c;
+  --scrollbar-track: #0c0a12;
+  color-scheme: dark;
+}
+
+/* ——— Teal ——— */
+html[data-theme="teal"] {
+  --bg: #0b0f14;
+  --bg-elev: #111827;
+  --bg-card: #151c27;
+  --bg-card-2: #1a2332;
+  --card: var(--bg-card);
+  --line: #243044;
+  --line-soft: #1e293b;
+  --hover-line: #334155;
+  --hover-bg: rgba(255, 255, 255, 0.03);
+  --hover-bg-2: rgba(255, 255, 255, 0.05);
+  --ink: #e5e7eb;
+  --text: var(--ink);
+  --muted: #94a3b8;
+  --muted-2: #64748b;
+
+  --accent: #14b8a6;
+  --accent-hot: #2dd4bf;
+  --accent-dim: rgba(20, 184, 166, 0.18);
+  --accent-ink: #042f2e;
+  --accent-glow: rgba(20, 184, 166, 0.12);
+  --teal: #14b8a6;
+  --teal-dim: rgba(20, 184, 166, 0.18);
+  --teal-deep: #0f766e;
+  --mark-ink: #042f2e;
+  --orange: #14b8a6;
+  --orange-hot: #2dd4bf;
+  --cta: #14b8a6;
+  --cta-hot: #2dd4bf;
+  --cta-ink: #042f2e;
+
+  /* Scrollbar (WebKit + Firefox via shell-v2.css) */
+  --scrollbar-thumb: #a8875a;
+  --scrollbar-thumb-hover: #d9c39c;
+  --scrollbar-track: #0b0f14;
+  color-scheme: dark;
+}
+
+/* ——— Mafia (black + burgundy) ——— */
+html[data-theme="mafia"] {
+  --bg: #050505;
+  --bg-elev: #0c0c0c;
+  --bg-card: #121212;
+  --bg-card-2: #1a1a1a;
+  --card: var(--bg-card);
+  --line: #2a1518;
+  --line-soft: #1a1012;
+  --hover-line: #3a2024;
+  --hover-bg: rgba(255, 255, 255, 0.03);
+  --hover-bg-2: rgba(255, 255, 255, 0.05);
+  --ink: #e5e7eb;
+  --text: var(--ink);
+  --muted: #a1a1aa;
+  --muted-2: #71717a;
+
+  --accent: #9f1239;
+  --accent-hot: #e11d48;
+  --accent-dim: rgba(159, 18, 57, 0.22);
+  --accent-ink: #1a0508;
+  --accent-glow: rgba(159, 18, 57, 0.14);
+  --teal: #e11d48;
+  --teal-dim: rgba(159, 18, 57, 0.22);
+  --teal-deep: #9f1239;
+  --mark-ink: #fff1f2;
+  --orange: #e11d48;
+  --orange-hot: #fb7185;
+  --cta: #9f1239;
+  --cta-hot: #e11d48;
+  --cta-ink: #fff1f2;
+
+  /* Scrollbar (WebKit + Firefox via shell-v2.css) */
+  --scrollbar-thumb: #a8875a;
+  --scrollbar-thumb-hover: #d9c39c;
+  --scrollbar-track: #050505;
+  color-scheme: dark;
+}
+
+
+/* ——— Bitrix24 light (corporate light: white/gray + #006AC4) ——— */
+html[data-theme="bitrix"] {
+  --bg: #F8FAFB;
+  --bg-elev: #FFFFFF;
+  --bg-card: #FFFFFF;
+  --bg-card-2: #EDEEF0;
+  --card: var(--bg-card);
+  --line: #DFE0E3;
+  --line-soft: #EDEEF0;
+  --hover-line: #D5D7DB;
+  --hover-bg: rgba(0, 106, 196, 0.04);
+  --hover-bg-2: rgba(0, 106, 196, 0.08);
+  --shadow: 0 8px 28px rgba(51, 71, 91, 0.12);
+  --ink: #333333;
+  --text: var(--ink);
+  --muted: #525C69;
+  --muted-2: #A8ADB4;
+
+  --accent: #006AC4;
+  --accent-hot: #1A8AD4;
+  --accent-dim: rgba(0, 106, 196, 0.14);
+  --accent-ink: #FFFFFF;
+  --accent-glow: rgba(0, 106, 196, 0.12);
+  --teal: #006AC4;
+  --teal-dim: rgba(0, 106, 196, 0.14);
+  --teal-deep: #004E91;
+  --mark-ink: #FFFFFF;
+  --orange: #006AC4;
+  --orange-hot: #1A8AD4;
+  --cta: #006AC4;
+  --cta-hot: #1A8AD4;
+  --cta-ink: #FFFFFF;
+
+  --green: #9DCF00;
+  --red: #FF5752;
+  --red-glow: rgba(255, 87, 82, 0.35);
+  --blue: #006AC4;
+
+  --scrollbar-thumb: #006AC4;
+  --scrollbar-thumb-hover: #1A8AD4;
+  --scrollbar-track: #EDEEF0;
+
+  /* Rich surface — bitrix light: grey-blue soft shadows */
+  --elev-out:
+    8px 8px 18px rgba(51, 71, 91, 0.18),
+    -5px -5px 14px rgba(255, 255, 255, 1),
+    inset 0 1px 0 rgba(255, 255, 255, 1);
+  --elev-in:
+    inset 5px 5px 12px rgba(51, 71, 91, 0.16),
+    inset -4px -4px 10px rgba(255, 255, 255, 0.95);
+  --elev-out-soft:
+    4px 4px 10px rgba(51, 71, 91, 0.14),
+    -3px -3px 8px rgba(255, 255, 255, 0.95);
+  --elev-accent:
+    0 0 0 1px color-mix(in srgb, var(--accent) 30%, transparent),
+    6px 6px 16px rgba(51, 71, 91, 0.16),
+    -3px -3px 10px rgba(255, 255, 255, 1),
+    inset 0 1px 0 rgba(255, 255, 255, 1);
+  --noise: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.7'/%3E%3C/svg%3E");
+  --noise-opacity: 0.05;
+  --bg-grad:
+    radial-gradient(920px 520px at 18% 8%, rgba(0, 106, 196, 0.10), transparent 58%),
+    radial-gradient(780px 480px at 92% 88%, rgba(51, 71, 91, 0.08), transparent 52%),
+    linear-gradient(165deg, #FFFFFF 0%, #F5F7FA 45%, #E8ECF1 100%);
+  color-scheme: light;
+}
+
+/* ——— Beige (retired from UI; migrate → bitrix. Kept for back-compat) ——— */
+html[data-theme="beige"] {
+  /* Gilil Lighting brand light — warm off-white + champagne brass */
+  --bg: #f7f3ed;
+  --bg-elev: #fbf8f3;
+  --bg-card: #fffaf2;
+  --bg-card-2: #efe7dc;
+  --card: var(--bg-card);
+  --line: #e3d7c6;
+  --line-soft: #efe7dc;
+  --hover-line: #d9c39c;
+  --hover-bg: rgba(43, 38, 34, 0.04);
+  --hover-bg-2: rgba(43, 38, 34, 0.07);
+  --shadow: 0 12px 40px rgba(43, 38, 34, 0.12);
+  --ink: #2b2622;
+  --text: var(--ink);
+  --muted: #5b524a;
+  --muted-2: #8b7d6e;
+
+  --accent: #a8875a;
+  --accent-hot: #86683f;
+  --accent-dim: rgba(168, 135, 90, 0.14);
+  --accent-ink: #f7f3ed;
+  --accent-glow: rgba(168, 135, 90, 0.12);
+  --teal: #a8875a;
+  --teal-dim: rgba(168, 135, 90, 0.14);
+  --teal-deep: #86683f;
+  --mark-ink: #f7f3ed;
+  --orange: #a8875a;
+  --orange-hot: #86683f;
+  --cta: #2b2622;
+  --cta-hot: #3a332d;
+  --cta-ink: #f7f3ed;
+
+  --green: #5a7a4a;
+  --red: #a23e2a;
+  --red-glow: rgba(162, 62, 42, 0.35);
+  --blue: #86683f;
+
+  /* Scrollbar (WebKit + Firefox via shell-v2.css) */
+  --scrollbar-thumb: #a8875a;
+  --scrollbar-thumb-hover: #86683f;
+  --scrollbar-track: #efe7dc;
+  color-scheme: light;
+}
+
+/* Soft radial wash on login / main follows accent + rich bg-grad */
+html[data-theme] #login-gate {
+  background:
+    radial-gradient(900px 500px at 20% 10%, var(--accent-glow), transparent 55%),
+    radial-gradient(700px 400px at 90% 80%, color-mix(in srgb, var(--cta) 10%, transparent), transparent 50%),
+    var(--bg-grad, var(--bg));
+}
+
+/* Rich surface always on — boot sets html[data-surface="rich"]; tokens live per theme above. */

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark" data-surface="rich">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>CRM TV overlap diag</title>
+<link rel="stylesheet" href="/themes.css"/>
+<link rel="stylesheet" href="/shell-v2.css"/>
+<style>
+html,body{height:100%;margin:0;overflow:hidden}
+#app-shell{height:100%;display:grid;grid-template-rows:auto minmax(0,1fr)}
+.appbar{padding:8px;border-bottom:1px solid #333}
+.body{display:grid;grid-template-columns:0 minmax(0,1fr);height:100%;min-height:0;overflow:hidden}
+.sidebar{display:none}
+.main{min-width:0;min-height:0;overflow:hidden;display:flex;flex-direction:column;background:transparent;position:relative}
+#mode{position:fixed;top:8px;right:8px;z-index:9999;background:#111;color:#fff;padding:6px 10px;border-radius:8px;font:12px monospace}
+</style>
+</head>
+<body>
+<div id="mode">mode: both-active (repro)</div>
+<div id="app-shell">
+  <header class="appbar"><strong>diag CRM+TV</strong></header>
+  <div class="body">
+    <aside class="sidebar"></aside>
+    <main class="main">
+      <section class="section active" id="sec-crm">
+        <div class="crm-layout">
+          <div class="crm-list">
+            <h2><span data-i18n="nav.crm">CRM</span> <span id="crm-scope-label" style="color:var(--muted);font-weight:500;font-size:12px">роль…</span></h2>
+            <div class="crm-side-filters" id="crm-side-filters"></div>
+            <div id="crm-cards"></div>
+            <div id="crm-admin-box" class="crm-admin-box hidden">
+              <h2 data-i18n="crm.admin">管理后台</h2>
+              <p style="margin:0;font-size:12px;color:var(--muted)" data-i18n="crm.admin_hint">用户与设置管理 — 仅管理员（鲁斯兰）。</p>
+              <button type="button" class="btn ghost" id="btn-admin-users" style="margin-top:8px" data-i18n="crm.users">用户</button>
+            </div>
+          </div>
+          <div class="crm-detail" id="crm-detail"></div>
+        </div>
+      </section>
+      <section class="section active" id="sec-tv">
+        <div class="embed-wrap">
+          <div class="embed-bar">
+            <span data-i18n="tv.bar">CRM TV 大屏</span>
+            <a href="/crm-tv.html" target="_blank" rel="noopener" data-i18n="tv.open">打开 crm-tv.html ↗</a>
+          </div>
+          <div class="simple-panel">
+            <h2 style="margin:0 0 8px" data-i18n="tv.title">CRM TV</h2>
+            <p style="margin:0;color:var(--muted);font-size:13px" data-i18n="tv.desc">招标漏斗大屏展示。下方为预览；完整全屏见链接。</p>
+            <div class="simple-grid" style="margin-top:14px" id="tv-stats"></div>
+            <div class="tv-preview-frame" style="margin-top:14px">
+              <iframe src="/crm-tv.html" title="SRM TV" loading="lazy" referrerpolicy="no-referrer"></iframe>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+<script>
+// Fill minimal CRM cards so layout has height
+document.getElementById('crm-cards').innerHTML = '<div class="crm-card selected"><div class="cname">Demo Co</div><div class="cmeta">RU</div></div>'.repeat(6);
+document.getElementById('crm-detail').innerHTML = '<div class="dhead"><div><h2>Demo</h2></div></div><div class="card"><h2>История</h2><p>…</p></div>';
+document.getElementById('tv-stats').innerHTML = '<div class="stat ok"><div class="n">3</div><div class="l">found</div></div>'.repeat(5);
+</script>
+</body></html>

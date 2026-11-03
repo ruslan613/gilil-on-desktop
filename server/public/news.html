@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Новости — Gilil On / тендеры</title>
+  <script>
+    (function () {
+      try {
+        var id = localStorage.getItem('gilil_theme') || 'dark';
+        if (id === 'beige') id = 'bitrix';
+        if (id === 'blue') id = 'cyan';
+        var ok = { dark: 1, bitrix: 1, cyan: 1 };
+        var q = new URLSearchParams(location.search).get('theme');
+        if (q === 'beige') q = 'bitrix';
+        if (q === 'blue') q = 'cyan';
+        if (q && ok[q]) id = q;
+        if (!ok[id]) id = 'dark';
+        document.documentElement.dataset.theme = id;
+        document.documentElement.dataset.surface = 'rich';
+      } catch (_) {
+        document.documentElement.dataset.theme = 'dark';
+        document.documentElement.dataset.surface = 'rich';
+      }
+    })();
+  </script>
+  <link rel="stylesheet" href="/themes.css" />
+  <style>
+    /* News aliases → shell theme tokens from themes.css (data-theme=dark|bitrix|cyan) */
+    :root {
+      --chip: var(--bg-card-2, #221c17);
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background: var(--bg-grad, var(--bg));
+      background-color: var(--bg);
+      color: var(--ink);
+      color-scheme: inherit;
+    }
+    body {
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      line-height: 1.45;
+    }
+    .wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 24px 16px 48px;
+    }
+    header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin: 0 0 4px;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+    }
+    header p {
+      margin: 0 0 20px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+    header a {
+      color: var(--accent);
+    }
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .toolbar button {
+      border: 1px solid var(--line);
+      background: var(--card);
+      color: var(--ink);
+      padding: 6px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+    .toolbar button:hover {
+      border-color: var(--hover-line, var(--line));
+      background: var(--hover-bg, var(--card));
+    }
+    .toolbar button.active {
+      background: var(--accent);
+      color: var(--accent-ink, #fff);
+      border-color: var(--accent);
+    }
+    .status {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+    .list { display: flex; flex-direction: column; gap: 12px; }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 14px 16px;
+      box-shadow: var(--elev-out-soft, 0 1px 0 rgba(0,0,0,0.03));
+    }
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 6px;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+    .chip {
+      background: var(--chip);
+      padding: 2px 8px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--muted);
+    }
+    .chip.kind-new { background: color-mix(in srgb, var(--green, #22c55e) 22%, transparent); color: var(--green, #22c55e); }
+    .chip.kind-change { background: color-mix(in srgb, #fbbf24 22%, transparent); color: #fbbf24; }
+    .chip.kind-result { background: color-mix(in srgb, var(--blue, #3b82f6) 22%, transparent); color: var(--blue, #3b82f6); }
+    .chip.kind-info { background: var(--chip); color: var(--muted); }
+    html[data-theme="bitrix"] .chip.kind-change { color: #c87d00; background: rgba(200, 125, 0, 0.12); }
+    .card h2 {
+      font-size: 1.05rem;
+      margin: 0 0 6px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+    .card h2 a { color: inherit; text-decoration: none; }
+    .card h2 a:hover { color: var(--accent); text-decoration: underline; }
+    .body { font-size: 0.9rem; color: var(--muted); margin: 0 0 8px; }
+    .body a { color: var(--accent); }
+    .nmck { font-weight: 600; font-size: 0.95rem; color: var(--ink); }
+    .empty { color: var(--muted); padding: 24px 0; text-align: center; }
+    footer {
+      margin-top: 28px;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+    footer code {
+      color: var(--accent-hot, var(--accent));
+    }
+    /* Embed mode: ?embed=1 hides chrome */
+    body.embed header p.lead,
+    body.embed footer { display: none; }
+    body.embed .wrap { padding: 8px; max-width: none; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <p style="margin:0 0 10px;font-size:0.85rem"><a href="/tenders-dashboard.html">Панель</a> · <a href="/crm.html">CRM</a> · <a href="/crm-tv.html">TV</a></p>
+      <h1>Новости</h1>
+      <p class="lead">Свежие тендеры и обновления по освещению (Gilil On · мониторинг площадок РФ)</p>
+    </header>
+    <div class="toolbar" id="filters">
+      <button type="button" data-kind="" class="active">Все</button>
+      <button type="button" data-kind="new">Новые</button>
+      <button type="button" data-kind="change">Изменения</button>
+      <button type="button" data-kind="result">Итоги</button>
+      <button type="button" data-kind="info">Инфо</button>
+    </div>
+    <div class="status" id="status">Загрузка…</div>
+    <div class="list" id="list"></div>
+    <footer>
+      Данные обновляются ежедневным парсером <code>npm run tenders:fetch</code>.
+      Виджет: встройте эту страницу в iframe или вызывайте
+      <code>GET /api/public/tender-news</code>.
+    </footer>
+  </div>
+  <script>
+    (function () {
+      const params = new URLSearchParams(location.search);
+      if (params.get('embed') === '1') document.body.classList.add('embed');
+      const apiBase = params.get('api') || '';
+      let kind = params.get('kind') || '';
+      const listEl = document.getElementById('list');
+      const statusEl = document.getElementById('status');
+
+      const THEME_KEY = 'gilil_theme';
+      const THEME_IDS = ['dark', 'bitrix', 'cyan'];
+
+      function applyNewsTheme(id) {
+        if (id === 'beige') id = 'bitrix';
+        if (id === 'blue') id = 'cyan';
+        const theme = THEME_IDS.includes(id) ? id : 'dark';
+        document.documentElement.dataset.theme = theme;
+        document.documentElement.dataset.surface = 'rich';
+        return theme;
+      }
+
+      function readShellTheme() {
+        try {
+          let saved = localStorage.getItem(THEME_KEY);
+          if (saved === 'beige') saved = 'bitrix';
+          if (saved === 'blue') saved = 'cyan';
+          return saved;
+        } catch (_) {
+          return null;
+        }
+      }
+
+      (function bootTheme() {
+        let id = readShellTheme();
+        try {
+          const q = new URLSearchParams(location.search).get('theme');
+          if (q) id = q;
+        } catch (_) {}
+        applyNewsTheme(id || 'dark');
+        try {
+          if (window.parent && window.parent !== window) {
+            window.parent.postMessage({ type: 'gilil:news-ready' }, location.origin);
+          }
+        } catch (_) {}
+      })();
+
+      window.addEventListener('storage', (e) => {
+        if (e.key === THEME_KEY) applyNewsTheme(e.newValue || 'dark');
+      });
+
+      window.addEventListener('message', (e) => {
+        try {
+          if (e.origin !== location.origin) return;
+          const data = e.data;
+          if (data && data.type === 'gilil:theme' && data.theme) {
+            applyNewsTheme(data.theme);
+          }
+        } catch (_) {}
+      });
+
+      // Keep in sync if shell writes theme while news is open in iframe (same tab).
+      setInterval(() => {
+        const t = readShellTheme();
+        if (!t) return;
+        if (document.documentElement.dataset.theme !== t) applyNewsTheme(t);
+      }, 1500);
+
+      const KIND_RU = { new: 'новый', change: 'изменение', result: 'итог', info: 'инфо' };
+      const PLATFORM_RU = {
+        zakupki: 'ЕИС / zakupki',
+        b2b: 'B2B-Center',
+        sber_ast: 'Сбер АСТ',
+        rts: 'РТС',
+        eetp: 'ЕЭТП',
+        tender_ru: 'Тендер.ру',
+        other: 'прочее',
+      };
+
+      function fmtDate(s) {
+        if (!s) return '';
+        const d = new Date(s);
+        if (Number.isNaN(d.getTime())) return String(s).slice(0, 10);
+        return d.toLocaleDateString('ru-RU', {
+          day: '2-digit', month: 'short', year: 'numeric',
+        });
+      }
+      function fmtMoney(n) {
+        if (n == null) return null;
+        return new Intl.NumberFormat('ru-RU', {
+          style: 'currency', currency: 'RUB', maximumFractionDigits: 0,
+        }).format(n);
+      }
+
+      async function load() {
+        statusEl.textContent = 'Загрузка…';
+        const q = new URLSearchParams({ limit: '20' });
+        if (kind) q.set('kind', kind);
+        try {
+          const res = await fetch(apiBase + '/api/public/tender-news?' + q.toString());
+          const data = await res.json();
+          if (!data.ok) throw new Error('bad response');
+          statusEl.textContent = data.count
+            ? `Показано: ${data.count}`
+            : 'Пока нет новостей — запустите npm run tenders:fetch';
+          listEl.innerHTML = '';
+          if (!data.items.length) {
+            listEl.innerHTML = '<div class="empty">Нет записей</div>';
+            return;
+          }
+          for (const it of data.items) {
+            const card = document.createElement('article');
+            card.className = 'card';
+            const money = fmtMoney(it.nmck);
+            const href = it.url || '#';
+            card.innerHTML =
+              '<div class="meta">' +
+              '<span class="chip kind-' + (it.kind || 'info') + '">' +
+              (KIND_RU[it.kind] || it.kind) + '</span>' +
+              '<span>' + fmtDate(it.published_at || it.created_at) + '</span>' +
+              (it.platform
+                ? '<span>' + (PLATFORM_RU[it.platform] || it.platform) + '</span>'
+                : '') +
+              (it.tender_no ? '<span>№ ' + it.tender_no + '</span>' : '') +
+              '</div>' +
+              '<h2><a href="' + href + '" target="_blank" rel="noopener">' +
+              escapeHtml(it.title) + '</a></h2>' +
+              (it.body ? '<p class="body">' + escapeHtml(it.body) + '</p>' : '') +
+              (money ? '<div class="nmck">' + money + '</div>' : '') +
+              (it.project
+                ? '<p class="body"><a href="' + it.project.open_path + '">Чат-проект · осталось ' +
+                  (it.project.days_left != null ? it.project.days_left + ' дн.' : 'н/д') +
+                  '</a></p>'
+                : '');
+            listEl.appendChild(card);
+          }
+        } catch (err) {
+          statusEl.textContent = 'Ошибка загрузки: ' + err.message;
+        }
+      }
+
+      function escapeHtml(s) {
+        return String(s)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      document.getElementById('filters').addEventListener('click', (e) => {
+        const btn = e.target.closest('button[data-kind]');
+        if (!btn) return;
+        kind = btn.getAttribute('data-kind') || '';
+        document.querySelectorAll('#filters button').forEach((b) =>
+          b.classList.toggle('active', b === btn)
+        );
+        load();
+      });
+
+      load();
+      // soft auto-refresh every 10 min when left open
+      setInterval(load, 600000);
+    })();
+  </script>
+</body>
+</html>
