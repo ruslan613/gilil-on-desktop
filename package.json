@@ -110,7 +110,12 @@
       ],
       "signAndEditExecutable": false,
       "publish": [
-        "github"
+        {
+          "provider": "github",
+          "owner": "ruslan613",
+          "repo": "gilil-on-desktop",
+          "releaseType": "release"
+        }
       ]
     },
     "portable": {
