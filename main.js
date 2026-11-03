@@ -28,7 +28,7 @@ const {
 
 const DEFAULT_PORT = 8788;
 const UI_PATH = '/shell-v2.html';
-const APP_VERSION = '1.1.0';
+const APP_VERSION = '1.1.2';
 
 const DEFAULT_ALLOW_HOSTS = [
   '127.0.0.1',
