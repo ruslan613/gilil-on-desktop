@@ -84,6 +84,13 @@
           "**/*",
           "!.keep"
         ]
+      },
+      {
+        "from": "icons/themes",
+        "to": "icons/themes",
+        "filter": [
+          "*.ico"
+        ]
       }
     ],
     "win": {
@@ -116,6 +123,8 @@
       "createDesktopShortcut": "always",
       "createStartMenuShortcut": true,
       "shortcutName": "Gilil On",
+      "deleteAppDataOnUninstall": true,
+      "include": "build/nsis-gilil.nsh",
       "artifactName": "GililOn-${version}-win-setup.exe"
     },
     "extraFiles": [
