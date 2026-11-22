@@ -425,30 +425,133 @@ function readPort(serverRoot) {
   return DEFAULT_PORT;
 }
 
-function waitForPort(port, timeoutMs = 30000) {
+const SERVER_STARTUP_LOG_NAME = 'server-startup.log';
+const SERVER_STDERR_TAIL_MAX = 4000;
+const SERVER_STARTUP_LOG_MAX = 1024 * 1024;
+const SERVER_STARTUP_LOG_KEEP = 256 * 1024;
+
+/** Last stderr bytes from the current child, for the native startup dialog. */
+let serverStderrTail = '';
+let serverStartupLogPath = null;
+
+function beginServerStartupLog(meta) {
+  serverStderrTail = '';
+  const logPath = path.join(dataDirPath(), SERVER_STARTUP_LOG_NAME);
+  serverStartupLogPath = logPath;
+  try {
+    fs.mkdirSync(path.dirname(logPath), { recursive: true });
+    try {
+      const st = fs.statSync(logPath);
+      if (st.size > SERVER_STARTUP_LOG_MAX) {
+        const fd = fs.openSync(logPath, 'r');
+        try {
+          const buf = Buffer.alloc(SERVER_STARTUP_LOG_KEEP);
+          fs.readSync(fd, buf, 0, SERVER_STARTUP_LOG_KEEP, st.size - SERVER_STARTUP_LOG_KEEP);
+          fs.writeFileSync(logPath, buf);
+        } finally {
+          fs.closeSync(fd);
+        }
+      }
+    } catch (_) {
+      /* new file */
+    }
+    fs.appendFileSync(
+      logPath,
+      `\n===== ${new Date().toISOString()} =====\n${meta}`,
+      'utf8'
+    );
+  } catch (e) {
+    serverStartupLogPath = null;
+    console.warn('[gilil-desktop] server-startup.log failed:', e.message);
+  }
+}
+
+function appendServerStartupLog(text) {
+  if (!serverStartupLogPath || !text) return;
+  try {
+    fs.appendFileSync(serverStartupLogPath, text, 'utf8');
+  } catch (e) {
+    console.warn('[gilil-desktop] server-startup.log write failed:', e.message);
+  }
+}
+
+function noteServerOutput(kind, text) {
+  const normalized = String(text).replace(/\r\n/g, '\n');
+  const lines = normalized.split('\n');
+  let block = '';
+  for (let i = 0; i < lines.length; i++) {
+    if (i === lines.length - 1 && lines[i] === '') break;
+    block += `[${kind}] ${lines[i]}\n`;
+  }
+  appendServerStartupLog(block);
+  if (kind === 'stderr') {
+    serverStderrTail = (serverStderrTail + normalized).slice(-SERVER_STDERR_TAIL_MAX);
+  }
+}
+
+function waitForPort(port, timeoutMs = 30000, child) {
   const started = Date.now();
   return new Promise((resolve, reject) => {
+    let settled = false;
+    let exitInfo = null;
+
+    const finish = (err) => {
+      if (settled) return;
+      settled = true;
+      if (child) {
+        child.removeListener('exit', onChildExit);
+        child.removeListener('close', onChildClose);
+      }
+      if (err) reject(err);
+      else resolve();
+    };
+
+    // 'close' fires after stdio is flushed, so the stderr tail is complete.
+    const onChildExit = (code, signal) => {
+      exitInfo = { code, signal };
+    };
+    const onChildClose = () => {
+      const info = exitInfo || { code: null, signal: null };
+      const sig = info.signal ? `, signal ${info.signal}` : '';
+      const tail = serverStderrTail.trim();
+      const detail = tail ? `\n${tail}` : '';
+      finish(
+        new Error(
+          `Server exited before becoming ready on port ${port} (code ${info.code}${sig}).${detail}`
+        )
+      );
+    };
+    if (child) {
+      child.on('exit', onChildExit);
+      child.on('close', onChildClose);
+    }
+
     const attempt = () => {
+      if (settled) return;
       const req = http.get(
         { host: '127.0.0.1', port, path: '/api/health', timeout: 1000 },
         (res) => {
           res.resume();
+          if (settled) return;
           if (res.statusCode && res.statusCode < 500) {
-            resolve();
+            finish(null);
             return;
           }
           retry();
         }
       );
-      req.on('error', retry);
+      req.on('error', () => {
+        if (!settled) retry();
+      });
       req.on('timeout', () => {
         req.destroy();
-        retry();
+        if (!settled) retry();
       });
     };
     const retry = () => {
+      if (settled) return;
       if (Date.now() - started > timeoutMs) {
-        reject(new Error(`Server did not become ready on port ${port} within ${timeoutMs}ms`));
+        finish(new Error(`Server did not become ready on port ${port} within ${timeoutMs}ms`));
         return;
       }
       setTimeout(attempt, 250);
@@ -479,6 +582,9 @@ function startServer(serverRoot, port) {
   const nodeBin = resolveNodeBin();
   console.log(`[gilil-desktop] v=${APP_VERSION} nodeBin=${nodeBin}`);
   console.log(`[gilil-desktop] db=${dbPath}`);
+  beginServerStartupLog(
+    `v=${APP_VERSION}\nnodeBin=${nodeBin}\ndb=${dbPath}\nport=${port}\nentry=${entry}\n`
+  );
 
   serverProcess = spawn(nodeBin, [entry], {
     cwd: serverRoot,
@@ -488,12 +594,17 @@ function startServer(serverRoot, port) {
   });
 
   serverProcess.stdout.on('data', (buf) => {
-    console.log(`[gilil-server] ${buf.toString().trimEnd()}`);
+    const text = buf.toString();
+    noteServerOutput('stdout', text);
+    console.log(`[gilil-server] ${text.trimEnd()}`);
   });
   serverProcess.stderr.on('data', (buf) => {
-    console.error(`[gilil-server] ${buf.toString().trimEnd()}`);
+    const text = buf.toString();
+    noteServerOutput('stderr', text);
+    console.error(`[gilil-server] ${text.trimEnd()}`);
   });
   serverProcess.on('exit', (code, signal) => {
+    appendServerStartupLog(`[exit] code=${code} signal=${signal}\n`);
     console.log(`[gilil-server] exited code=${code} signal=${signal}`);
     serverProcess = null;
     if (!quitting && mainWindow && !mainWindow.isDestroyed()) {
@@ -911,8 +1022,8 @@ async function createWindow() {
 
   console.log(`[gilil-desktop] serverRoot=${serverRoot} port=${port}`);
 
-  startServer(serverRoot, port);
-  await waitForPort(port);
+  const child = startServer(serverRoot, port);
+  await waitForPort(port, 30000, child);
 
   const iconInfo = resolveAppIcon();
 
