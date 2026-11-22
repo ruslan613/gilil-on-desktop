@@ -15,14 +15,7 @@
 !macroend
 
 !macro customUnInstall
-  ; Same shortcut name the installer and the app write. One file, not a second copy.
+  ; Remove only the desktop shortcut. Leave %APPDATA%\gilil-on-desktop in place,
+  ; including gilil-on-data, the database, and server-startup.log.
   Delete "$DESKTOP\Gilil On.lnk"
-  ; Per-user data. gilil-on-data (database, WAL, server-startup.log) lives inside this folder.
-  ${If} $installMode == "all"
-    SetShellVarContext current
-  ${EndIf}
-  RMDir /r "$APPDATA\gilil-on-desktop"
-  ${If} $installMode == "all"
-    SetShellVarContext all
-  ${EndIf}
 !macroend

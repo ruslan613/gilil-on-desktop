@@ -57,14 +57,14 @@ assert.strictEqual(digests.size, 3, 'theme icons must differ');
 
 const pkg = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
 assert.strictEqual(pkg.build.nsis.createDesktopShortcut, 'always');
-assert.strictEqual(pkg.build.nsis.deleteAppDataOnUninstall, true);
+assert.ok(pkg.build.nsis.deleteAppDataOnUninstall !== true, 'uninstall must keep the user database');
 assert.strictEqual(pkg.build.nsis.include, 'build/nsis-gilil.nsh');
 assert.ok(pkg.build.extraResources.some((r) => r.from === 'icons/themes'));
 
 const nsh = fs.readFileSync(path.join(root, 'build', 'nsis-gilil.nsh'), 'utf8');
 assert.ok(nsh.includes('gilil-on-dark.ico'));
 assert.ok(nsh.includes('Gilil On.lnk'));
-assert.ok(nsh.includes('$APPDATA\\gilil-on-desktop'));
+assert.ok(!nsh.includes('RMDir /r "$APPDATA\\gilil-on-desktop"'), 'uninstall must not delete AppData');
 assert.ok(nsh.includes('0x2000'), 'SHCNE_UPDATEITEM');
 assert.ok(!nsh.includes('0x08000000') && !nsh.includes('0x8000000'), 'no SHCNE_ASSOCCHANGED');
 

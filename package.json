@@ -123,7 +123,6 @@
       "createDesktopShortcut": "always",
       "createStartMenuShortcut": true,
       "shortcutName": "Gilil On",
-      "deleteAppDataOnUninstall": true,
       "include": "build/nsis-gilil.nsh",
       "artifactName": "GililOn-${version}-win-setup.exe"
     },
