@@ -425,30 +425,133 @@ function readPort(serverRoot) {
   return DEFAULT_PORT;
 }
 
-function waitForPort(port, timeoutMs = 30000) {
+const SERVER_STARTUP_LOG_NAME = 'server-startup.log';
+const SERVER_STDERR_TAIL_MAX = 4000;
+const SERVER_STARTUP_LOG_MAX = 1024 * 1024;
+const SERVER_STARTUP_LOG_KEEP = 256 * 1024;
+
+/** Last stderr bytes from the current child, for the native startup dialog. */
+let serverStderrTail = '';
+let serverStartupLogPath = null;
+
+function beginServerStartupLog(meta) {
+  serverStderrTail = '';
+  const logPath = path.join(dataDirPath(), SERVER_STARTUP_LOG_NAME);
+  serverStartupLogPath = logPath;
+  try {
+    fs.mkdirSync(path.dirname(logPath), { recursive: true });
+    try {
+      const st = fs.statSync(logPath);
+      if (st.size > SERVER_STARTUP_LOG_MAX) {
+        const fd = fs.openSync(logPath, 'r');
+        try {
+          const buf = Buffer.alloc(SERVER_STARTUP_LOG_KEEP);
+          fs.readSync(fd, buf, 0, SERVER_STARTUP_LOG_KEEP, st.size - SERVER_STARTUP_LOG_KEEP);
+          fs.writeFileSync(logPath, buf);
+        } finally {
+          fs.closeSync(fd);
+        }
+      }
+    } catch (_) {
+      /* new file */
+    }
+    fs.appendFileSync(
+      logPath,
+      `\n===== ${new Date().toISOString()} =====\n${meta}`,
+      'utf8'
+    );
+  } catch (e) {
+    serverStartupLogPath = null;
+    console.warn('[gilil-desktop] server-startup.log failed:', e.message);
+  }
+}
+
+function appendServerStartupLog(text) {
+  if (!serverStartupLogPath || !text) return;
+  try {
+    fs.appendFileSync(serverStartupLogPath, text, 'utf8');
+  } catch (e) {
+    console.warn('[gilil-desktop] server-startup.log write failed:', e.message);
+  }
+}
+
+function noteServerOutput(kind, text) {
+  const normalized = String(text).replace(/\r\n/g, '\n');
+  const lines = normalized.split('\n');
+  let block = '';
+  for (let i = 0; i < lines.length; i++) {
+    if (i === lines.length - 1 && lines[i] === '') break;
+    block += `[${kind}] ${lines[i]}\n`;
+  }
+  appendServerStartupLog(block);
+  if (kind === 'stderr') {
+    serverStderrTail = (serverStderrTail + normalized).slice(-SERVER_STDERR_TAIL_MAX);
+  }
+}
+
+function waitForPort(port, timeoutMs = 30000, child) {
   const started = Date.now();
   return new Promise((resolve, reject) => {
+    let settled = false;
+    let exitInfo = null;
+
+    const finish = (err) => {
+      if (settled) return;
+      settled = true;
+      if (child) {
+        child.removeListener('exit', onChildExit);
+        child.removeListener('close', onChildClose);
+      }
+      if (err) reject(err);
+      else resolve();
+    };
+
+    // 'close' fires after stdio is flushed, so the stderr tail is complete.
+    const onChildExit = (code, signal) => {
+      exitInfo = { code, signal };
+    };
+    const onChildClose = () => {
+      const info = exitInfo || { code: null, signal: null };
+      const sig = info.signal ? `, signal ${info.signal}` : '';
+      const tail = serverStderrTail.trim();
+      const detail = tail ? `\n${tail}` : '';
+      finish(
+        new Error(
+          `Server exited before becoming ready on port ${port} (code ${info.code}${sig}).${detail}`
+        )
+      );
+    };
+    if (child) {
+      child.on('exit', onChildExit);
+      child.on('close', onChildClose);
+    }
+
     const attempt = () => {
+      if (settled) return;
       const req = http.get(
         { host: '127.0.0.1', port, path: '/api/health', timeout: 1000 },
         (res) => {
           res.resume();
+          if (settled) return;
           if (res.statusCode && res.statusCode < 500) {
-            resolve();
+            finish(null);
             return;
           }
           retry();
         }
       );
-      req.on('error', retry);
+      req.on('error', () => {
+        if (!settled) retry();
+      });
       req.on('timeout', () => {
         req.destroy();
-        retry();
+        if (!settled) retry();
       });
     };
     const retry = () => {
+      if (settled) return;
       if (Date.now() - started > timeoutMs) {
-        reject(new Error(`Server did not become ready on port ${port} within ${timeoutMs}ms`));
+        finish(new Error(`Server did not become ready on port ${port} within ${timeoutMs}ms`));
         return;
       }
       setTimeout(attempt, 250);
@@ -479,6 +582,9 @@ function startServer(serverRoot, port) {
   const nodeBin = resolveNodeBin();
   console.log(`[gilil-desktop] v=${APP_VERSION} nodeBin=${nodeBin}`);
   console.log(`[gilil-desktop] db=${dbPath}`);
+  beginServerStartupLog(
+    `v=${APP_VERSION}\nnodeBin=${nodeBin}\ndb=${dbPath}\nport=${port}\nentry=${entry}\n`
+  );
 
   serverProcess = spawn(nodeBin, [entry], {
     cwd: serverRoot,
@@ -488,12 +594,17 @@ function startServer(serverRoot, port) {
   });
 
   serverProcess.stdout.on('data', (buf) => {
-    console.log(`[gilil-server] ${buf.toString().trimEnd()}`);
+    const text = buf.toString();
+    noteServerOutput('stdout', text);
+    console.log(`[gilil-server] ${text.trimEnd()}`);
   });
   serverProcess.stderr.on('data', (buf) => {
-    console.error(`[gilil-server] ${buf.toString().trimEnd()}`);
+    const text = buf.toString();
+    noteServerOutput('stderr', text);
+    console.error(`[gilil-server] ${text.trimEnd()}`);
   });
   serverProcess.on('exit', (code, signal) => {
+    appendServerStartupLog(`[exit] code=${code} signal=${signal}\n`);
     console.log(`[gilil-server] exited code=${code} signal=${signal}`);
     serverProcess = null;
     if (!quitting && mainWindow && !mainWindow.isDestroyed()) {
@@ -746,6 +857,11 @@ function setupIpc() {
 
   ipcMain.on('gilil:set-theme', (_e, id) => {
     writeSavedSplashTheme(id);
+    try {
+      ensureDesktopShortcutOnce();
+    } catch (e) {
+      console.warn('[gilil-desktop] theme shortcut:', e.message);
+    }
   });
 
   ipcMain.handle('gilil:open-manual', async () => {
@@ -758,74 +874,149 @@ function setupIpc() {
   });
 }
 
-const DESKTOP_SHORTCUT_FLAG = 'desktop-shortcut-created.flag';
+const THEME_WORDMARK_ICONS = {
+  dark: 'gilil-on-dark.ico',
+  bitrix: 'gilil-on-bitrix.ico',
+  cyan: 'gilil-on-cyan.ico',
+};
+
+/** SHCNE_UPDATEITEM. Not SHCNE_ASSOCCHANGED — that would be a global shell refresh. */
+const SHCNE_UPDATEITEM = 0x00002000;
+/** SHCNF_PATHW | SHCNF_FLUSH. One item, Unicode path, no Explorer restart. */
+const SHCNF_PATHW_FLUSH = 0x00001005;
+
+function resolveThemeWordmarkIcon(theme) {
+  const file = THEME_WORDMARK_ICONS[theme] || THEME_WORDMARK_ICONS.dark;
+  const candidates = [];
+  if (process.resourcesPath) {
+    candidates.push(path.join(process.resourcesPath, 'icons', 'themes', file));
+  }
+  candidates.push(path.join(__dirname, 'icons', 'themes', file));
+  for (const iconPath of candidates) {
+    try {
+      if (fs.existsSync(iconPath)) return iconPath;
+    } catch (_) {}
+  }
+  return null;
+}
+
+function pathsEqual(a, b) {
+  if (!a || !b) return false;
+  try {
+    return path.normalize(a).toLowerCase() === path.normalize(b).toLowerCase();
+  } catch (_) {
+    return false;
+  }
+}
 
 /**
- * Portable builds have no installer UI, so NSIS createDesktopShortcut never runs.
- * On first packaged Windows launch, create a desktop .lnk once (userData flag).
+ * Tell the shell this one shortcut changed. A short-lived process, not a
+ * resident daemon, and it is not registered to start with Windows.
+ */
+function notifyShortcutChanged(shortcutPath) {
+  if (process.platform !== 'win32' || !shortcutPath) return;
+  const ps = [
+    "$p = $env:GILIL_NOTIFY_PATH",
+    "if ([string]::IsNullOrEmpty($p)) { exit 0 }",
+    "Add-Type -TypeDefinition @'",
+    "using System;",
+    "using System.Runtime.InteropServices;",
+    "public static class GililItemNotify {",
+    "  [DllImport(\"shell32.dll\", CharSet=CharSet.Unicode)]",
+    "  public static extern void SHChangeNotify(int wEventId, uint uFlags, string dwItem1, System.IntPtr dwItem2);",
+    "}",
+    "'@",
+    `[GililItemNotify]::SHChangeNotify(${SHCNE_UPDATEITEM}, ${SHCNF_PATHW_FLUSH}, $p, [IntPtr]::Zero)`,
+  ].join("\n");
+  try {
+    const child = spawn(
+      "powershell.exe",
+      ["-NoProfile", "-NonInteractive", "-Command", ps],
+      {
+        windowsHide: true,
+        stdio: "ignore",
+        env: { ...process.env, GILIL_NOTIFY_PATH: shortcutPath },
+      }
+    );
+    child.unref();
+    child.on("error", () => {});
+  } catch (e) {
+    console.warn("[gilil-desktop] shortcut notify failed:", e.message);
+  }
+}
+
+/**
+ * One desktop shortcut, "Gilil On.lnk", using the in-app wordmark for the
+ * saved theme. Rewriting the same path does not create a second icon.
+ * The old desktop-shortcut-created.flag is ignored and removed.
  */
 function ensureDesktopShortcutOnce() {
-  if (process.platform !== 'win32') return;
+  if (process.platform !== "win32") return;
   if (!app.isPackaged) return;
 
-  const flagPath = path.join(app.getPath('userData'), DESKTOP_SHORTCUT_FLAG);
   try {
-    if (fs.existsSync(flagPath)) return;
-  } catch (_) {
-    return;
-  }
+    const staleFlag = path.join(app.getPath("userData"), "desktop-shortcut-created.flag");
+    if (fs.existsSync(staleFlag)) fs.unlinkSync(staleFlag);
+  } catch (_) {}
 
   let desktopDir;
   try {
-    desktopDir = app.getPath('desktop');
+    desktopDir = app.getPath("desktop");
   } catch (e) {
-    console.warn('[gilil-desktop] desktop path unavailable:', e.message);
+    console.warn("[gilil-desktop] desktop path unavailable:", e.message);
     return;
   }
 
-  const shortcutPath = path.join(desktopDir, 'Gilil On.lnk');
-  const iconPath = (() => {
-    const ico = path.join(__dirname, 'icons', 'gilil-on-windows.ico');
-    try {
-      if (fs.existsSync(ico)) return ico;
-    } catch (_) {}
-    return process.execPath;
-  })();
+  const theme = readSavedSplashTheme();
+  const shortcutPath = path.join(desktopDir, "Gilil On.lnk");
+  const iconPath = resolveThemeWordmarkIcon(theme) || process.execPath;
+  const details = {
+    target: process.execPath,
+    cwd: path.dirname(process.execPath),
+    args: "",
+    description: "Gilil On",
+    icon: iconPath,
+    iconIndex: 0,
+    appUserModelId: "com.gilil.on",
+  };
 
-  let created = false;
+  let exists = false;
   try {
-    created = shell.writeShortcutLink(shortcutPath, 'create', {
-      target: process.execPath,
-      cwd: path.dirname(process.execPath),
-      args: '',
-      description: 'Gilil On',
-      icon: iconPath,
-      iconIndex: 0,
-      appUserModelId: 'com.gilil.on',
-    });
-  } catch (e) {
-    console.warn('[gilil-desktop] writeShortcutLink failed:', e.message);
-    return;
-  }
-
-  if (!created) {
-    // If link already exists, still mark done so we do not retry forever.
+    exists = fs.existsSync(shortcutPath);
+  } catch (_) {}
+  if (exists && typeof shell.readShortcutLink === "function") {
     try {
-      if (fs.existsSync(shortcutPath)) created = true;
+      const cur = shell.readShortcutLink(shortcutPath);
+      if (
+        cur &&
+        pathsEqual(cur.target, process.execPath) &&
+        pathsEqual(cur.icon, iconPath) &&
+        (cur.iconIndex || 0) === 0
+      ) {
+        return;
+      }
     } catch (_) {}
   }
 
-  if (created) {
-    try {
-      fs.mkdirSync(path.dirname(flagPath), { recursive: true });
-      fs.writeFileSync(flagPath, `created=${new Date().toISOString()}\npath=${shortcutPath}\n`, 'utf8');
-      console.log(`[gilil-desktop] desktop shortcut ok: ${shortcutPath}`);
-    } catch (e) {
-      console.warn('[gilil-desktop] shortcut flag write failed:', e.message);
-    }
-  } else {
-    console.warn('[gilil-desktop] desktop shortcut not created');
+  let ok = false;
+  try {
+    ok = shell.writeShortcutLink(shortcutPath, exists ? "replace" : "create", details);
+  } catch (e) {
+    console.warn("[gilil-desktop] writeShortcutLink failed:", e.message);
   }
+  if (!ok) {
+    try {
+      ok = shell.writeShortcutLink(shortcutPath, "create", details);
+    } catch (e) {
+      console.warn("[gilil-desktop] writeShortcutLink create failed:", e.message);
+    }
+  }
+  if (!ok) {
+    console.warn("[gilil-desktop] desktop shortcut not written:", shortcutPath);
+    return;
+  }
+  console.log(`[gilil-desktop] desktop shortcut ${theme}: ${shortcutPath}`);
+  notifyShortcutChanged(shortcutPath);
 }
 
 
@@ -911,8 +1102,8 @@ async function createWindow() {
 
   console.log(`[gilil-desktop] serverRoot=${serverRoot} port=${port}`);
 
-  startServer(serverRoot, port);
-  await waitForPort(port);
+  const child = startServer(serverRoot, port);
+  await waitForPort(port, 30000, child);
 
   const iconInfo = resolveAppIcon();
 

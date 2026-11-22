@@ -126,6 +126,16 @@ const wss = new WebSocketServer({ server, path: '/ws' });
 attachWebSocket(wss);
 
 // Bind loopback only — desktop shell must not expose the API on LAN.
+server.on('error', (err) => {
+  const code = err && err.code ? String(err.code) : '';
+  let text = `[gilil-on] server error${code ? ` ${code}` : ''}: ${err && err.message ? err.message : err}\n`;
+  if (code === 'EADDRINUSE') {
+    text += `[gilil-on] EADDRINUSE: 127.0.0.1:${PORT} is already in use\n`;
+  }
+  process.stderr.write(text, () => {
+    process.exit(1);
+  });
+});
 server.listen(PORT, '127.0.0.1', () => {
   console.log(`[gilil-on] http://127.0.0.1:${PORT}  ws://127.0.0.1:${PORT}/ws`);
   console.log(`[gilil-on] db=${DB_PATH}`);
