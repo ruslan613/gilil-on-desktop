@@ -1,6 +1,6 @@
 {
   "name": "gilil-on-desktop",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "description": "Gilil On \u2014 Windows desktop shell (Electron) + Stage 2 server",
   "main": "main.js",
   "author": "Gilil",
@@ -18,7 +18,8 @@
     "predist:portable": "node scripts/sync-manual-docs.js && npm run prepare:server-resources",
     "dist:portable": "electron-builder --win portable",
     "postdist:portable": "node scripts/restore-linux-native.js",
-    "smoke:update": "node scripts/smoke-auto-update.js"
+    "smoke:update": "node scripts/smoke-auto-update.js",
+    "test:pack-files": "node scripts/test-packaged-main-files.js"
   },
   "dependencies": {
     "electron-updater": "^6.8.11"
@@ -43,7 +44,9 @@
       "icons/gilil-on-windows.ico",
       "icons/gilil-on-512.png",
       "icons/tray-icon.png",
-      "auto-updater.js"
+      "auto-updater.js",
+      "update-schedule.js",
+      "window-chrome.js"
     ],
     "extraResources": [
       {

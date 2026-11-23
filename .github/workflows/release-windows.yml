@@ -25,6 +25,11 @@ jobs:
             package-lock.json
             server/package-lock.json
 
+      # build.files is an allowlist. 1.1.4 packed auto-updater.js and omitted
+      # update-schedule.js, so the main process died before the server listened.
+      - name: Check packaged main-process modules
+        run: node scripts/test-packaged-main-files.js
+
       - name: Install root dependencies
         run: npm ci
 
