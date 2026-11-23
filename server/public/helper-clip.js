@@ -94,6 +94,10 @@
         lead: 'Сейчас открыт журнал.',
         steps: ['Журнал показывает уже записанные действия. Новые записи сами появляются из работы в программе.'],
       },
+      other: {
+        lead: 'Подсказка относится только к открытому экрану.',
+        steps: ['Пользуйтесь кнопками, которые сейчас видны. Отдельного перехода в другой раздел здесь нет.'],
+      },
     },
   };
 
@@ -177,6 +181,10 @@
       lead: 'The activity journal is open.',
       steps: ['The journal lists actions already recorded. New rows come from work in the app.'],
     },
+    other: {
+      lead: 'This tip is only about the screen that is open.',
+      steps: ['Use the buttons visible on this screen. This tip does not switch to another section.'],
+    },
   };
 
   COPY.zh = {
@@ -209,11 +217,15 @@
     usefulness: { lead: '当前是贡献。', steps: ['本屏上的评价属于当前资料。'] },
     director: { lead: '当前是总监负荷。', steps: ['列表显示下属计划。只有错过计划时才能升级。'] },
     activity: { lead: '当前是日志。', steps: ['日志显示已经记录的操作。新记录来自程序中的工作。'] },
+    other: {
+      lead: '提示只针对当前打开的屏幕。',
+      steps: ['请使用屏幕上能看见的按钮。这里不会转到其他栏目。'],
+    },
   };
 
   function suggestions(section, lang) {
     const pack = COPY[lang] || COPY.ru;
-    const block = pack[section] || pack.chats;
+    const block = pack[section] || pack.other;
     return {
       title: pack.title,
       close: pack.close,

@@ -25,7 +25,7 @@ assert.strictEqual(feedUrlAllowed('not a url'), false);
 check('only HTTPS or localhost may override the release feed', true);
 
 const pkg = require('../package.json');
-check('version stays 1.1.3 until the release is asked for', pkg.version === '1.1.3');
+check('package version is 1.1.4', pkg.version === '1.1.4');
 check('uninstall still keeps AppData', pkg.build.nsis.deleteAppDataOnUninstall === false);
 
 if (failed) {

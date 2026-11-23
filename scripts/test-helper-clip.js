@@ -30,7 +30,8 @@ check('personal tip names the Who card gear', personal.lead.indexOf('Лична�
 check('mail tip is not the personal tip', mail.lead !== personal.lead && mail.steps[0].indexOf('письм') >= 0);
 check('english chats tip stays on conversations', chats.lead.indexOf('Projects') >= 0 && chats.steps.some((s) => s.indexOf('conversation') >= 0));
 check('chinese personal tip stays on the Who card', helper.suggestions('personal', 'zh').steps[0].indexOf('齿轮') >= 0);
-check('unknown section falls back to the open chat screen', helper.suggestions('not-a-section', 'ru').lead === helper.suggestions('chats', 'ru').lead);
+const unknown = helper.suggestions('not-a-section', 'ru');
+check('unknown screen stays neutral', unknown.lead.indexOf('открытому экрану') >= 0 && unknown.lead !== helper.suggestions('chats', 'ru').lead && unknown.steps.join(' ').indexOf('Проект') < 0);
 
 if (failed) {
   console.error(failed + ' failed');
