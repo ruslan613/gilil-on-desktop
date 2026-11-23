@@ -5078,7 +5078,14 @@
     if (!panel) return;
     panel.classList.toggle('hidden', !open);
     panel.hidden = !open;
-    if (btn) btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    if (btn) {
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      if (open) {
+        btn.classList.remove('is-attention');
+        void btn.offsetWidth;
+        btn.classList.add('is-attention');
+      }
+    }
     if (open) refreshHelper();
   }
 
@@ -5588,6 +5595,9 @@
       openBtn.addEventListener('click', () => {
         const panel = document.getElementById('helper-panel');
         setHelperOpen(!(panel && !panel.hidden));
+      });
+      openBtn.addEventListener('animationend', (ev) => {
+        if (ev.animationName === 'clippy-wave') openBtn.classList.remove('is-attention');
       });
     }
     if (closeBtn) closeBtn.addEventListener('click', () => setHelperOpen(false));

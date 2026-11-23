@@ -704,23 +704,48 @@ html.win-caption #app-shell::before {
 }
 .helper-clip {
   position: fixed;
-  left: 16px;
-  bottom: 16px;
+  left: calc(var(--sidebar-w) + 12px);
+  bottom: 12px;
   z-index: 36;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 8px;
-  max-width: min(320px, calc(100vw - 32px));
+  max-width: min(320px, calc(100vw - var(--sidebar-w) - 28px));
   pointer-events: none;
 }
 .helper-clip.hidden, .helper-clip[hidden] { display: none !important; }
 .helper-open, .helper-panel, .helper-panel button { pointer-events: auto; }
 .helper-open {
-  width: 40px; height: 40px; border-radius: 12px;
-  border: 1px solid var(--line); background: var(--bg-elev); color: var(--ink);
-  display: grid; place-items: center; cursor: pointer;
-  box-shadow: var(--elev-out-soft);
+  width: 80px; height: 100px; padding: 0; border: 0; background: transparent;
+  color: var(--ink); cursor: pointer;
+}
+.clippy { display: block; overflow: visible; }
+.clippy-bob { transform-origin: 64px 124px; transform-box: view-box; animation: clippy-idle 3.2s ease-in-out infinite; }
+.clippy-wire { fill: none; stroke: #e7eaef; stroke-width: 8; stroke-linecap: round; stroke-linejoin: round; }
+.clippy-wire-edge { stroke: #5c616b; stroke-width: 12; }
+.clippy-sclera { fill: #fff; }
+.clippy-pupil { fill: #1c1917; }
+.clippy-brow { fill: none; stroke: #2c2824; stroke-width: 2.2; stroke-linecap: round; }
+.clippy-lid { fill: #8b909a; transform-origin: center top; transform-box: fill-box; transform: scaleY(0.14); animation: clippy-blink 4.6s infinite; }
+.helper-open.is-attention .clippy-bob { animation: clippy-wave 0.7s ease; }
+@keyframes clippy-idle {
+  0%, 100% { transform: rotate(-4deg); }
+  50% { transform: rotate(5deg); }
+}
+@keyframes clippy-blink {
+  0%, 42%, 50%, 100% { transform: scaleY(0.14); }
+  45% { transform: scaleY(1); }
+}
+@keyframes clippy-wave {
+  0% { transform: rotate(-4deg); }
+  35% { transform: rotate(14deg) translateY(-3px); }
+  70% { transform: rotate(-8deg); }
+  100% { transform: rotate(-4deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .clippy-bob, .clippy-lid { animation: none !important; }
+  .clippy-lid { transform: scaleY(0.14); }
 }
 .helper-panel {
   background: var(--bg-elev); color: var(--ink);

@@ -799,8 +799,25 @@
     <ul id="helper-list"></ul>
   </div>
   <button type="button" id="helper-open" class="helper-open" aria-expanded="false" aria-controls="helper-panel" title="Подсказка по этому экрану">
-    <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
-      <path d="M16.2 7.2 8.6 14.8a2.6 2.6 0 1 0 3.7 3.7l6.2-6.2a4.2 4.2 0 0 0-5.9-5.9L6.2 12.8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    <svg class="clippy" viewBox="0 0 120 150" width="72" height="90" aria-hidden="true">
+      <g class="clippy-bob">
+        <path class="clippy-wire clippy-wire-edge" d="M78 122 C78 96 94 78 94 56 C94 22 26 18 26 56 C26 84 46 94 48 112 C50 132 74 136 76 116 C78 100 64 96 60 110"/>
+        <path class="clippy-wire" d="M78 122 C78 96 94 78 94 56 C94 22 26 18 26 56 C26 84 46 94 48 112 C50 132 74 136 76 116 C78 100 64 96 60 110"/>
+        <g class="clippy-eyes">
+          <g class="clippy-eye">
+            <ellipse class="clippy-sclera" cx="46" cy="50" rx="7" ry="8"/>
+            <circle class="clippy-pupil" cx="48" cy="52" r="3"/>
+            <ellipse class="clippy-lid" cx="46" cy="50" rx="7.4" ry="8.4"/>
+          </g>
+          <g class="clippy-eye">
+            <ellipse class="clippy-sclera" cx="70" cy="50" rx="7" ry="8"/>
+            <circle class="clippy-pupil" cx="72" cy="52" r="3"/>
+            <ellipse class="clippy-lid" cx="70" cy="50" rx="7.4" ry="8.4"/>
+          </g>
+        </g>
+        <path class="clippy-brow" d="M38 38 Q46 33 54 38"/>
+        <path class="clippy-brow" d="M62 38 Q70 33 78 38"/>
+      </g>
     </svg>
   </button>
 </div>
