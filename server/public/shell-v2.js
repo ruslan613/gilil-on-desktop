@@ -246,6 +246,13 @@
       "update.ready": "更新已下载",
       "update.install": "安装并重新启动",
       "update.error": "更新错误：{err}",
+      "settings.check_update": "检查更新",
+      "settings.update_checking": "正在检查是否有新版本…",
+      "settings.update_none": "没有新版本。窗口没有重新加载。",
+      "settings.update_found": "发现版本 v{ver}。尚未开始下载。",
+      "settings.update_found_plain": "发现新版本。尚未开始下载。",
+      "settings.update_desktop_only": "版本检查只在已安装的程序中可用。界面没有重新加载。",
+      "settings.update_unavailable": "版本检查未执行（{reason}）。没有安装新版本。",
       "notif.empty": "暂时安静",
       "notif.empty_sub": "新消息、任务和账单会出现在这里",
       "notif.tab.all": "全部",
@@ -791,6 +798,13 @@
       "update.ready": "Обновление загружено",
       "update.install": "Установить и перезапустить",
       "update.error": "Ошибка обновления: {err}",
+      "settings.check_update": "Проверить обновления",
+      "settings.update_checking": "Проверяем, есть ли новая версия…",
+      "settings.update_none": "Новой версии нет. Окно не перезагружалось.",
+      "settings.update_found": "Найдена версия v{ver}. Загрузка не начата.",
+      "settings.update_found_plain": "Найдена новая версия. Загрузка не начата.",
+      "settings.update_desktop_only": "Проверка версии есть только в установленном приложении. Интерфейс не перезагружался.",
+      "settings.update_unavailable": "Проверка версии не выполнена ({reason}). Новая версия не устанавливалась.",
       "notif.empty": "Пока тихо",
       "notif.empty_sub": "Новые сообщения, задачи и счета появятся здесь",
       "notif.tab.all": "Все",
@@ -1336,6 +1350,13 @@
       "update.ready": "Update downloaded",
       "update.install": "Install and restart",
       "update.error": "Update error: {err}",
+      "settings.check_update": "Check for updates",
+      "settings.update_checking": "Checking for a new version…",
+      "settings.update_none": "No newer version. The window was not reloaded.",
+      "settings.update_found": "Version v{ver} found. Download has not started.",
+      "settings.update_found_plain": "A newer version was found. Download has not started.",
+      "settings.update_desktop_only": "Version check runs only in the installed app. The interface was not reloaded.",
+      "settings.update_unavailable": "Version check did not run ({reason}). No new version was installed.",
       "notif.empty": "All quiet",
       "notif.empty_sub": "New messages, tasks and invoices will show up here",
       "notif.tab.all": "All",
@@ -5385,6 +5406,12 @@
     const theme = THEME_IDS.includes(id) ? id : 'dark';
     currentTheme = theme;
     document.documentElement.dataset.theme = theme;
+    const brandIcon = document.getElementById('brand-theme-icon');
+    const themeIcon = { dark: '/icons/themes/gililon-dark.svg', bitrix: '/icons/themes/gililon-bitrix.svg', cyan: '/icons/themes/gililon-cyan.svg' };
+    if (brandIcon) brandIcon.src = themeIcon[theme] || themeIcon.dark;
+    document.querySelectorAll('link[rel="icon"], link[rel="apple-touch-icon"]').forEach((link) => {
+      link.href = (themeIcon[theme] || themeIcon.dark).replace('.svg', '.png');
+    });
     try { localStorage.setItem(THEME_KEY, theme); } catch (_) {}
     // Push theme to same-origin iframes (SRM TV) immediately.
     pushThemeToFrames(theme);
@@ -7009,7 +7036,68 @@
     }
   }
 
+  let settingsUpdateAsked = false;
+  let settingsUpdateBusy = false;
+
+  function showSettingsUpdateStatus(text) {
+    const el = document.getElementById('settings-update-status');
+    if (!el) return;
+    el.textContent = text || '';
+    el.hidden = !text;
+  }
+
+  function settingsUpdateMessage(st) {
+    const status = st && st.status;
+    if (!st || !st.enabled || status === 'skipped') {
+      const reason = (st && (st.reason || status)) || 'disabled';
+      return tUpdate('settings.update_unavailable', { reason: reason });
+    }
+    if (status === 'checking') return tUpdate('settings.update_checking');
+    if (status === 'not-available' || status === 'idle') return tUpdate('settings.update_none');
+    if (status === 'available') {
+      return st.version
+        ? tUpdate('settings.update_found', { ver: st.version })
+        : tUpdate('settings.update_found_plain');
+    }
+    if (status === 'downloading') {
+      const pct = Math.max(0, Math.min(100, Math.round((st.progress && st.progress.percent) || 0)));
+      return tUpdate('update.downloading', { pct: pct });
+    }
+    if (status === 'downloaded') {
+      return st.version ? tUpdate('update.ready') + ' · v' + st.version : tUpdate('update.ready');
+    }
+    if (status === 'error') return tUpdate('update.error', { err: String(st.error || '').slice(0, 120) });
+    return tUpdate('settings.update_unavailable', { reason: status || 'unknown' });
+  }
+
+  async function onSettingsCheckUpdate() {
+    if (settingsUpdateBusy) return;
+    settingsUpdateBusy = true;
+    settingsUpdateAsked = true;
+    try {
+      if (!(window.gililDesktop && typeof window.gililDesktop.checkForUpdates === 'function')) {
+        showSettingsUpdateStatus(tUpdate('settings.update_desktop_only'));
+        return;
+      }
+      showSettingsUpdateStatus(tUpdate('settings.update_checking'));
+      const result = await window.gililDesktop.checkForUpdates();
+      const st = (result && result.state) ? result.state : (result || {});
+      if (result && result.ok === false && result.error && (!st || st.status !== 'error')) {
+        showSettingsUpdateStatus(tUpdate('update.error', { err: String(result.error).slice(0, 120) }));
+        return;
+      }
+      showSettingsUpdateStatus(settingsUpdateMessage(st));
+      if (st) renderUpdateStatus(st);
+    } catch (err) {
+      showSettingsUpdateStatus(tUpdate('update.error', { err: String((err && err.message) || err).slice(0, 120) }));
+    } finally {
+      settingsUpdateBusy = false;
+    }
+  }
+
   function bindUpdateUi() {
+    const settingsBtn = document.getElementById('btn-settings-check-update');
+    if (settingsBtn) settingsBtn.addEventListener('click', () => { onSettingsCheckUpdate().catch(() => {}); });
     if (!(window.gililDesktop && window.gililDesktop.isDesktop)) return;
     const btnDl = document.getElementById('btn-update-download');
     const btnInst = document.getElementById('btn-update-install');
@@ -7035,7 +7123,11 @@
       });
     }
     if (typeof window.gililDesktop.onUpdateStatus === 'function') {
-      window.gililDesktop.onUpdateStatus((payload) => renderUpdateStatus(payload || {}));
+      window.gililDesktop.onUpdateStatus((payload) => {
+        const st = payload || {};
+        renderUpdateStatus(st);
+        if (settingsUpdateAsked) showSettingsUpdateStatus(settingsUpdateMessage(st));
+      });
     }
     if (typeof window.gililDesktop.getUpdateStatus === 'function') {
       window.gililDesktop.getUpdateStatus().then((st) => renderUpdateStatus(st || {})).catch(() => {});

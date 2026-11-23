@@ -1,8 +1,9 @@
 'use strict';
 
 /**
- * Gilil On — quiet auto-update via electron-updater (NSIS / GitHub Releases).
- * Portable builds skip auto-install (no installer). Dev skips unless GILIL_UPDATE_FORCE=1
+ * Gilil On — manual update check via electron-updater (NSIS / GitHub Releases).
+ * Nothing is checked, downloaded, or installed until the user presses a button.
+ * Portable builds keep the updater disabled. Dev skips unless GILIL_UPDATE_FORCE=1
  * or GILIL_UPDATE_FEED_URL is set (smoke / mock feed).
  */
 
@@ -211,7 +212,7 @@ function setupAutoUpdater(opts) {
   state.enabled = true;
   state.reason = null;
   u.autoDownload = false;
-  u.autoInstallOnAppQuit = true;
+  u.autoInstallOnAppQuit = false;
 
   if (!app.isPackaged) {
     // Allow check against mock / custom feed in smoke & local tests
@@ -296,12 +297,6 @@ function setupAutoUpdater(opts) {
   });
 
   wireIpc();
-
-  const delayMs = Number(process.env.GILIL_UPDATE_CHECK_DELAY_MS) || 4000;
-  setTimeout(() => {
-    quietCheck().catch(() => {});
-  }, delayMs);
-
   return snapshot();
 }
 

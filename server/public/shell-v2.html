@@ -26,6 +26,10 @@
         if (q && ok[q]) id = q;
         if (!ok[id]) id = 'dark';
         document.documentElement.dataset.theme = id;
+        var themeIcons = { dark: '/icons/themes/gililon-dark.png', bitrix: '/icons/themes/gililon-bitrix.png', cyan: '/icons/themes/gililon-cyan.png' };
+        document.querySelectorAll('link[rel="icon"], link[rel="apple-touch-icon"]').forEach(function (link) {
+          if (themeIcons[id]) link.href = themeIcons[id];
+        });
         document.documentElement.dataset.surface = 'rich';
         try { localStorage.setItem('gilil_theme', id); } catch (_) {}
       } catch (e) {
@@ -91,7 +95,7 @@
 <div id="app-shell" class="hidden">
   <header class="appbar">
     <div class="brand" title="Gilil On">
-      <div class="mark" aria-label="GililOn"><span class="mark-gilil">Gilil</span><span class="mark-on">On</span></div>
+      <div class="mark" aria-label="GililOn"><img id="brand-theme-icon" class="brand-theme-icon" alt="" src="/icons/themes/gililon-dark.svg" width="36" height="36"><span class="mark-gilil">Gilil</span><span class="mark-on">On</span></div>
     </div>
 
     <div class="nav-stack" id="nav-stack">
@@ -134,6 +138,11 @@
           <button type="button" class="btn ghost settings-link-btn" id="btn-settings-usefulness" data-i18n="nav.usefulness" style="display:block;width:100%;text-align:left">★ Полезность</button>
           <button type="button" class="btn ghost settings-link-btn" id="btn-settings-director" data-i18n="nav.director_workload" style="display:block;width:100%;text-align:left">▣ Директор · нагрузка</button>
           <a class="btn ghost settings-link-btn" id="btn-settings-als" href="/als-studio.html" style="display:block;width:100%;text-align:left;text-decoration:none">✦ AI Lighting Studio</a>
+          <button type="button" class="btn ghost settings-link-btn" id="btn-settings-check-update" style="display:block;width:100%;text-align:left">
+            <span data-i18n="settings.check_update">Проверить обновления</span>
+            <span class="settings-update-new">new</span>
+          </button>
+          <p class="settings-update-status" id="settings-update-status" role="status" aria-live="polite" hidden></p>
           <button type="button" class="btn ghost settings-link-btn" id="btn-settings-manual" data-i18n="settings.manual" style="display:block;width:100%;text-align:left">📖 Инструкция по Gilil On</button>
         </div>
         <div class="theme-swatches" id="theme-swatches" role="listbox" aria-label="Темы">

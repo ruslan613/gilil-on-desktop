@@ -2594,6 +2594,17 @@ html:not([data-surface]) .chat-item .cav {
   font-weight: 600;
 }
 .settings-link-btn { justify-content: flex-start !important; }
+#btn-settings-check-update { position: relative; overflow: visible; padding-right: 46px; }
+#btn-settings-check-update .settings-update-new {
+  position: absolute; top: 3px; right: 8px; background: #d40000; color: #fff;
+  font-size: 9px; font-weight: 700; line-height: 1; padding: 2px 4px; border-radius: 3px; pointer-events: none;
+}
+.settings-update-status { margin: 0 2px 2px; font-size: 12px; line-height: 1.35; color: var(--muted); text-align: left; }
+.settings-update-status[hidden] { display: none !important; }
+.brand .mark:has(.brand-theme-icon) { background: transparent !important; box-shadow: none !important; padding: 0 !important; width: 36px !important; height: 36px !important; }
+.brand .mark .brand-theme-icon { width: 36px; height: 36px; display: block; }
+.brand .mark:has(.brand-theme-icon) .mark-gilil,
+.brand .mark:has(.brand-theme-icon) .mark-on { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 
 
 /* Статус выполнения плана (директоры) */
