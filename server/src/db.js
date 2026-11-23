@@ -340,6 +340,11 @@ function migrate(database) {
     console.log('[db] migrated: users.hire_date');
   }
   database.exec(`UPDATE users SET hire_date = date(created_at) WHERE hire_date IS NULL OR hire_date = ''`);
+
+  const colsProfile = database.prepare('PRAGMA table_info(users)').all().map((c) => c.name);
+  if (!colsProfile.includes('profile_company')) {
+    database.exec('ALTER TABLE users ADD COLUMN profile_company TEXT');
+  }
 }
 
 function seed(database) {

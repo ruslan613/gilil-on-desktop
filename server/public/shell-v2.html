@@ -244,9 +244,12 @@
 
           <div class="personal-grid">
             <div>
-              <div class="card" style="margin-bottom:14px">
-                <h2 data-i18n="personal.who">我是谁</h2>
-                <div class="who">
+              <div class="card who-card" id="who-card" style="margin-bottom:14px">
+                <div class="who-card-head">
+                  <h2 data-i18n="personal.who">我是谁</h2>
+                  <button type="button" class="theme-gear who-card-gear" id="btn-who-edit" aria-expanded="false" aria-controls="who-edit-form" data-i18n-title="personal.edit" data-i18n-aria="personal.edit" title="Изменить" aria-label="Изменить">⚙</button>
+                </div>
+                <div class="who" id="who-view">
                   <div class="big-av" id="who-av">АР</div>
                   <dl>
                     <dt data-i18n="personal.lbl_name">姓名</dt><dd id="who-name">阿列克谢·彼得罗夫</dd>
@@ -256,6 +259,19 @@
                     <dt data-i18n="personal.lbl_login">登录名</dt><dd id="who-login">ru1（演示）</dd>
                   </dl>
                 </div>
+                <form id="who-edit-form" class="who-edit hidden" hidden>
+                  <label class="fld"><span data-i18n="personal.lbl_name">姓名</span><input type="text" id="who-edit-name" maxlength="120" required /></label>
+                  <label class="fld"><span data-i18n="personal.lbl_company">公司</span><input type="text" id="who-edit-company" maxlength="120" /></label>
+                  <p class="who-protected"><span data-i18n="personal.lbl_role">角色</span> <strong id="who-edit-role"></strong></p>
+                  <p class="who-protected"><span data-i18n="personal.lbl_team">团队 / 城市</span> <strong id="who-edit-team"></strong></p>
+                  <p class="who-protected"><span data-i18n="personal.lbl_login">登录名</span> <strong id="who-edit-login"></strong></p>
+                  <p class="who-protected-note" data-i18n="personal.protected_note">Роль, команда и логин здесь не меняются.</p>
+                  <div class="who-edit-actions">
+                    <button type="submit" class="btn" id="who-edit-save" data-i18n="personal.save">Сохранить</button>
+                    <button type="button" class="btn ghost" id="who-edit-cancel" data-i18n="personal.cancel">Отмена</button>
+                  </div>
+                  <p id="who-edit-status" class="who-edit-status" role="status"></p>
+                </form>
               </div>
               <div class="card" id="director-rating-card" style="margin-bottom:14px">
                 <h2 data-i18n="personal.director_rating">Оценка директора</h2>

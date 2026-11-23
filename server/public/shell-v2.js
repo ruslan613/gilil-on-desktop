@@ -186,6 +186,10 @@
       "nav.tier.more": "更多",
       "nav.tier.team": "团队",
       "personal.who": "我是谁",
+      "personal.edit": "编辑",
+      "personal.save": "保存",
+      "personal.cancel": "取消",
+      "personal.protected_note": "角色、团队和登录名不能在这里修改。",
       "personal.lbl_name": "姓名",
       "personal.lbl_role": "角色",
       "personal.lbl_company": "公司",
@@ -742,6 +746,10 @@
       "nav.tier.more": "Ещё",
       "nav.tier.team": "Команда",
       "personal.who": "Кто я",
+      "personal.edit": "Изменить",
+      "personal.save": "Сохранить",
+      "personal.cancel": "Отмена",
+      "personal.protected_note": "Роль, команда и логин здесь не меняются.",
       "personal.lbl_name": "Имя",
       "personal.lbl_role": "Роль",
       "personal.lbl_company": "Компания",
@@ -1298,6 +1306,10 @@
       "nav.tier.more": "More",
       "nav.tier.team": "Team",
       "personal.who": "Who I am",
+      "personal.edit": "Edit",
+      "personal.save": "Save",
+      "personal.cancel": "Cancel",
+      "personal.protected_note": "Role, team and login cannot be changed here.",
       "personal.lbl_name": "Name",
       "personal.lbl_role": "Role",
       "personal.lbl_company": "Company",
@@ -2432,8 +2444,24 @@
     }
   }
 
-  function applyRoleUI() {
+  let serverProfile = null;
+
+  function shownProfile() {
     const u = DEMO_USER();
+    const saved = serverProfile || {};
+    return {
+      name: saved.display_name || u.name,
+      short: saved.display_name ? String(saved.display_name).split('·')[0].trim() : u.short,
+      role: u.role,
+      company: saved.profile_company || u.company,
+      team: u.team,
+      login: saved.username || u.login,
+      initials: u.initials,
+    };
+  }
+
+  function applyRoleUI() {
+    const u = shownProfile();
     const av = $('#user-av');
     const name = $('#user-name');
     const role = $('#user-role');
@@ -5134,6 +5162,7 @@
     openTeamChats('projects');
     applyRoleUI();
     applyLang(currentLang, { silent: true });
+    if (typeof loadOwnProfile === 'function') loadOwnProfile();
     toast(opts.toast || tf('toast.entered', { login: DEMO_USER().login, short: DEMO_USER().short, role: DEMO_USER().role }));
     setTimeout(() => {
       if (!beepPlayed && overdueCount() > 0) {
@@ -5437,8 +5466,81 @@
     if (open && typeof openProfileCard === 'function') openProfileCard(false);
   }
 
+  function setWhoEditing(open) {
+    const form = document.getElementById('who-edit-form');
+    const view = document.getElementById('who-view');
+    const btn = document.getElementById('btn-who-edit');
+    if (!form || !view) return;
+    if (open) {
+      const shown = shownProfile();
+      const nameEl = document.getElementById('who-edit-name');
+      const companyEl = document.getElementById('who-edit-company');
+      if (nameEl) nameEl.value = shown.name || '';
+      if (companyEl) companyEl.value = shown.company || '';
+      const roleEl = document.getElementById('who-edit-role');
+      const teamEl = document.getElementById('who-edit-team');
+      const loginEl = document.getElementById('who-edit-login');
+      if (roleEl) roleEl.textContent = shown.role || '';
+      if (teamEl) teamEl.textContent = shown.team || '';
+      if (loginEl) loginEl.textContent = shown.login || '';
+      const status = document.getElementById('who-edit-status');
+      if (status) status.textContent = '';
+    }
+    form.classList.toggle('hidden', !open);
+    form.hidden = !open;
+    view.classList.toggle('hidden', open);
+    if (btn) btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+
+  async function loadOwnProfile() {
+    const token = getToken();
+    if (!token) return;
+    try {
+      const r = await fetch('/api/me', { headers: { Authorization: 'Bearer ' + token, Accept: 'application/json' } });
+      const data = await r.json().catch(() => ({}));
+      if (!r.ok || !data.user) return;
+      serverProfile = data.user;
+      applyRoleUI();
+    } catch (_) {}
+  }
+
+  async function saveOwnProfile(ev) {
+    if (ev && ev.preventDefault) ev.preventDefault();
+    const token = getToken();
+    const status = document.getElementById('who-edit-status');
+    if (!token) {
+      if (status) status.textContent = t('personal.protected_note');
+      return;
+    }
+    const display_name = (document.getElementById('who-edit-name').value || '').trim();
+    const profile_company = (document.getElementById('who-edit-company').value || '').trim();
+    const r = await fetch('/api/me/profile', {
+      method: 'PATCH',
+      headers: { Authorization: 'Bearer ' + token, Accept: 'application/json', 'Content-Type': 'application/json' },
+      body: JSON.stringify({ display_name: display_name, profile_company: profile_company }),
+    });
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok || !data.user) {
+      if (status) status.textContent = (data && data.error) || 'error';
+      return;
+    }
+    serverProfile = data.user;
+    applyRoleUI();
+    setWhoEditing(false);
+  }
+
+  function bindWhoEditor() {
+    const openBtn = document.getElementById('btn-who-edit');
+    const form = document.getElementById('who-edit-form');
+    const cancel = document.getElementById('who-edit-cancel');
+    if (openBtn) openBtn.addEventListener('click', () => setWhoEditing(true));
+    if (cancel) cancel.addEventListener('click', () => setWhoEditing(false));
+    if (form) form.addEventListener('submit', (ev) => { saveOwnProfile(ev).catch(() => {}); });
+  }
+
   function bind() {
     bindOtpLogin();
+    bindWhoEditor();
     const passwordForm = document.getElementById('password-form');
     if (passwordForm) passwordForm.addEventListener('submit', (ev) => { loginWithPassword(ev); });
 

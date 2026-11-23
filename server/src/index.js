@@ -10,6 +10,7 @@ require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
 const { initDb, DB_PATH } = require('./db');
 const { resolveKey } = require('./crypto');
 const { mountAuthRoutes, authMiddleware } = require('./auth');
+const { mountProfileRoutes } = require('./profile');
 const { mountChatRoutes, attachWebSocket, sendToUser } = require('./chat');
 const { mountTaskRoutes } = require('./tasks');
 const { mountSearchRoutes } = require('./search');
@@ -70,6 +71,7 @@ app.get('/api/health', (_req, res) => {
 });
 
 mountAuthRoutes(app);
+mountProfileRoutes(app, authMiddleware);
 mountSmtpAllowlistRoutes(app, { authMiddleware });
 mountChatRoutes(app, { authMiddleware });
 mountTaskRoutes(app, { authMiddleware });
