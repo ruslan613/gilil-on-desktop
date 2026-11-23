@@ -65,22 +65,38 @@ check('gold and navy SVG hashes are the approved files',
   sha(path.join(root, 'server/public/icons/themes/gililon-dark.svg')) === '1d43e6834b0d9d5d73aecf15c11c839e963b5a1721619e81bb27ea20ac6d8d6f' &&
   sha(path.join(root, 'server/public/icons/themes/gililon-bitrix.svg')) === 'd81a8ec141ea7f632a171218c9eeae97c70fa7af869615a561a4edbfc1761713');
 
-function icoSizes(file) {
+function icoFrames(file) {
   const data = fs.readFileSync(file);
   const count = data.readUInt16LE(4);
-  const sizes = [];
+  const frames = [];
   for (let i = 0; i < count; i++) {
     const base = 6 + i * 16;
     let w = data.readUInt8(base);
+    let h = data.readUInt8(base + 1);
     if (w === 0) w = 256;
-    sizes.push(w);
+    if (h === 0) h = 256;
+    const bytes = data.readUInt32LE(base + 8);
+    const offset = data.readUInt32LE(base + 12);
+    const blob = data.subarray(offset, offset + bytes);
+    const ihdr = blob.indexOf(Buffer.from('IHDR'));
+    frames.push({
+      w,
+      h,
+      png: blob.subarray(0, 4).toString('hex') === '89504e47',
+      colorType: ihdr > 0 ? blob[ihdr + 4 + 8 + 1] : -1,
+      ihdrW: ihdr > 0 ? blob.readUInt32BE(ihdr + 4) : 0,
+      ihdrH: ihdr > 0 ? blob.readUInt32BE(ihdr + 8) : 0,
+    });
   }
-  return sizes.sort((a, b) => a - b);
+  return frames;
 }
 const expected = [16, 20, 24, 32, 40, 48, 64, 96, 128, 256];
 for (const theme of ['dark', 'bitrix', 'cyan']) {
   const file = path.join(root, 'icons', 'themes', `gilil-on-${theme}.ico`);
-  check(theme + ' ico frames', JSON.stringify(icoSizes(file)) === JSON.stringify(expected));
+  const frames = icoFrames(file);
+  const sizes = frames.map((f) => f.w).sort((a, b) => a - b);
+  check(theme + ' ico frames', JSON.stringify(sizes) === JSON.stringify(expected));
+  check(theme + ' frames are square RGBA png', frames.every((f) => f.png && f.w === f.h && f.colorType === 6 && f.ihdrW === f.w && f.ihdrH === f.h));
 }
 
 if (failed) {
