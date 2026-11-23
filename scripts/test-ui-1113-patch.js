@@ -59,6 +59,15 @@ check('theme switch repaints the caption', main.includes('applyWindowChrome(main
 check('caption inset is only marked for Windows', html.includes("platform === 'win32'") && css.includes('html.win-caption #app-shell'));
 check('updater still does not install on its own', updater.includes('autoInstallOnAppQuit = false') && !updater.includes('setTimeout'));
 
+const nsh = fs.readFileSync(path.join(root, 'build/nsis-gilil.nsh'), 'utf8');
+check('start menu shortcut uses the approved emblem', nsh.includes('$newStartMenuLink') && nsh.includes('gilil-on-dark.ico') && !nsh.includes('RMDir'));
+check('runtime refreshes the Start menu shortcut', main.includes('Start Menu') && main.includes('brandedShortcutPaths'));
+const darkIco = fs.readFileSync(path.join(root, 'icons/themes/gilil-on-dark.ico'));
+const winIco = fs.readFileSync(path.join(root, 'icons/gilil-on-windows.ico'));
+check('exe fallback ico is the approved dark emblem', darkIco.equals(winIco));
+check('favicon default is the theme emblem', html.includes('href="/icons/themes/gililon-dark.png"'));
+check('settings gear button remains the settings control', html.includes('id="btn-theme-gear"') && html.includes('⚙'));
+
 if (failed) {
   console.error(failed + ' failed');
   process.exit(1);

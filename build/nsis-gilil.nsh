@@ -3,14 +3,20 @@
 ; customUnInstall runs after program files and the standard shortcut removal.
 
 !macro customInstall
-  ; Point that one shortcut at the in-app wordmark (default theme is dark).
-  ; $newDesktopLink is "Gilil On.lnk" on the desktop, including paths with spaces.
-  ${If} ${FileExists} "$newDesktopLink"
-  ${AndIf} ${FileExists} "$INSTDIR\resources\icons\themes\gilil-on-dark.ico"
-    CreateShortCut "$newDesktopLink" "$appExe" "" "$INSTDIR\resources\icons\themes\gilil-on-dark.ico" 0 "" "" "${APP_DESCRIPTION}"
-    WinShell::SetLnkAUMI "$newDesktopLink" "${APP_ID}"
-    ; SHCNE_UPDATEITEM + SHCNF_PATHW|SHCNF_FLUSH for this .lnk only.
-    System::Call 'shell32::SHChangeNotify(i 0x2000, i 0x1005, w "$newDesktopLink", p 0)'
+  ; Desktop, Start menu, and Add/Remove Programs use the approved dark emblem.
+  ; The Start menu shortcut otherwise keeps the exe's own icon.
+  ${If} ${FileExists} "$INSTDIR\resources\icons\themes\gilil-on-dark.ico"
+    CopyFiles /SILENT "$INSTDIR\resources\icons\themes\gilil-on-dark.ico" "$INSTDIR\uninstallerIcon.ico"
+    ${If} ${FileExists} "$newDesktopLink"
+      CreateShortCut "$newDesktopLink" "$appExe" "" "$INSTDIR\resources\icons\themes\gilil-on-dark.ico" 0 "" "" "${APP_DESCRIPTION}"
+      WinShell::SetLnkAUMI "$newDesktopLink" "${APP_ID}"
+      System::Call 'shell32::SHChangeNotify(i 0x2000, i 0x1005, w "$newDesktopLink", p 0)'
+    ${EndIf}
+    ${If} ${FileExists} "$newStartMenuLink"
+      CreateShortCut "$newStartMenuLink" "$appExe" "" "$INSTDIR\resources\icons\themes\gilil-on-dark.ico" 0 "" "" "${APP_DESCRIPTION}"
+      WinShell::SetLnkAUMI "$newStartMenuLink" "${APP_ID}"
+      System::Call 'shell32::SHChangeNotify(i 0x2000, i 0x1005, w "$newStartMenuLink", p 0)'
+    ${EndIf}
   ${EndIf}
 !macroend
 

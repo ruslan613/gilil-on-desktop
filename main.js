@@ -850,40 +850,23 @@ function notifyShortcutChanged(shortcutPath) {
  * saved theme. Rewriting the same path does not create a second icon.
  * The old desktop-shortcut-created.flag is ignored and removed.
  */
-function ensureDesktopShortcutOnce() {
-  if (process.platform !== "win32") return;
-  if (!app.isPackaged) return;
-
+function brandedShortcutPaths() {
+  const paths = [];
   try {
-    const staleFlag = path.join(app.getPath("userData"), "desktop-shortcut-created.flag");
-    if (fs.existsSync(staleFlag)) fs.unlinkSync(staleFlag);
+    paths.push(path.join(app.getPath("desktop"), "Gilil On.lnk"));
   } catch (_) {}
+  const programs = path.join("Microsoft", "Windows", "Start Menu", "Programs");
+  if (process.env.APPDATA) paths.push(path.join(process.env.APPDATA, programs, "Gilil On.lnk"));
+  if (process.env.ProgramData) paths.push(path.join(process.env.ProgramData, programs, "Gilil On.lnk"));
+  return paths;
+}
 
-  let desktopDir;
-  try {
-    desktopDir = app.getPath("desktop");
-  } catch (e) {
-    console.warn("[gilil-desktop] desktop path unavailable:", e.message);
-    return;
-  }
-
-  const theme = readSavedSplashTheme();
-  const shortcutPath = path.join(desktopDir, "Gilil On.lnk");
-  const iconPath = resolveThemeWordmarkIcon(theme) || process.execPath;
-  const details = {
-    target: process.execPath,
-    cwd: path.dirname(process.execPath),
-    args: "",
-    description: "Gilil On",
-    icon: iconPath,
-    iconIndex: 0,
-    appUserModelId: "com.gilil.on",
-  };
-
+function writeBrandedShortcut(shortcutPath, iconPath, createIfMissing) {
   let exists = false;
   try {
     exists = fs.existsSync(shortcutPath);
   } catch (_) {}
+  if (!exists && !createIfMissing) return false;
   if (exists && typeof shell.readShortcutLink === "function") {
     try {
       const cur = shell.readShortcutLink(shortcutPath);
@@ -893,30 +876,53 @@ function ensureDesktopShortcutOnce() {
         pathsEqual(cur.icon, iconPath) &&
         (cur.iconIndex || 0) === 0
       ) {
-        return;
+        return true;
       }
     } catch (_) {}
   }
-
+  const details = {
+    target: process.execPath,
+    cwd: path.dirname(process.execPath),
+    args: "",
+    description: "Gilil On",
+    icon: iconPath,
+    iconIndex: 0,
+    appUserModelId: "com.gilil.on",
+  };
   let ok = false;
   try {
     ok = shell.writeShortcutLink(shortcutPath, exists ? "replace" : "create", details);
   } catch (e) {
     console.warn("[gilil-desktop] writeShortcutLink failed:", e.message);
   }
-  if (!ok) {
+  if (!ok && !exists) {
     try {
       ok = shell.writeShortcutLink(shortcutPath, "create", details);
     } catch (e) {
       console.warn("[gilil-desktop] writeShortcutLink create failed:", e.message);
     }
   }
-  if (!ok) {
-    console.warn("[gilil-desktop] desktop shortcut not written:", shortcutPath);
-    return;
-  }
-  console.log(`[gilil-desktop] desktop shortcut ${theme}: ${shortcutPath}`);
-  notifyShortcutChanged(shortcutPath);
+  if (ok) notifyShortcutChanged(shortcutPath);
+  return ok;
+}
+
+function ensureDesktopShortcutOnce() {
+  if (process.platform !== "win32") return;
+  if (!app.isPackaged) return;
+
+  try {
+    const staleFlag = path.join(app.getPath("userData"), "desktop-shortcut-created.flag");
+    if (fs.existsSync(staleFlag)) fs.unlinkSync(staleFlag);
+  } catch (_) {}
+
+  const theme = readSavedSplashTheme();
+  const iconPath = resolveThemeWordmarkIcon(theme) || process.execPath;
+  const targets = brandedShortcutPaths();
+  targets.forEach((shortcutPath, index) => {
+    const isDesktop = index === 0;
+    const ok = writeBrandedShortcut(shortcutPath, iconPath, isDesktop || shortcutPath.includes("Start Menu"));
+    if (ok) console.log(`[gilil-desktop] shortcut ${theme}: ${shortcutPath}`);
+  });
 }
 
 
