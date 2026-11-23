@@ -14,7 +14,6 @@
       teamKey: 'team.russia_msk',
       loginKey: 'login.admin',
       crmScope: 'full',
-      password: 'admin123',
     },
     director: {
       key: 'director',
@@ -27,7 +26,6 @@
       teamKey: 'team.russia_msk',
       loginKey: 'login.demo_dir',
       crmScope: 'full',
-      password: 'dir123',
     },
     ru: {
       key: 'ru',
@@ -40,7 +38,6 @@
       teamKey: 'team.russia_msk',
       loginKey: 'login.demo_ru',
       crmScope: 'ru',
-      password: 'mgr123',
     },
     cn: {
       key: 'cn',
@@ -53,7 +50,6 @@
       teamKey: 'team.china_sh',
       loginKey: 'login.demo_cn',
       crmScope: 'cn',
-      password: 'dir123',
     },
   };
   let currentRole = 'ru';
@@ -90,6 +86,10 @@
       "login.hint": "演示登录：<strong>ru1 · 阿列克谢 · RU Manager</strong> · 无需密码",
       "login.sub": "Lighting Supply CN ↔ RU · 邮箱验证码登录",
       "login.email": "邮箱",
+      "login.username": "用户名",
+      "login.password": "密码",
+      "login.need_password": "请输入用户名和密码",
+      "login.bad_password": "用户名或密码不正确",
       "login.code": "邮件中的验证码",
       "login.send_code": "发送验证码",
       "login.verify": "登录",
@@ -642,6 +642,10 @@
       "login.hint": "Демо-вход как <strong>ru1 · Алексей · RU Manager</strong> · без пароля",
       "login.sub": "Lighting Supply CN ↔ RU · вход по коду из почты",
       "login.email": "Email",
+      "login.username": "Имя пользователя",
+      "login.password": "Пароль",
+      "login.need_password": "Введите имя пользователя и пароль",
+      "login.bad_password": "Неверное имя пользователя или пароль",
       "login.code": "Код из письма",
       "login.send_code": "Отправить код",
       "login.verify": "Войти",
@@ -1194,6 +1198,10 @@
       "login.hint": "Demo login as <strong>ru1 · Alexey · RU Manager</strong> · no password",
       "login.sub": "Lighting Supply CN ↔ RU · email OTP login",
       "login.email": "Email",
+      "login.username": "Username",
+      "login.password": "Password",
+      "login.need_password": "Enter username and password",
+      "login.bad_password": "Wrong username or password",
       "login.code": "Code from email",
       "login.send_code": "Send code",
       "login.verify": "Sign in",
@@ -2479,7 +2487,7 @@
       if (currentSection === 'tenders') renderTenders();
       if (currentSection === 'tv') renderTv();
     }
-    trySoftLogin(ROLES[role]);
+    trySoftLogin();
     toast(tf('toast.role', { short: DEMO_USER().short, role: DEMO_USER().role }));
     setTimeout(() => {
       if (typeof loadServerTasks === 'function') loadServerTasks();
@@ -2488,30 +2496,8 @@
     }, 600);
   }
 
-  function trySoftLogin(u) {
-    if (!u || !u.password) return;
-    const rememberMe = currentAuthRemembered() || isRememberMe();
-    fetch('/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username: u.username, password: u.password, rememberMe: !!rememberMe }),
-    })
-      .then((r) => r.json())
-      .then((data) => {
-        if (data && data.token) {
-          storeAuthTokens(data, rememberMe);
-          try {
-            localStorage.setItem('gilil_demo_user', JSON.stringify({ ...u, roleKey: u.key, id: (data.user && data.user.id) || u.id }));
-          } catch (_) {}
-          if (typeof loadNotifications === 'function') loadNotifications();
-          if (typeof connectNotifWs === 'function') connectNotifWs();
-          if (typeof loadServerTasks === 'function') loadServerTasks();
-          if (typeof loadReplyStatuses === 'function') loadReplyStatuses();
-          if (typeof loadServerChatsIntoSidebar === 'function') loadServerChatsIntoSidebar();
-          if (typeof loadMyUsefulnessProfile === 'function') loadMyUsefulnessProfile();
-        }
-      })
-      .catch(() => {});
+  function trySoftLogin() {
+    return;
   }
 
   // ——— Team visibility (sidebar dropdown; persist gilil_team_visibility) ———
@@ -5315,61 +5301,46 @@
     }
   }
 
-  // ——— Enter demo ———
-  function enterDemo() {
+  async function loginWithPassword(ev) {
+    if (ev && ev.preventDefault) ev.preventDefault();
+    const username = (($('#login-username') && $('#login-username').value) || '').trim();
+    const password = ($('#login-password') && $('#login-password').value) || '';
+    if (!username || !password) {
+      setOtpStatus(t('login.need_password'), 'error');
+      return;
+    }
+    const btn = $('#btn-password-login');
+    if (btn) btn.disabled = true;
+    setOtpStatus('');
     try {
-      sessionStorage.setItem('gilil_shell_v2_demo', 'ru1');
-      // Soft-login: store a marker; optionally try real token in background
-      localStorage.setItem('gilil_demo_user', JSON.stringify(DEMO_USER()));
-    } catch (_) {}
-    $('#login-gate').classList.add('hidden');
-    $('#app-shell').classList.remove('hidden');
-    $('#fab-tasks').classList.remove('hidden');
-    renderChats();
-    renderPlan();
-    renderTasks();
-    renderCrm();
-    loadAndRenderLeads();
-    renderTenders();
-    renderTv();
-    renderStorage();
-    applyMailRoleUI();
-    applyActivityRoleUI();
-    openTeamChats('projects');
-    applyRoleUI();
-    applyLang(currentLang, { silent: true });
-    toast(tf('toast.entered', { login: DEMO_USER().login, short: DEMO_USER().short, role: DEMO_USER().role }));
-
-    // Soft try real auth (non-blocking; demo works without it)
-    const rememberMe = isRememberMe();
-    fetch('/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        username: DEMO_USER().username || 'manager_ru',
-        password: DEMO_USER().password || 'mgr123',
-        rememberMe: !!rememberMe,
-      }),
-    })
-      .then((r) => r.json())
-      .then((data) => {
-        if (data && data.token) storeAuthTokens(data, rememberMe);
-      })
-      .catch(() => {});
-
-    // Auto beep once if overdue tasks exist (simulate >1h unchecked)
-    setTimeout(() => {
-      if (!beepPlayed && overdueCount() > 0) {
-        beepPlayed = true;
-        playBeep();
+      const rememberMe = isRememberMe();
+      const r = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password, rememberMe: !!rememberMe }),
+      });
+      const data = await r.json().catch(() => ({}));
+      if (!r.ok || !data || !data.token) {
+        const msg = data && data.error === 'rate_limited'
+          ? tf('login.wait_resend', { sec: data.retry_after_sec || 60 })
+          : t('login.bad_password');
+        setOtpStatus(msg, 'error');
+        return;
       }
-      // Invoice pending Ruslan: notify when acting as admin
-      updateInvoiceAlert();
-      loadNotifications();
-      connectNotifWs();
-      if (typeof loadServerTasks === 'function') loadServerTasks();
-      if (typeof loadReplyStatuses === 'function') loadReplyStatuses();
-    }, 1800);
+      storeAuthTokens(data, rememberMe);
+      currentRole = mapServerUserToRole(data.user);
+      const name = (data.user && data.user.display_name) || username;
+      const pw = $('#login-password');
+      if (pw) pw.value = '';
+      openShellAfterAuth({
+        sessionKey: 'login:' + username,
+        toast: tf('toast.entered', { login: username, short: name, role: (data.user && data.user.role) || '' }),
+      });
+    } catch (e) {
+      setOtpStatus(String(e.message || e), 'error');
+    } finally {
+      if (btn) btn.disabled = false;
+    }
   }
 
   // ——— Wire events ———
@@ -5468,7 +5439,8 @@
 
   function bind() {
     bindOtpLogin();
-    $('#btn-enter').addEventListener('click', enterDemo);
+    const passwordForm = document.getElementById('password-form');
+    if (passwordForm) passwordForm.addEventListener('submit', (ev) => { loginWithPassword(ev); });
 
     fillLangSelects();
     document.querySelectorAll('.lang-select').forEach((sel) => {
@@ -5479,8 +5451,6 @@
     const urlLang = new URLSearchParams(location.search).get('lang');
     if (urlLang && isUiLang(urlLang)) {
       startLang = urlLang.toLowerCase();
-    } else if (new URLSearchParams(location.search).get('demo') === '1') {
-      startLang = 'zh';
     } else {
       try {
         const saved = localStorage.getItem('gilil_shell_v2_lang');
@@ -5907,8 +5877,6 @@
             role: DEMO_USER().role,
           }),
         });
-      } else if (sess === 'ru1') {
-        enterDemo();
       } else if (sess && String(sess).startsWith('otp:') && token) {
         openShellAfterAuth({
           sessionKey: sess,
@@ -5921,10 +5889,6 @@
       }
     } catch (_) {}
 
-    // URL ?demo=1 auto-enter
-    if (new URLSearchParams(location.search).get('demo') === '1') {
-      enterDemo();
-    }
     // URL ?profile=1 — open Personal section after shell is ready (screenshots / deep link)
     if (new URLSearchParams(location.search).get('profile') === '1') {
       setTimeout(() => {

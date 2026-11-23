@@ -439,7 +439,7 @@ function seed(database) {
     uIns.run(uid, 70 - i * 5, i === 1 ? 1 : 0);
   });
 
-  console.log('[db] seeded demo users: admin/admin123, director_ru|cn/dir123, manager_ru/mgr123, emp_*/emp123');
+  console.log('[db] seeded initial users');
 }
 
 /** Ensure demo / known users have emails for OTP login. */

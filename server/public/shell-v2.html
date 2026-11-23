@@ -57,11 +57,19 @@
   </div>
 </div>
 
-<!-- OTP + demo login gate -->
+<!-- Username/password login. OTP remains a real email code path. No demo entry. -->
 <div id="login-gate">
   <div class="login-card">
     <div class="mark" aria-label="GililOn"><span class="mark-gilil">Gilil</span><span class="mark-on">On</span></div>
-    <p class="sub" data-i18n="login.sub">Lighting Supply CN ↔ RU · 演示 shell v2（布局 2）</p>
+    <p class="sub" data-i18n="login.sub">Lighting Supply CN ↔ RU</p>
+
+    <form id="password-form" class="otp-form" autocomplete="on">
+      <label class="otp-label" for="login-username" data-i18n="login.username">Имя пользователя</label>
+      <input type="text" id="login-username" name="username" class="otp-input" required autocomplete="username" />
+      <label class="otp-label" for="login-password" data-i18n="login.password">Пароль</label>
+      <input type="password" id="login-password" name="password" class="otp-input" required autocomplete="current-password" />
+      <button type="submit" class="btn-enter" id="btn-password-login" data-i18n="login.verify">Войти</button>
+    </form>
 
     <form id="otp-form" class="otp-form" autocomplete="on">
       <label class="otp-label" for="otp-email" data-i18n="login.email">Email</label>
@@ -90,8 +98,6 @@
       <p id="otp-mock-hint" class="otp-mock-hint hidden"></p>
     </form>
 
-    <button type="button" class="btn-demo-enter" id="btn-enter" data-i18n="login.enter_demo">Демо-вход</button>
-    <p class="hint" data-i18n="login.hint" data-i18n-html="1">演示登录：<strong>ru1 · 阿列克谢 · RU Manager</strong> · 无需密码</p>
   </div>
 </div>
 
