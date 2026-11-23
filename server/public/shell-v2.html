@@ -26,6 +26,9 @@
         if (q && ok[q]) id = q;
         if (!ok[id]) id = 'dark';
         document.documentElement.dataset.theme = id;
+        if (window.gililDesktop && window.gililDesktop.platform === 'win32') {
+          document.documentElement.classList.add('win-caption');
+        }
         var themeIcons = { dark: '/icons/themes/gililon-dark.png', bitrix: '/icons/themes/gililon-bitrix.png', cyan: '/icons/themes/gililon-cyan.png' };
         document.querySelectorAll('link[rel="icon"], link[rel="apple-touch-icon"]').forEach(function (link) {
           if (themeIcons[id]) link.href = themeIcons[id];
@@ -95,7 +98,7 @@
 <div id="app-shell" class="hidden">
   <header class="appbar">
     <div class="brand" title="Gilil On">
-      <div class="mark" aria-label="GililOn"><img id="brand-theme-icon" class="brand-theme-icon" alt="" src="/icons/themes/gililon-dark.svg" width="36" height="36"><span class="mark-gilil">Gilil</span><span class="mark-on">On</span></div>
+      <div class="mark" aria-label="GililOn"><img id="brand-theme-icon" class="brand-theme-icon" alt="" src="/icons/themes/gililon-dark.svg" width="50" height="50"><span class="mark-gilil">Gilil</span><span class="mark-on">On</span></div>
     </div>
 
     <div class="nav-stack" id="nav-stack">

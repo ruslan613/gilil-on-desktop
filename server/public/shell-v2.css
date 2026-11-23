@@ -263,21 +263,35 @@ button, input { font: inherit; }
 /* ——— App shell ——— */
 #app-shell {
   height: 100%;
-  min-height: 100%;
-  min-height: 100dvh;
+  max-height: 100%;
+  min-height: 0;
   width: 100%;
   max-width: 100%;
   display: grid;
   grid-template-rows: auto auto minmax(0, 1fr); /* header · update-banner · body */
   overflow: hidden;
 }
+html.win-caption #app-shell {
+  padding-top: 32px;
+  box-sizing: border-box;
+}
+html.win-caption #app-shell::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 140px;
+  height: 32px;
+  -webkit-app-region: drag;
+  z-index: 4000;
+}
 
 /* Header — compact one-tier pills; never eats chat height */
 .appbar {
   display: flex; align-items: center; gap: 12px;
-  padding: 4px 14px;
-  min-height: var(--header-h);
-  max-height: 52px; /* single compact pills row */
+  padding: 6px 14px;
+  min-height: 62px;
+  max-height: none;
   overflow: visible; /* allow profile / notif / theme popovers to escape */
   background: linear-gradient(180deg, color-mix(in srgb, var(--bg-elev) 88%, #fff 4%), var(--bg-elev));
   border-bottom: 1px solid var(--line-soft);
@@ -472,6 +486,7 @@ button, input { font: inherit; }
 .body {
   display: grid;
   grid-template-columns: var(--sidebar-w) minmax(0, 1fr);
+  align-items: stretch;
   min-height: 0;
   height: 100%;
   width: 100%;
@@ -483,7 +498,10 @@ button, input { font: inherit; }
   background: linear-gradient(180deg, color-mix(in srgb, var(--bg-elev) 92%, #fff 3%), var(--bg-elev));
   border-right: 1px solid var(--line-soft);
   display: flex; flex-direction: column;
+  height: 100%;
   min-height: 0;
+  align-self: stretch;
+  overflow: hidden;
   box-shadow: 4px 0 18px rgba(0, 0, 0, 0.12);
 }
 .sidebar-head {
@@ -578,7 +596,10 @@ button, input { font: inherit; }
 
 
 .chat-groups {
-  flex: 1; overflow-y: auto; padding: 4px 8px 16px;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  padding: 4px 8px 16px;
 }
 .group { margin-bottom: 10px; }
 .group-title {
@@ -2601,8 +2622,12 @@ html:not([data-surface]) .chat-item .cav {
 }
 .settings-update-status { margin: 0 2px 2px; font-size: 12px; line-height: 1.35; color: var(--muted); text-align: left; }
 .settings-update-status[hidden] { display: none !important; }
-.brand .mark:has(.brand-theme-icon) { background: transparent !important; box-shadow: none !important; padding: 0 !important; width: 36px !important; height: 36px !important; }
-.brand .mark .brand-theme-icon { width: 36px; height: 36px; display: block; }
+.brand .mark:has(.brand-theme-icon) { background: transparent !important; box-shadow: none !important; padding: 0 !important; width: 50px !important; height: 50px !important; }
+.brand .mark .brand-theme-icon { width: 50px; height: 50px; display: block; object-fit: contain; }
+@media (max-width: 900px) {
+  .brand .mark:has(.brand-theme-icon) { width: 42px !important; height: 42px !important; }
+  .brand .mark .brand-theme-icon { width: 42px; height: 42px; }
+}
 .brand .mark:has(.brand-theme-icon) .mark-gilil,
 .brand .mark:has(.brand-theme-icon) .mark-on { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 

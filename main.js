@@ -25,6 +25,7 @@ const {
   startDownload: updateStartDownload,
   quitAndInstall: updateQuitAndInstall,
 } = require('./auto-updater');
+const { captionOptions, captionForTheme } = require('./window-chrome');
 
 const DEFAULT_PORT = 8788;
 const UI_PATH = '/shell-v2.html';
@@ -747,7 +748,8 @@ function setupIpc() {
   });
 
   ipcMain.on('gilil:set-theme', (_e, id) => {
-    writeSavedSplashTheme(id);
+    const theme = writeSavedSplashTheme(id);
+    applyWindowChrome(mainWindow, theme);
     try {
       const themed = resolveThemeWordmarkIcon(readSavedSplashTheme());
       if (themed && mainWindow && !mainWindow.isDestroyed()) mainWindow.setIcon(themed);
@@ -932,6 +934,22 @@ function readSavedSplashTheme() {
   return 'dark';
 }
 
+function applyWindowChrome(win, theme) {
+  if (!win || win.isDestroyed()) return;
+  const colors = captionForTheme(theme);
+  try {
+    win.setBackgroundColor(colors.color);
+  } catch (e) {
+    console.warn('[gilil-desktop] window background:', e.message);
+  }
+  if (process.platform !== 'win32' || typeof win.setTitleBarOverlay !== 'function') return;
+  try {
+    win.setTitleBarOverlay(captionOptions(theme));
+  } catch (e) {
+    console.warn('[gilil-desktop] caption theme:', e.message);
+  }
+}
+
 function writeSavedSplashTheme(id) {
   const theme = SPLASH_THEMES.has(id) ? id : 'dark';
   try {
@@ -1043,7 +1061,7 @@ async function createWindow() {
     resizable: true,
     maximizable: true,
     fullscreenable: true,
-    backgroundColor: SPLASH_BG[readSavedSplashTheme()] || '#0c0a08',
+    backgroundColor: captionForTheme(readSavedSplashTheme()).color,
     title: `Gilil On ${APP_VERSION}`,
     show: false,
     webPreferences: {
@@ -1059,8 +1077,13 @@ async function createWindow() {
     },
   };
   if (iconInfo.path) winOpts.icon = iconInfo.path;
+  if (process.platform === 'win32') {
+    winOpts.titleBarStyle = 'hidden';
+    winOpts.titleBarOverlay = captionOptions(readSavedSplashTheme());
+  }
 
   mainWindow = new BrowserWindow(winOpts);
+  applyWindowChrome(mainWindow, readSavedSplashTheme());
   try {
     mainWindow.setMinimumSize(minW, minH);
   } catch (_) {}
