@@ -1819,6 +1819,7 @@
     document.querySelectorAll('[data-i18n-aria]').forEach((el) => {
       el.setAttribute('aria-label', t(el.getAttribute('data-i18n-aria')));
     });
+    if (typeof refreshHelper === 'function') refreshHelper();
     try {
       if (typeof currentTheme === 'string') {
         const sel = document.getElementById('theme-select');
@@ -5039,6 +5040,46 @@
     if (name === 'director') {
       if (typeof loadDirectorWorkload === 'function') loadDirectorWorkload();
     }
+    if (typeof refreshHelper === 'function') refreshHelper();
+  }
+
+  function refreshHelper() {
+    const panel = document.getElementById('helper-panel');
+    const clip = document.getElementById('helper-clip');
+    if (!panel || !clip || !window.GililHelper) return;
+    const shell = document.getElementById('app-shell');
+    const signedIn = shell && !shell.classList.contains('hidden');
+    clip.classList.toggle('hidden', !signedIn);
+    clip.hidden = !signedIn;
+    if (!signedIn || panel.hidden) return;
+    const tip = window.GililHelper.suggestions(currentSection, currentLang);
+    const title = document.getElementById('helper-title');
+    const lead = document.getElementById('helper-lead');
+    const list = document.getElementById('helper-list');
+    const openBtn = document.getElementById('helper-open');
+    const closeBtn = document.getElementById('helper-close');
+    if (title) title.textContent = tip.title;
+    if (lead) lead.textContent = tip.lead;
+    if (openBtn) openBtn.title = tip.open;
+    if (closeBtn) closeBtn.setAttribute('aria-label', tip.close);
+    if (list) {
+      list.textContent = '';
+      tip.steps.forEach((step) => {
+        const li = document.createElement('li');
+        li.textContent = step;
+        list.appendChild(li);
+      });
+    }
+  }
+
+  function setHelperOpen(open) {
+    const panel = document.getElementById('helper-panel');
+    const btn = document.getElementById('helper-open');
+    if (!panel) return;
+    panel.classList.toggle('hidden', !open);
+    panel.hidden = !open;
+    if (btn) btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    if (open) refreshHelper();
   }
 
 
@@ -5148,6 +5189,8 @@
     } catch (_) {}
     $('#login-gate').classList.add('hidden');
     $('#app-shell').classList.remove('hidden');
+    const helperClip = document.getElementById('helper-clip');
+    if (helperClip) { helperClip.classList.remove('hidden'); helperClip.hidden = false; }
     $('#fab-tasks').classList.remove('hidden');
     renderChats();
     renderPlan();
@@ -5538,9 +5581,22 @@
     if (form) form.addEventListener('submit', (ev) => { saveOwnProfile(ev).catch(() => {}); });
   }
 
+  function bindHelper() {
+    const openBtn = document.getElementById('helper-open');
+    const closeBtn = document.getElementById('helper-close');
+    if (openBtn) {
+      openBtn.addEventListener('click', () => {
+        const panel = document.getElementById('helper-panel');
+        setHelperOpen(!(panel && !panel.hidden));
+      });
+    }
+    if (closeBtn) closeBtn.addEventListener('click', () => setHelperOpen(false));
+  }
+
   function bind() {
     bindOtpLogin();
     bindWhoEditor();
+    bindHelper();
     const passwordForm = document.getElementById('password-form');
     if (passwordForm) passwordForm.addEventListener('submit', (ev) => { loginWithPassword(ev); });
 

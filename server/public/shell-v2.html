@@ -789,8 +789,25 @@
 
 <div id="toast"></div>
 
+<div id="helper-clip" class="helper-clip hidden" hidden>
+  <div id="helper-panel" class="helper-panel hidden" hidden role="dialog" aria-labelledby="helper-title">
+    <div class="helper-panel-head">
+      <strong id="helper-title">Скрепка</strong>
+      <button type="button" id="helper-close" aria-label="Закрыть подсказку">×</button>
+    </div>
+    <p id="helper-lead"></p>
+    <ul id="helper-list"></ul>
+  </div>
+  <button type="button" id="helper-open" class="helper-open" aria-expanded="false" aria-controls="helper-panel" title="Подсказка по этому экрану">
+    <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+      <path d="M16.2 7.2 8.6 14.8a2.6 2.6 0 1 0 3.7 3.7l6.2-6.2a4.2 4.2 0 0 0-5.9-5.9L6.2 12.8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+  </button>
+</div>
+
 <script src="/splash.js"></script>
 <script src="supply-stage2.js" defer></script>
+<script src="/helper-clip.js"></script>
     <script src="/shell-v2.js"></script>
 
 <script>
