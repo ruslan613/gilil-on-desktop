@@ -57,7 +57,7 @@ check('caption colors match the three themes', true);
 check('windows caption is applied from the saved theme', main.includes("titleBarStyle = 'hidden'") && main.includes('titleBarOverlay = captionOptions(readSavedSplashTheme())'));
 check('theme switch repaints the caption', main.includes('applyWindowChrome(mainWindow, theme)'));
 check('caption inset is only marked for Windows', html.includes("platform === 'win32'") && css.includes('html.win-caption #app-shell'));
-check('updater still does not install on its own', updater.includes('autoInstallOnAppQuit = false') && !updater.includes('setTimeout'));
+check('updater downloads from the release feed and installs on quit', updater.includes('u.autoDownload = true') && updater.includes('u.autoInstallOnAppQuit = true') && updater.includes('shouldStartCheck'));
 
 const nsh = fs.readFileSync(path.join(root, 'build/nsis-gilil.nsh'), 'utf8');
 check('start menu shortcut uses the approved emblem', nsh.includes('$newStartMenuLink') && nsh.includes('gilil-on-dark.ico') && !nsh.includes('RMDir'));

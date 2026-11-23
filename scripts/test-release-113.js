@@ -34,9 +34,11 @@ check('package version is 1.1.3', pkg.version === '1.1.3');
 check('installer name stays on the existing feed pattern', pkg.build.nsis.artifactName === 'GililOn-${version}-win-setup.exe');
 check('uninstall does not opt into deleting AppData', pkg.build.nsis.deleteAppDataOnUninstall === false);
 check('custom uninstall does not remove the user directory', !nsh.includes('RMDir') && nsh.includes('Leave %APPDATA%\\gilil-on-desktop'));
-check('no startup update timer', !updater.includes('setTimeout') && !updater.includes('GILIL_UPDATE_CHECK_DELAY_MS'));
-check('quit does not install by itself', updater.includes('autoInstallOnAppQuit = false') && !updater.includes('autoInstallOnAppQuit = true'));
-check('download stays on its own IPC', updater.includes("ipcMain.handle('gilil:update-download'") && updater.includes('u.autoDownload = false'));
+check('packaged app checks on startup and in the background', updater.includes('START_DELAY_MS') && updater.includes('BACKGROUND_MS') && updater.includes('shouldStartCheck'));
+check('download is automatic and install waits for quit', updater.includes('u.autoDownload = true') && updater.includes('u.autoInstallOnAppQuit = true'));
+const downloaded = updater.slice(updater.indexOf("u.on('update-downloaded'"), updater.indexOf("u.on('error'"));
+check('a finished download does not restart the app', !downloaded.includes('quitAndInstall'));
+check('manual download IPC remains beside automatic download', updater.includes("ipcMain.handle('gilil:update-download'") && updater.includes('u.autoDownload = true'));
 
 const linksAt = html.indexOf('class="settings-links"');
 const swatchAt = html.indexOf('id="theme-swatches"');

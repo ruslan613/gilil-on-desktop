@@ -1,15 +1,18 @@
 'use strict';
 
 /**
- * Gilil On — manual update check via electron-updater (NSIS / GitHub Releases).
- * Nothing is checked, downloaded, or installed until the user presses a button.
- * Portable builds keep the updater disabled. Dev skips unless GILIL_UPDATE_FORCE=1
+ * Gilil On — update check via electron-updater (NSIS / GitHub Releases).
+ * A packaged NSIS build checks at startup and again in the background.
+ * A newer release is downloaded by the app. NSIS installs it on quit.
+ * The app does not restart itself when the download finishes.
+ * Portable builds stay disabled. Dev skips unless GILIL_UPDATE_FORCE=1
  * or GILIL_UPDATE_FEED_URL is set (smoke / mock feed).
  */
 
 const { app, ipcMain, Notification } = require('electron');
 const path = require('path');
 const fs = require('fs');
+const { START_DELAY_MS, BACKGROUND_MS, shouldStartCheck, feedUrlAllowed } = require('./update-schedule');
 
 /** @type {import('electron-updater').AppUpdater | null} */
 let updater = null;
@@ -211,8 +214,10 @@ function setupAutoUpdater(opts) {
 
   state.enabled = true;
   state.reason = null;
-  u.autoDownload = false;
-  u.autoInstallOnAppQuit = false;
+  // The official GitHub release feed only. A pull-request build is not a feed.
+  u.autoDownload = true;
+  u.allowDowngrade = false;
+  u.autoInstallOnAppQuit = true;
 
   if (!app.isPackaged) {
     // Allow check against mock / custom feed in smoke & local tests
@@ -221,6 +226,15 @@ function setupAutoUpdater(opts) {
 
   const feedUrl = process.env.GILIL_UPDATE_FEED_URL;
   if (feedUrl) {
+    if (!feedUrlAllowed(feedUrl)) {
+      state.enabled = false;
+      state.status = 'skipped';
+      state.reason = 'feed_not_https';
+      console.warn('[gilil-update] refused feed:', feedUrl);
+      wireIpc();
+      broadcast();
+      return snapshot();
+    }
     try {
       u.setFeedURL({ provider: 'generic', url: feedUrl.replace(/\/$/, '') });
       console.log('[gilil-update] feed URL override:', feedUrl);
@@ -297,6 +311,16 @@ function setupAutoUpdater(opts) {
   });
 
   wireIpc();
+
+  const delayMs = Number(process.env.GILIL_UPDATE_CHECK_DELAY_MS);
+  const startDelay = Number.isFinite(delayMs) && delayMs >= 0 ? delayMs : START_DELAY_MS;
+  setTimeout(() => {
+    if (shouldStartCheck(state.status)) quietCheck().catch(() => {});
+  }, startDelay);
+  setInterval(() => {
+    if (shouldStartCheck(state.status)) quietCheck().catch(() => {});
+  }, BACKGROUND_MS);
+
   return snapshot();
 }
 
