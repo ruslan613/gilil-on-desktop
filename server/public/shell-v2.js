@@ -14,7 +14,6 @@
       teamKey: 'team.russia_msk',
       loginKey: 'login.admin',
       crmScope: 'full',
-      password: 'admin123',
     },
     director: {
       key: 'director',
@@ -27,7 +26,6 @@
       teamKey: 'team.russia_msk',
       loginKey: 'login.demo_dir',
       crmScope: 'full',
-      password: 'dir123',
     },
     ru: {
       key: 'ru',
@@ -40,7 +38,6 @@
       teamKey: 'team.russia_msk',
       loginKey: 'login.demo_ru',
       crmScope: 'ru',
-      password: 'mgr123',
     },
     cn: {
       key: 'cn',
@@ -53,7 +50,6 @@
       teamKey: 'team.china_sh',
       loginKey: 'login.demo_cn',
       crmScope: 'cn',
-      password: 'dir123',
     },
   };
   let currentRole = 'ru';
@@ -90,6 +86,10 @@
       "login.hint": "演示登录：<strong>ru1 · 阿列克谢 · RU Manager</strong> · 无需密码",
       "login.sub": "Lighting Supply CN ↔ RU · 邮箱验证码登录",
       "login.email": "邮箱",
+      "login.username": "用户名",
+      "login.password": "密码",
+      "login.need_password": "请输入用户名和密码",
+      "login.bad_password": "用户名或密码不正确",
       "login.code": "邮件中的验证码",
       "login.send_code": "发送验证码",
       "login.verify": "登录",
@@ -186,6 +186,10 @@
       "nav.tier.more": "更多",
       "nav.tier.team": "团队",
       "personal.who": "我是谁",
+      "personal.edit": "编辑",
+      "personal.save": "保存",
+      "personal.cancel": "取消",
+      "personal.protected_note": "角色、团队和登录名不能在这里修改。",
       "personal.lbl_name": "姓名",
       "personal.lbl_role": "角色",
       "personal.lbl_company": "公司",
@@ -246,6 +250,13 @@
       "update.ready": "更新已下载",
       "update.install": "安装并重新启动",
       "update.error": "更新错误：{err}",
+      "settings.check_update": "检查更新",
+      "settings.update_checking": "正在检查是否有新版本…",
+      "settings.update_none": "没有新版本。窗口没有重新加载。",
+      "settings.update_found": "发现版本 v{ver}。程序会自行下载，并在退出时安装。",
+      "settings.update_found_plain": "发现新版本。程序会自行下载，并在退出时安装。",
+      "settings.update_desktop_only": "版本检查只在已安装的程序中可用。界面没有重新加载。",
+      "settings.update_unavailable": "版本检查未执行（{reason}）。没有安装新版本。",
       "notif.empty": "暂时安静",
       "notif.empty_sub": "新消息、任务和账单会出现在这里",
       "notif.tab.all": "全部",
@@ -635,6 +646,10 @@
       "login.hint": "Демо-вход как <strong>ru1 · Алексей · RU Manager</strong> · без пароля",
       "login.sub": "Lighting Supply CN ↔ RU · вход по коду из почты",
       "login.email": "Email",
+      "login.username": "Имя пользователя",
+      "login.password": "Пароль",
+      "login.need_password": "Введите имя пользователя и пароль",
+      "login.bad_password": "Неверное имя пользователя или пароль",
       "login.code": "Код из письма",
       "login.send_code": "Отправить код",
       "login.verify": "Войти",
@@ -731,6 +746,10 @@
       "nav.tier.more": "Ещё",
       "nav.tier.team": "Команда",
       "personal.who": "Кто я",
+      "personal.edit": "Изменить",
+      "personal.save": "Сохранить",
+      "personal.cancel": "Отмена",
+      "personal.protected_note": "Роль, команда и логин здесь не меняются.",
       "personal.lbl_name": "Имя",
       "personal.lbl_role": "Роль",
       "personal.lbl_company": "Компания",
@@ -791,6 +810,13 @@
       "update.ready": "Обновление загружено",
       "update.install": "Установить и перезапустить",
       "update.error": "Ошибка обновления: {err}",
+      "settings.check_update": "Проверить обновления",
+      "settings.update_checking": "Проверяем, есть ли новая версия…",
+      "settings.update_none": "Новой версии нет. Окно не перезагружалось.",
+      "settings.update_found": "Найдена версия v{ver}. Программа скачает её сама и поставит при выходе.",
+      "settings.update_found_plain": "Найдена новая версия. Программа скачает её сама и поставит при выходе.",
+      "settings.update_desktop_only": "Проверка версии есть только в установленном приложении. Интерфейс не перезагружался.",
+      "settings.update_unavailable": "Проверка версии не выполнена ({reason}). Новая версия не устанавливалась.",
       "notif.empty": "Пока тихо",
       "notif.empty_sub": "Новые сообщения, задачи и счета появятся здесь",
       "notif.tab.all": "Все",
@@ -1180,6 +1206,10 @@
       "login.hint": "Demo login as <strong>ru1 · Alexey · RU Manager</strong> · no password",
       "login.sub": "Lighting Supply CN ↔ RU · email OTP login",
       "login.email": "Email",
+      "login.username": "Username",
+      "login.password": "Password",
+      "login.need_password": "Enter username and password",
+      "login.bad_password": "Wrong username or password",
       "login.code": "Code from email",
       "login.send_code": "Send code",
       "login.verify": "Sign in",
@@ -1276,6 +1306,10 @@
       "nav.tier.more": "More",
       "nav.tier.team": "Team",
       "personal.who": "Who I am",
+      "personal.edit": "Edit",
+      "personal.save": "Save",
+      "personal.cancel": "Cancel",
+      "personal.protected_note": "Role, team and login cannot be changed here.",
       "personal.lbl_name": "Name",
       "personal.lbl_role": "Role",
       "personal.lbl_company": "Company",
@@ -1336,6 +1370,13 @@
       "update.ready": "Update downloaded",
       "update.install": "Install and restart",
       "update.error": "Update error: {err}",
+      "settings.check_update": "Check for updates",
+      "settings.update_checking": "Checking for a new version…",
+      "settings.update_none": "No newer version. The window was not reloaded.",
+      "settings.update_found": "Version v{ver} found. The app downloads it and installs on quit.",
+      "settings.update_found_plain": "A newer version was found. The app downloads it and installs on quit.",
+      "settings.update_desktop_only": "Version check runs only in the installed app. The interface was not reloaded.",
+      "settings.update_unavailable": "Version check did not run ({reason}). No new version was installed.",
       "notif.empty": "All quiet",
       "notif.empty_sub": "New messages, tasks and invoices will show up here",
       "notif.tab.all": "All",
@@ -1778,6 +1819,7 @@
     document.querySelectorAll('[data-i18n-aria]').forEach((el) => {
       el.setAttribute('aria-label', t(el.getAttribute('data-i18n-aria')));
     });
+    if (typeof refreshHelper === 'function') refreshHelper();
     try {
       if (typeof currentTheme === 'string') {
         const sel = document.getElementById('theme-select');
@@ -2403,8 +2445,24 @@
     }
   }
 
-  function applyRoleUI() {
+  let serverProfile = null;
+
+  function shownProfile() {
     const u = DEMO_USER();
+    const saved = serverProfile || {};
+    return {
+      name: saved.display_name || u.name,
+      short: saved.display_name ? String(saved.display_name).split('·')[0].trim() : u.short,
+      role: u.role,
+      company: saved.profile_company || u.company,
+      team: u.team,
+      login: saved.username || u.login,
+      initials: u.initials,
+    };
+  }
+
+  function applyRoleUI() {
+    const u = shownProfile();
     const av = $('#user-av');
     const name = $('#user-name');
     const role = $('#user-role');
@@ -2458,7 +2516,7 @@
       if (currentSection === 'tenders') renderTenders();
       if (currentSection === 'tv') renderTv();
     }
-    trySoftLogin(ROLES[role]);
+    trySoftLogin();
     toast(tf('toast.role', { short: DEMO_USER().short, role: DEMO_USER().role }));
     setTimeout(() => {
       if (typeof loadServerTasks === 'function') loadServerTasks();
@@ -2467,30 +2525,8 @@
     }, 600);
   }
 
-  function trySoftLogin(u) {
-    if (!u || !u.password) return;
-    const rememberMe = currentAuthRemembered() || isRememberMe();
-    fetch('/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username: u.username, password: u.password, rememberMe: !!rememberMe }),
-    })
-      .then((r) => r.json())
-      .then((data) => {
-        if (data && data.token) {
-          storeAuthTokens(data, rememberMe);
-          try {
-            localStorage.setItem('gilil_demo_user', JSON.stringify({ ...u, roleKey: u.key, id: (data.user && data.user.id) || u.id }));
-          } catch (_) {}
-          if (typeof loadNotifications === 'function') loadNotifications();
-          if (typeof connectNotifWs === 'function') connectNotifWs();
-          if (typeof loadServerTasks === 'function') loadServerTasks();
-          if (typeof loadReplyStatuses === 'function') loadReplyStatuses();
-          if (typeof loadServerChatsIntoSidebar === 'function') loadServerChatsIntoSidebar();
-          if (typeof loadMyUsefulnessProfile === 'function') loadMyUsefulnessProfile();
-        }
-      })
-      .catch(() => {});
+  function trySoftLogin() {
+    return;
   }
 
   // ——— Team visibility (sidebar dropdown; persist gilil_team_visibility) ———
@@ -5004,6 +5040,53 @@
     if (name === 'director') {
       if (typeof loadDirectorWorkload === 'function') loadDirectorWorkload();
     }
+    if (typeof refreshHelper === 'function') refreshHelper();
+  }
+
+  function refreshHelper() {
+    const panel = document.getElementById('helper-panel');
+    const clip = document.getElementById('helper-clip');
+    if (!panel || !clip || !window.GililHelper) return;
+    const shell = document.getElementById('app-shell');
+    const signedIn = shell && !shell.classList.contains('hidden');
+    clip.classList.toggle('hidden', !signedIn);
+    clip.hidden = !signedIn;
+    if (!signedIn || panel.hidden) return;
+    const tip = window.GililHelper.suggestions(currentSection, currentLang);
+    const title = document.getElementById('helper-title');
+    const lead = document.getElementById('helper-lead');
+    const list = document.getElementById('helper-list');
+    const openBtn = document.getElementById('helper-open');
+    const closeBtn = document.getElementById('helper-close');
+    if (title) title.textContent = tip.title;
+    if (lead) lead.textContent = tip.lead;
+    if (openBtn) openBtn.title = tip.open;
+    if (closeBtn) closeBtn.setAttribute('aria-label', tip.close);
+    if (list) {
+      list.textContent = '';
+      tip.steps.forEach((step) => {
+        const li = document.createElement('li');
+        li.textContent = step;
+        list.appendChild(li);
+      });
+    }
+  }
+
+  function setHelperOpen(open) {
+    const panel = document.getElementById('helper-panel');
+    const btn = document.getElementById('helper-open');
+    if (!panel) return;
+    panel.classList.toggle('hidden', !open);
+    panel.hidden = !open;
+    if (btn) {
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      if (open) {
+        btn.classList.remove('is-attention');
+        void btn.offsetWidth;
+        btn.classList.add('is-attention');
+      }
+    }
+    if (open) refreshHelper();
   }
 
 
@@ -5113,6 +5196,8 @@
     } catch (_) {}
     $('#login-gate').classList.add('hidden');
     $('#app-shell').classList.remove('hidden');
+    const helperClip = document.getElementById('helper-clip');
+    if (helperClip) { helperClip.classList.remove('hidden'); helperClip.hidden = false; }
     $('#fab-tasks').classList.remove('hidden');
     renderChats();
     renderPlan();
@@ -5127,6 +5212,7 @@
     openTeamChats('projects');
     applyRoleUI();
     applyLang(currentLang, { silent: true });
+    if (typeof loadOwnProfile === 'function') loadOwnProfile();
     toast(opts.toast || tf('toast.entered', { login: DEMO_USER().login, short: DEMO_USER().short, role: DEMO_USER().role }));
     setTimeout(() => {
       if (!beepPlayed && overdueCount() > 0) {
@@ -5294,61 +5380,46 @@
     }
   }
 
-  // ——— Enter demo ———
-  function enterDemo() {
+  async function loginWithPassword(ev) {
+    if (ev && ev.preventDefault) ev.preventDefault();
+    const username = (($('#login-username') && $('#login-username').value) || '').trim();
+    const password = ($('#login-password') && $('#login-password').value) || '';
+    if (!username || !password) {
+      setOtpStatus(t('login.need_password'), 'error');
+      return;
+    }
+    const btn = $('#btn-password-login');
+    if (btn) btn.disabled = true;
+    setOtpStatus('');
     try {
-      sessionStorage.setItem('gilil_shell_v2_demo', 'ru1');
-      // Soft-login: store a marker; optionally try real token in background
-      localStorage.setItem('gilil_demo_user', JSON.stringify(DEMO_USER()));
-    } catch (_) {}
-    $('#login-gate').classList.add('hidden');
-    $('#app-shell').classList.remove('hidden');
-    $('#fab-tasks').classList.remove('hidden');
-    renderChats();
-    renderPlan();
-    renderTasks();
-    renderCrm();
-    loadAndRenderLeads();
-    renderTenders();
-    renderTv();
-    renderStorage();
-    applyMailRoleUI();
-    applyActivityRoleUI();
-    openTeamChats('projects');
-    applyRoleUI();
-    applyLang(currentLang, { silent: true });
-    toast(tf('toast.entered', { login: DEMO_USER().login, short: DEMO_USER().short, role: DEMO_USER().role }));
-
-    // Soft try real auth (non-blocking; demo works without it)
-    const rememberMe = isRememberMe();
-    fetch('/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        username: DEMO_USER().username || 'manager_ru',
-        password: DEMO_USER().password || 'mgr123',
-        rememberMe: !!rememberMe,
-      }),
-    })
-      .then((r) => r.json())
-      .then((data) => {
-        if (data && data.token) storeAuthTokens(data, rememberMe);
-      })
-      .catch(() => {});
-
-    // Auto beep once if overdue tasks exist (simulate >1h unchecked)
-    setTimeout(() => {
-      if (!beepPlayed && overdueCount() > 0) {
-        beepPlayed = true;
-        playBeep();
+      const rememberMe = isRememberMe();
+      const r = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password, rememberMe: !!rememberMe }),
+      });
+      const data = await r.json().catch(() => ({}));
+      if (!r.ok || !data || !data.token) {
+        const msg = data && data.error === 'rate_limited'
+          ? tf('login.wait_resend', { sec: data.retry_after_sec || 60 })
+          : t('login.bad_password');
+        setOtpStatus(msg, 'error');
+        return;
       }
-      // Invoice pending Ruslan: notify when acting as admin
-      updateInvoiceAlert();
-      loadNotifications();
-      connectNotifWs();
-      if (typeof loadServerTasks === 'function') loadServerTasks();
-      if (typeof loadReplyStatuses === 'function') loadReplyStatuses();
-    }, 1800);
+      storeAuthTokens(data, rememberMe);
+      currentRole = mapServerUserToRole(data.user);
+      const name = (data.user && data.user.display_name) || username;
+      const pw = $('#login-password');
+      if (pw) pw.value = '';
+      openShellAfterAuth({
+        sessionKey: 'login:' + username,
+        toast: tf('toast.entered', { login: username, short: name, role: (data.user && data.user.role) || '' }),
+      });
+    } catch (e) {
+      setOtpStatus(String(e.message || e), 'error');
+    } finally {
+      if (btn) btn.disabled = false;
+    }
   }
 
   // ——— Wire events ———
@@ -5385,6 +5456,12 @@
     const theme = THEME_IDS.includes(id) ? id : 'dark';
     currentTheme = theme;
     document.documentElement.dataset.theme = theme;
+    const brandIcon = document.getElementById('brand-theme-icon');
+    const themeIcon = { dark: '/icons/themes/gililon-dark.svg', bitrix: '/icons/themes/gililon-bitrix.svg', cyan: '/icons/themes/gililon-cyan.svg' };
+    if (brandIcon) brandIcon.src = themeIcon[theme] || themeIcon.dark;
+    document.querySelectorAll('link[rel="icon"], link[rel="apple-touch-icon"]').forEach((link) => {
+      link.href = (themeIcon[theme] || themeIcon.dark).replace('.svg', '.png');
+    });
     try { localStorage.setItem(THEME_KEY, theme); } catch (_) {}
     // Push theme to same-origin iframes (SRM TV) immediately.
     pushThemeToFrames(theme);
@@ -5439,9 +5516,99 @@
     if (open && typeof openProfileCard === 'function') openProfileCard(false);
   }
 
+  function setWhoEditing(open) {
+    const form = document.getElementById('who-edit-form');
+    const view = document.getElementById('who-view');
+    const btn = document.getElementById('btn-who-edit');
+    if (!form || !view) return;
+    if (open) {
+      const shown = shownProfile();
+      const nameEl = document.getElementById('who-edit-name');
+      const companyEl = document.getElementById('who-edit-company');
+      if (nameEl) nameEl.value = shown.name || '';
+      if (companyEl) companyEl.value = shown.company || '';
+      const roleEl = document.getElementById('who-edit-role');
+      const teamEl = document.getElementById('who-edit-team');
+      const loginEl = document.getElementById('who-edit-login');
+      if (roleEl) roleEl.textContent = shown.role || '';
+      if (teamEl) teamEl.textContent = shown.team || '';
+      if (loginEl) loginEl.textContent = shown.login || '';
+      const status = document.getElementById('who-edit-status');
+      if (status) status.textContent = '';
+    }
+    form.classList.toggle('hidden', !open);
+    form.hidden = !open;
+    view.classList.toggle('hidden', open);
+    if (btn) btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+
+  async function loadOwnProfile() {
+    const token = getToken();
+    if (!token) return;
+    try {
+      const r = await fetch('/api/me', { headers: { Authorization: 'Bearer ' + token, Accept: 'application/json' } });
+      const data = await r.json().catch(() => ({}));
+      if (!r.ok || !data.user) return;
+      serverProfile = data.user;
+      applyRoleUI();
+    } catch (_) {}
+  }
+
+  async function saveOwnProfile(ev) {
+    if (ev && ev.preventDefault) ev.preventDefault();
+    const token = getToken();
+    const status = document.getElementById('who-edit-status');
+    if (!token) {
+      if (status) status.textContent = t('personal.protected_note');
+      return;
+    }
+    const display_name = (document.getElementById('who-edit-name').value || '').trim();
+    const profile_company = (document.getElementById('who-edit-company').value || '').trim();
+    const r = await fetch('/api/me/profile', {
+      method: 'PATCH',
+      headers: { Authorization: 'Bearer ' + token, Accept: 'application/json', 'Content-Type': 'application/json' },
+      body: JSON.stringify({ display_name: display_name, profile_company: profile_company }),
+    });
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok || !data.user) {
+      if (status) status.textContent = (data && data.error) || 'error';
+      return;
+    }
+    serverProfile = data.user;
+    applyRoleUI();
+    setWhoEditing(false);
+  }
+
+  function bindWhoEditor() {
+    const openBtn = document.getElementById('btn-who-edit');
+    const form = document.getElementById('who-edit-form');
+    const cancel = document.getElementById('who-edit-cancel');
+    if (openBtn) openBtn.addEventListener('click', () => setWhoEditing(true));
+    if (cancel) cancel.addEventListener('click', () => setWhoEditing(false));
+    if (form) form.addEventListener('submit', (ev) => { saveOwnProfile(ev).catch(() => {}); });
+  }
+
+  function bindHelper() {
+    const openBtn = document.getElementById('helper-open');
+    const closeBtn = document.getElementById('helper-close');
+    if (openBtn) {
+      openBtn.addEventListener('click', () => {
+        const panel = document.getElementById('helper-panel');
+        setHelperOpen(!(panel && !panel.hidden));
+      });
+      openBtn.addEventListener('animationend', (ev) => {
+        if (ev.animationName === 'clippy-wave') openBtn.classList.remove('is-attention');
+      });
+    }
+    if (closeBtn) closeBtn.addEventListener('click', () => setHelperOpen(false));
+  }
+
   function bind() {
     bindOtpLogin();
-    $('#btn-enter').addEventListener('click', enterDemo);
+    bindWhoEditor();
+    bindHelper();
+    const passwordForm = document.getElementById('password-form');
+    if (passwordForm) passwordForm.addEventListener('submit', (ev) => { loginWithPassword(ev); });
 
     fillLangSelects();
     document.querySelectorAll('.lang-select').forEach((sel) => {
@@ -5452,8 +5619,6 @@
     const urlLang = new URLSearchParams(location.search).get('lang');
     if (urlLang && isUiLang(urlLang)) {
       startLang = urlLang.toLowerCase();
-    } else if (new URLSearchParams(location.search).get('demo') === '1') {
-      startLang = 'zh';
     } else {
       try {
         const saved = localStorage.getItem('gilil_shell_v2_lang');
@@ -5880,8 +6045,6 @@
             role: DEMO_USER().role,
           }),
         });
-      } else if (sess === 'ru1') {
-        enterDemo();
       } else if (sess && String(sess).startsWith('otp:') && token) {
         openShellAfterAuth({
           sessionKey: sess,
@@ -5894,10 +6057,6 @@
       }
     } catch (_) {}
 
-    // URL ?demo=1 auto-enter
-    if (new URLSearchParams(location.search).get('demo') === '1') {
-      enterDemo();
-    }
     // URL ?profile=1 — open Personal section after shell is ready (screenshots / deep link)
     if (new URLSearchParams(location.search).get('profile') === '1') {
       setTimeout(() => {
@@ -7009,7 +7168,68 @@
     }
   }
 
+  let settingsUpdateAsked = false;
+  let settingsUpdateBusy = false;
+
+  function showSettingsUpdateStatus(text) {
+    const el = document.getElementById('settings-update-status');
+    if (!el) return;
+    el.textContent = text || '';
+    el.hidden = !text;
+  }
+
+  function settingsUpdateMessage(st) {
+    const status = st && st.status;
+    if (!st || !st.enabled || status === 'skipped') {
+      const reason = (st && (st.reason || status)) || 'disabled';
+      return tUpdate('settings.update_unavailable', { reason: reason });
+    }
+    if (status === 'checking') return tUpdate('settings.update_checking');
+    if (status === 'not-available' || status === 'idle') return tUpdate('settings.update_none');
+    if (status === 'available') {
+      return st.version
+        ? tUpdate('settings.update_found', { ver: st.version })
+        : tUpdate('settings.update_found_plain');
+    }
+    if (status === 'downloading') {
+      const pct = Math.max(0, Math.min(100, Math.round((st.progress && st.progress.percent) || 0)));
+      return tUpdate('update.downloading', { pct: pct });
+    }
+    if (status === 'downloaded') {
+      return st.version ? tUpdate('update.ready') + ' · v' + st.version : tUpdate('update.ready');
+    }
+    if (status === 'error') return tUpdate('update.error', { err: String(st.error || '').slice(0, 120) });
+    return tUpdate('settings.update_unavailable', { reason: status || 'unknown' });
+  }
+
+  async function onSettingsCheckUpdate() {
+    if (settingsUpdateBusy) return;
+    settingsUpdateBusy = true;
+    settingsUpdateAsked = true;
+    try {
+      if (!(window.gililDesktop && typeof window.gililDesktop.checkForUpdates === 'function')) {
+        showSettingsUpdateStatus(tUpdate('settings.update_desktop_only'));
+        return;
+      }
+      showSettingsUpdateStatus(tUpdate('settings.update_checking'));
+      const result = await window.gililDesktop.checkForUpdates();
+      const st = (result && result.state) ? result.state : (result || {});
+      if (result && result.ok === false && result.error && (!st || st.status !== 'error')) {
+        showSettingsUpdateStatus(tUpdate('update.error', { err: String(result.error).slice(0, 120) }));
+        return;
+      }
+      showSettingsUpdateStatus(settingsUpdateMessage(st));
+      if (st) renderUpdateStatus(st);
+    } catch (err) {
+      showSettingsUpdateStatus(tUpdate('update.error', { err: String((err && err.message) || err).slice(0, 120) }));
+    } finally {
+      settingsUpdateBusy = false;
+    }
+  }
+
   function bindUpdateUi() {
+    const settingsBtn = document.getElementById('btn-settings-check-update');
+    if (settingsBtn) settingsBtn.addEventListener('click', () => { onSettingsCheckUpdate().catch(() => {}); });
     if (!(window.gililDesktop && window.gililDesktop.isDesktop)) return;
     const btnDl = document.getElementById('btn-update-download');
     const btnInst = document.getElementById('btn-update-install');
@@ -7035,7 +7255,11 @@
       });
     }
     if (typeof window.gililDesktop.onUpdateStatus === 'function') {
-      window.gililDesktop.onUpdateStatus((payload) => renderUpdateStatus(payload || {}));
+      window.gililDesktop.onUpdateStatus((payload) => {
+        const st = payload || {};
+        renderUpdateStatus(st);
+        if (settingsUpdateAsked) showSettingsUpdateStatus(settingsUpdateMessage(st));
+      });
     }
     if (typeof window.gililDesktop.getUpdateStatus === 'function') {
       window.gililDesktop.getUpdateStatus().then((st) => renderUpdateStatus(st || {})).catch(() => {});

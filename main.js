@@ -25,10 +25,11 @@ const {
   startDownload: updateStartDownload,
   quitAndInstall: updateQuitAndInstall,
 } = require('./auto-updater');
+const { captionOptions, captionForTheme } = require('./window-chrome');
 
 const DEFAULT_PORT = 8788;
 const UI_PATH = '/shell-v2.html';
-const APP_VERSION = '1.1.0';
+const APP_VERSION = '1.1.4';
 
 const DEFAULT_ALLOW_HOSTS = [
   '127.0.0.1',
@@ -398,10 +399,11 @@ function resolveNodeBin() {
 
 function resolveAppIcon() {
   const candidates = [
+    resolveThemeWordmarkIcon(readSavedSplashTheme()),
     path.join(__dirname, 'icons', 'gilil-on-windows.ico'),
     path.join(__dirname, 'icons', 'gilil-on-512.png'),
     path.join(__dirname, 'tray-icon.png'),
-  ];
+  ].filter(Boolean);
   for (const p of candidates) {
     try {
       if (fs.existsSync(p)) {
@@ -567,6 +569,7 @@ function sendToRenderer(channel, payload) {
 
 function loadTrayIcon() {
   const candidates = [
+    resolveThemeWordmarkIcon(readSavedSplashTheme()),
     path.join(__dirname, 'tray-icon.png'),
     path.join(__dirname, 'icons', 'tray-icon.png'),
     path.join(__dirname, 'icons', 'gilil-on-512.png'),
@@ -745,7 +748,20 @@ function setupIpc() {
   });
 
   ipcMain.on('gilil:set-theme', (_e, id) => {
-    writeSavedSplashTheme(id);
+    const theme = writeSavedSplashTheme(id);
+    applyWindowChrome(mainWindow, theme);
+    try {
+      const themed = resolveThemeWordmarkIcon(readSavedSplashTheme());
+      if (themed && mainWindow && !mainWindow.isDestroyed()) mainWindow.setIcon(themed);
+      if (themed && tray) tray.setImage(nativeImage.createFromPath(themed));
+    } catch (e) {
+      console.warn('[gilil-desktop] theme icon:', e.message);
+    }
+    try {
+      ensureDesktopShortcutOnce();
+    } catch (e) {
+      console.warn('[gilil-desktop] theme shortcut:', e.message);
+    }
   });
 
   ipcMain.handle('gilil:open-manual', async () => {
@@ -758,74 +774,155 @@ function setupIpc() {
   });
 }
 
-const DESKTOP_SHORTCUT_FLAG = 'desktop-shortcut-created.flag';
+const THEME_WORDMARK_ICONS = {
+  dark: 'gilil-on-dark.ico',
+  bitrix: 'gilil-on-bitrix.ico',
+  cyan: 'gilil-on-cyan.ico',
+};
+
+/** SHCNE_UPDATEITEM. Not SHCNE_ASSOCCHANGED — that would be a global shell refresh. */
+const SHCNE_UPDATEITEM = 0x00002000;
+/** SHCNF_PATHW | SHCNF_FLUSH. One item, Unicode path, no Explorer restart. */
+const SHCNF_PATHW_FLUSH = 0x00001005;
+
+function resolveThemeWordmarkIcon(theme) {
+  const file = THEME_WORDMARK_ICONS[theme] || THEME_WORDMARK_ICONS.dark;
+  const candidates = [];
+  if (process.resourcesPath) {
+    candidates.push(path.join(process.resourcesPath, 'icons', 'themes', file));
+  }
+  candidates.push(path.join(__dirname, 'icons', 'themes', file));
+  for (const iconPath of candidates) {
+    try {
+      if (fs.existsSync(iconPath)) return iconPath;
+    } catch (_) {}
+  }
+  return null;
+}
+
+function pathsEqual(a, b) {
+  if (!a || !b) return false;
+  try {
+    return path.normalize(a).toLowerCase() === path.normalize(b).toLowerCase();
+  } catch (_) {
+    return false;
+  }
+}
 
 /**
- * Portable builds have no installer UI, so NSIS createDesktopShortcut never runs.
- * On first packaged Windows launch, create a desktop .lnk once (userData flag).
+ * Tell the shell this one shortcut changed. A short-lived process, not a
+ * resident daemon, and it is not registered to start with Windows.
  */
+function notifyShortcutChanged(shortcutPath) {
+  if (process.platform !== 'win32' || !shortcutPath) return;
+  const ps = [
+    "$p = $env:GILIL_NOTIFY_PATH",
+    "if ([string]::IsNullOrEmpty($p)) { exit 0 }",
+    "Add-Type -TypeDefinition @'",
+    "using System;",
+    "using System.Runtime.InteropServices;",
+    "public static class GililItemNotify {",
+    "  [DllImport(\"shell32.dll\", CharSet=CharSet.Unicode)]",
+    "  public static extern void SHChangeNotify(int wEventId, uint uFlags, string dwItem1, System.IntPtr dwItem2);",
+    "}",
+    "'@",
+    `[GililItemNotify]::SHChangeNotify(${SHCNE_UPDATEITEM}, ${SHCNF_PATHW_FLUSH}, $p, [IntPtr]::Zero)`,
+  ].join("\n");
+  try {
+    const child = spawn(
+      "powershell.exe",
+      ["-NoProfile", "-NonInteractive", "-Command", ps],
+      {
+        windowsHide: true,
+        stdio: "ignore",
+        env: { ...process.env, GILIL_NOTIFY_PATH: shortcutPath },
+      }
+    );
+    child.unref();
+    child.on("error", () => {});
+  } catch (e) {
+    console.warn("[gilil-desktop] shortcut notify failed:", e.message);
+  }
+}
+
+/**
+ * One desktop shortcut, "Gilil On.lnk", using the in-app wordmark for the
+ * saved theme. Rewriting the same path does not create a second icon.
+ * The old desktop-shortcut-created.flag is ignored and removed.
+ */
+function brandedShortcutPaths() {
+  const paths = [];
+  try {
+    paths.push(path.join(app.getPath("desktop"), "Gilil On.lnk"));
+  } catch (_) {}
+  const programs = path.join("Microsoft", "Windows", "Start Menu", "Programs");
+  if (process.env.APPDATA) paths.push(path.join(process.env.APPDATA, programs, "Gilil On.lnk"));
+  if (process.env.ProgramData) paths.push(path.join(process.env.ProgramData, programs, "Gilil On.lnk"));
+  return paths;
+}
+
+function writeBrandedShortcut(shortcutPath, iconPath, createIfMissing) {
+  let exists = false;
+  try {
+    exists = fs.existsSync(shortcutPath);
+  } catch (_) {}
+  if (!exists && !createIfMissing) return false;
+  if (exists && typeof shell.readShortcutLink === "function") {
+    try {
+      const cur = shell.readShortcutLink(shortcutPath);
+      if (
+        cur &&
+        pathsEqual(cur.target, process.execPath) &&
+        pathsEqual(cur.icon, iconPath) &&
+        (cur.iconIndex || 0) === 0
+      ) {
+        return true;
+      }
+    } catch (_) {}
+  }
+  const details = {
+    target: process.execPath,
+    cwd: path.dirname(process.execPath),
+    args: "",
+    description: "Gilil On",
+    icon: iconPath,
+    iconIndex: 0,
+    appUserModelId: "com.gilil.on",
+  };
+  let ok = false;
+  try {
+    ok = shell.writeShortcutLink(shortcutPath, exists ? "replace" : "create", details);
+  } catch (e) {
+    console.warn("[gilil-desktop] writeShortcutLink failed:", e.message);
+  }
+  if (!ok && !exists) {
+    try {
+      ok = shell.writeShortcutLink(shortcutPath, "create", details);
+    } catch (e) {
+      console.warn("[gilil-desktop] writeShortcutLink create failed:", e.message);
+    }
+  }
+  if (ok) notifyShortcutChanged(shortcutPath);
+  return ok;
+}
+
 function ensureDesktopShortcutOnce() {
-  if (process.platform !== 'win32') return;
+  if (process.platform !== "win32") return;
   if (!app.isPackaged) return;
 
-  const flagPath = path.join(app.getPath('userData'), DESKTOP_SHORTCUT_FLAG);
   try {
-    if (fs.existsSync(flagPath)) return;
-  } catch (_) {
-    return;
-  }
+    const staleFlag = path.join(app.getPath("userData"), "desktop-shortcut-created.flag");
+    if (fs.existsSync(staleFlag)) fs.unlinkSync(staleFlag);
+  } catch (_) {}
 
-  let desktopDir;
-  try {
-    desktopDir = app.getPath('desktop');
-  } catch (e) {
-    console.warn('[gilil-desktop] desktop path unavailable:', e.message);
-    return;
-  }
-
-  const shortcutPath = path.join(desktopDir, 'Gilil On.lnk');
-  const iconPath = (() => {
-    const ico = path.join(__dirname, 'icons', 'gilil-on-windows.ico');
-    try {
-      if (fs.existsSync(ico)) return ico;
-    } catch (_) {}
-    return process.execPath;
-  })();
-
-  let created = false;
-  try {
-    created = shell.writeShortcutLink(shortcutPath, 'create', {
-      target: process.execPath,
-      cwd: path.dirname(process.execPath),
-      args: '',
-      description: 'Gilil On',
-      icon: iconPath,
-      iconIndex: 0,
-      appUserModelId: 'com.gilil.on',
-    });
-  } catch (e) {
-    console.warn('[gilil-desktop] writeShortcutLink failed:', e.message);
-    return;
-  }
-
-  if (!created) {
-    // If link already exists, still mark done so we do not retry forever.
-    try {
-      if (fs.existsSync(shortcutPath)) created = true;
-    } catch (_) {}
-  }
-
-  if (created) {
-    try {
-      fs.mkdirSync(path.dirname(flagPath), { recursive: true });
-      fs.writeFileSync(flagPath, `created=${new Date().toISOString()}\npath=${shortcutPath}\n`, 'utf8');
-      console.log(`[gilil-desktop] desktop shortcut ok: ${shortcutPath}`);
-    } catch (e) {
-      console.warn('[gilil-desktop] shortcut flag write failed:', e.message);
-    }
-  } else {
-    console.warn('[gilil-desktop] desktop shortcut not created');
-  }
+  const theme = readSavedSplashTheme();
+  const iconPath = resolveThemeWordmarkIcon(theme) || process.execPath;
+  const targets = brandedShortcutPaths();
+  targets.forEach((shortcutPath, index) => {
+    const isDesktop = index === 0;
+    const ok = writeBrandedShortcut(shortcutPath, iconPath, isDesktop || shortcutPath.includes("Start Menu"));
+    if (ok) console.log(`[gilil-desktop] shortcut ${theme}: ${shortcutPath}`);
+  });
 }
 
 
@@ -841,6 +938,22 @@ function readSavedSplashTheme() {
     if (SPLASH_THEMES.has(t)) return t;
   } catch (_) {}
   return 'dark';
+}
+
+function applyWindowChrome(win, theme) {
+  if (!win || win.isDestroyed()) return;
+  const colors = captionForTheme(theme);
+  try {
+    win.setBackgroundColor(colors.color);
+  } catch (e) {
+    console.warn('[gilil-desktop] window background:', e.message);
+  }
+  if (process.platform !== 'win32' || typeof win.setTitleBarOverlay !== 'function') return;
+  try {
+    win.setTitleBarOverlay(captionOptions(theme));
+  } catch (e) {
+    console.warn('[gilil-desktop] caption theme:', e.message);
+  }
 }
 
 function writeSavedSplashTheme(id) {
@@ -954,7 +1067,7 @@ async function createWindow() {
     resizable: true,
     maximizable: true,
     fullscreenable: true,
-    backgroundColor: SPLASH_BG[readSavedSplashTheme()] || '#0c0a08',
+    backgroundColor: captionForTheme(readSavedSplashTheme()).color,
     title: `Gilil On ${APP_VERSION}`,
     show: false,
     webPreferences: {
@@ -970,8 +1083,13 @@ async function createWindow() {
     },
   };
   if (iconInfo.path) winOpts.icon = iconInfo.path;
+  if (process.platform === 'win32') {
+    winOpts.titleBarStyle = 'hidden';
+    winOpts.titleBarOverlay = captionOptions(readSavedSplashTheme());
+  }
 
   mainWindow = new BrowserWindow(winOpts);
+  applyWindowChrome(mainWindow, readSavedSplashTheme());
   try {
     mainWindow.setMinimumSize(minW, minH);
   } catch (_) {}

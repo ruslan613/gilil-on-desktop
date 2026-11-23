@@ -39,6 +39,7 @@ function publicUser(row) {
     role: row.role,
     region: row.region,
     display_name: row.display_name,
+    profile_company: row.profile_company || null,
     locale: row.locale,
     manager_id: row.manager_id,
   };
