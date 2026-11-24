@@ -44,7 +44,11 @@ check('settings links still open the same sections', js.includes("bindSettingsLi
 check('top tabs wrap instead of a clipping scrollbar', /flex-wrap:\s*wrap/.test(css) && css.includes('scrollbar-width: none'));
 check('top tab font is the 12.5px baseline plus exactly 2pt', css.includes('calc(12.5px + (2 * 96px / 72))'));
 check('narrow layout does not put the old 12px size back', !/\.pill\s*\{[^}]*font-size:\s*12px/.test(css));
-check('sidebar stretches and the chat list scrolls inside it', css.includes('align-self: stretch') && css.includes('flex: 1 1 auto') && css.includes('min-height: 0'));
+const side = css.slice(css.indexOf('.sidebar {'), css.indexOf('.sidebar {') + 700);
+const shell = css.slice(css.indexOf('#app-shell {'), css.indexOf('#app-shell {') + 400);
+const bodyRule = css.slice(css.indexOf('.body {'), css.indexOf('.body {') + 450);
+check('sidebar column stretches inside a viewport-tall shell', /height:\s*100dvh/.test(shell) && /grid-row:\s*3/.test(bodyRule) && /height:\s*100%/.test(side) && /min-height:\s*100%/.test(side) && /background-color:\s*var\(--bg-elev\)/.test(side));
+check('chat list scrolls inside the sidebar column', /\.chat-groups\s*\{[^}]*flex:\s*1 1 auto/.test(css) && /\.chat-groups\s*\{[^}]*min-height:\s*0/.test(css) && /\.chat-groups\s*\{[^}]*overflow:\s*auto/.test(css));
 check('uninstall still does not delete AppData', !js.includes('--delete-app-data') && fs.readFileSync(path.join(root, 'package.json'), 'utf8').includes('"deleteAppDataOnUninstall": false'));
 
 const i18nStart = js.indexOf('const I18N = {');
@@ -93,6 +97,16 @@ check('Chinese shell strings do not contain Cyrillic', zhCyr === 0);
 check('English shell strings are not Chinese or Russian leftovers', enForeign === 0);
 check('Chinese reload control is Chinese', I18N.zh['supply.reload'] === '刷新');
 check('journal and mail statistics have natural labels', I18N.ru['nav.activity'] === 'Журнал' && I18N.en['nav.activity'] === 'Activity log' && I18N.zh['nav.mail_stats'] === '邮件统计' && I18N.en['nav.mail_stats'] === 'Mail statistics');
+const roleToast = ['toast.tpl_deny', 'toast.tpl_count', 'toast.mail_stats_deny'].map((k) => I18N.zh[k] + '\n' + I18N.ru[k]).join('\n');
+check('Russian and Chinese role toasts use role words, not admin/director ids', !/admin|director/i.test(roleToast));
+check('role fixture stays off in the desktop shell and off outside localhost', js.includes('window.gililDesktop') && js.includes("get('fixtureRole')") && js.includes("host !== '127.0.0.1'") && js.includes("host !== 'localhost'"));
+const tv = fs.readFileSync(path.join(root, 'server/public/crm-tv.html'), 'utf8');
+const pageLang = fs.readFileSync(path.join(root, 'server/public/ui-lang.js'), 'utf8');
+check('SRM clock reads the selected language and refreshes when it changes', tv.includes('GililPageLang.lang()') && tv.includes('tickClock()') && !/toLocaleString\(\s*'ru-RU'/.test(tv));
+check('embedded pages apply a language the shell posts', pageLang.includes("e.data.type !== 'gilil:lang'") && js.includes("type: 'gilil:lang'"));
+const statsFn = js.slice(js.indexOf('async function renderMailStats'), js.indexOf('async function renderMailStats') + 3200);
+check('mail statistics column headers use translation keys', statsFn.includes("t('mail.col_role')") && statsFn.includes("t('mail.col_client')") && !statsFn.includes("'Роль'") && !statsFn.includes("'Клиент'"));
+check('localhost fixture paints the empty mail and journal layout without a token', js.includes('isolatedFixtureRole') && statsFn.includes("t('mail.no_rows')") && js.includes("t('activity.empty')") && js.includes("isolatedFixtureRole === 'admin'"));
 
 const baselinePx = 12.5;
 const plusTwoPtPx = 2 * 96 / 72;

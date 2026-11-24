@@ -42,7 +42,8 @@ check('emblem is 50px, about 1.4 times 36', css.includes('width: 50px !important
 check('emblem keeps its picture', css.includes('object-fit: contain'));
 check('narrow header uses a smaller emblem', css.includes('max-width: 900px') && css.includes('width: 42px'));
 
-check('sidebar stretches to the row', css.includes('.sidebar {') && /align-self:\s*stretch/.test(css.slice(css.indexOf('.sidebar {'), css.indexOf('.sidebar {') + 500)) && css.includes('min-height: 0'));
+const sideBlock = css.slice(css.indexOf('.sidebar {'), css.indexOf('.sidebar {') + 700);
+check('sidebar stretches to the row', css.includes('.sidebar {') && /align-self:\s*stretch/.test(sideBlock) && /height:\s*100%/.test(sideBlock) && /grid-row:\s*3/.test(css) && css.includes('height: 100dvh'));
 check('team list scrolls inside the sidebar', css.includes('flex: 1 1 auto') && css.includes('min-height: 0'));
 
 assert.strictEqual(CAPTION_HEIGHT, 32);

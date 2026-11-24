@@ -35,6 +35,12 @@
     window.addEventListener('storage', (e) => {
       if (!e.key || e.key === KEY) paint(true);
     });
+    window.addEventListener('message', (e) => {
+      if (!e.data || e.data.type !== 'gilil:lang') return;
+      if (e.origin && e.origin !== window.location.origin) return;
+      try { localStorage.setItem(KEY, e.data.lang); } catch (_) {}
+      paint(true);
+    });
     root.GililPageLang = { lang: lang, tr: tr, paint: paint };
     return tr;
   }

@@ -53,6 +53,7 @@
     },
   };
   let currentRole = 'ru';
+  let isolatedFixtureRole = '';
   function DEMO_USER() {
     const base = ROLES[currentRole];
     return {
@@ -536,8 +537,8 @@
       "toast.inv_need": "请填写公司与金额",
       "toast.admin_only": "管理后台仅限管理员角色",
       "toast.admin_users": "管理后台 · 用户（演示）：admin / dir1 / ru1 / cn1",
-      "toast.tpl_deny": "模板由 admin/director 编辑",
-      "toast.tpl_count": "模板数：{n}（通过 API / admin 编辑）",
+      "toast.tpl_deny": "模板由管理员和总监编辑",
+      "toast.tpl_count": "模板数：{n}（由管理员通过 API 编辑）",
       "toast.chat_filters": "聊天筛选已重置",
       "toast.contact_block": "联系方式已拦截 · 消息未送达",
       "toast.mail_stats_deny": "邮件统计仅限管理员和总监",
@@ -724,6 +725,16 @@
       "notif.sys.escalation": "升级 · 计划未完成",
       "notif.sys.escalation_body": "有人未完成计划，已升级。",
       "mail.manager_col": "经理",
+      "mail.col_role": "角色",
+      "mail.col_sent": "已发",
+      "mail.col_edited": "已改",
+      "mail.col_rejected": "已拒",
+      "mail.col_avg": "平均小时",
+      "mail.col_client": "客户",
+      "mail.col_project": "项目",
+      "mail.col_in": "收",
+      "mail.col_out": "发",
+      "mail.col_open": "未完成",
     },
     ru: {
       "login.enter": "Войти как сотрудник",
@@ -1181,8 +1192,8 @@
       "toast.inv_need": "Укажите компанию и сумму",
       "toast.admin_only": "Админка только для роли Админ",
       "toast.admin_users": "Админка · пользователи (демо): admin / dir1 / ru1 / cn1",
-      "toast.tpl_deny": "Шаблоны редактирует admin/director",
-      "toast.tpl_count": "Шаблонов: {n} (редактирование через API / admin)",
+      "toast.tpl_deny": "Шаблоны редактирует администратор или директор",
+      "toast.tpl_count": "Шаблонов: {n} (правит администратор через API)",
       "toast.chat_filters": "Фильтры чата сброшены",
       "toast.contact_block": "Контакт заблокирован · сообщение не доставлено",
       "toast.mail_stats_deny": "Статистика почты только для администратора и директора",
@@ -1369,6 +1380,16 @@
       "notif.sys.escalation": "Эскалация · пропуск плана",
       "notif.sys.escalation_body": "План не выполнен, отчёт передан генералу.",
       "mail.manager_col": "Менеджер",
+      "mail.col_role": "Роль",
+      "mail.col_sent": "Отпр.",
+      "mail.col_edited": "Правили",
+      "mail.col_rejected": "Откл.",
+      "mail.col_avg": "Ср.ч",
+      "mail.col_client": "Клиент",
+      "mail.col_project": "Проект",
+      "mail.col_in": "Вх.",
+      "mail.col_out": "Исх.",
+      "mail.col_open": "Открыто",
     },
     en: {
       "login.enter": "Sign in as employee",
@@ -1813,7 +1834,7 @@
       "toast.inv_need": "Enter company and amount",
       "toast.admin_only": "Admin panel for Admin role only",
       "toast.admin_users": "Admin · users (demo): admin / dir1 / ru1 / cn1",
-      "toast.tpl_deny": "Templates edited by admin/director",
+      "toast.tpl_deny": "Templates are edited by an administrator or a director",
       "toast.tpl_count": "Templates: {n} (edit via API / admin)",
       "toast.chat_filters": "Chat filters reset",
       "toast.contact_block": "Contact blocked · message not delivered",
@@ -2014,6 +2035,16 @@
       "notif.sys.escalation": "Escalation · missed plan",
       "notif.sys.escalation_body": "A plan was missed and reported to the general.",
       "mail.manager_col": "Manager",
+      "mail.col_role": "Role",
+      "mail.col_sent": "Sent",
+      "mail.col_edited": "Edited",
+      "mail.col_rejected": "Rejected",
+      "mail.col_avg": "Avg h",
+      "mail.col_client": "Client",
+      "mail.col_project": "Project",
+      "mail.col_in": "In",
+      "mail.col_out": "Out",
+      "mail.col_open": "Open",
     },
   };
 
@@ -2068,6 +2099,11 @@
     if (!isUiLang(lang)) lang = 'en';
     currentLang = lang;
     try { localStorage.setItem('gilil_shell_v2_lang', lang); } catch (_) {}
+    document.querySelectorAll('iframe').forEach((frame) => {
+      try {
+        if (frame.contentWindow) frame.contentWindow.postMessage({ type: 'gilil:lang', lang: lang }, window.location.origin);
+      } catch (_) {}
+    });
     const meta = langMeta(lang);
     document.documentElement.lang = lang === 'zh' ? 'zh-CN' : lang;
     document.documentElement.dir = meta.rtl ? 'rtl' : 'ltr';
@@ -4807,6 +4843,19 @@
     const proj = $('#mail-stats-projects');
     const chart = $('#mail-stats-chart');
     if (r.status !== 200) {
+      const fixtureEmpty = isolatedFixtureRole === 'admin' || isolatedFixtureRole === 'director';
+      if (fixtureEmpty && (r.status === 401 || r.status === 404 || r.status === 0)) {
+        if (metrics) {
+          metrics.innerHTML = [t('mail.in'), t('mail.out'), t('mail.bot_clean'), t('mail.manual'), t('mail.avg_hours')]
+            .map((l) => '<div class="mail-metric"><div class="n">—</div><div class="l">' + escapeHtml(l) + '</div></div>')
+            .join('');
+        }
+        const empty = '<p style="color:var(--muted);font-size:12px">' + escapeHtml(t('mail.no_rows')) + '</p>';
+        if (mgr) mgr.innerHTML = empty;
+        if (proj) proj.innerHTML = empty;
+        if (chart) chart.innerHTML = empty;
+        return;
+      }
       if (metrics) metrics.innerHTML = '<p style="color:var(--muted)">' + escapeHtml(t('mail.no_access')) + '</p>';
       return;
     }
@@ -4843,20 +4892,20 @@
     if (mgr) {
       mgr.innerHTML = table(r.data.by_manager, [
         ['display_name', t('mail.manager_col')],
-        ['role', 'Роль'],
-        ['sent', 'Отпр.'],
-        ['edited', 'Правили'],
-        ['rejected', 'Откл.'],
-        ['avg_hours', 'Ср.ч'],
+        ['role', t('mail.col_role')],
+        ['sent', t('mail.col_sent')],
+        ['edited', t('mail.col_edited')],
+        ['rejected', t('mail.col_rejected')],
+        ['avg_hours', t('mail.col_avg')],
       ]);
     }
     if (proj) {
       proj.innerHTML = table(r.data.by_project, [
-        ['client_name', 'Клиент'],
-        ['title', 'Проект'],
-        ['inbound', 'In'],
-        ['outbound', 'Out'],
-        ['open_items', 'Открыто'],
+        ['client_name', t('mail.col_client')],
+        ['title', t('mail.col_project')],
+        ['inbound', t('mail.col_in')],
+        ['outbound', t('mail.col_out')],
+        ['open_items', t('mail.col_open')],
       ]);
     }
     if (chart) {
@@ -6080,6 +6129,17 @@
     });
     initTeamVisibilityUI();
     syncPillsActive(currentSection || 'chats');
+    const fixtureRole = (function () {
+      if (window.gililDesktop) return '';
+      const host = location.hostname;
+      if (host !== '127.0.0.1' && host !== 'localhost') return '';
+      const q = new URLSearchParams(location.search).get('fixtureRole');
+      return q === 'admin' || q === 'director' || q === 'ru' || q === 'cn' ? q : '';
+    })();
+    if (fixtureRole) {
+      isolatedFixtureRole = fixtureRole;
+      currentRole = fixtureRole;
+    }
     applyMailRoleUI();
     applyActivityRoleUI();
 
@@ -8361,6 +8421,10 @@
     root.textContent = '…';
     const r = await apiFetch('/api/activity?limit=80');
     if (!r.ok) {
+      if (isolatedFixtureRole === 'admin' && (r.status === 401 || r.status === 404 || r.status === 0)) {
+        root.innerHTML = '<div class="muted">' + esc(t('activity.empty')) + '</div>';
+        return;
+      }
       root.innerHTML = '<div class="stage2-err">' + esc(userFacingError(r.data, r.status)) + '</div>';
       return;
     }

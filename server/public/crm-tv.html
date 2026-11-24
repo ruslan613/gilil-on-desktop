@@ -401,7 +401,12 @@
       },
     };
     let reloadTv = function () {};
-    const tr = window.GililPageLang.bind(TV_DICT, function () { reloadTv(); });
+    const tr = window.GililPageLang.bind(TV_DICT, function (trFn) {
+      tickClock();
+      const upd = document.getElementById('updated');
+      if (upd) upd.textContent = trFn('updating');
+      reloadTv();
+    });
     const REFRESH_MS = 45000;
     const THEME_KEY = 'gilil_theme';
     const THEME_IDS = ['dark', 'bitrix', 'cyan'];
