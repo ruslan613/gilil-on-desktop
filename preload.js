@@ -5,10 +5,24 @@
  * contextIsolation: true, nodeIntegration: false.
  */
 const { contextBridge, ipcRenderer } = require('electron');
+const fs = require('fs');
+const path = require('path');
+
+function privateBuildLabel() {
+  try {
+    const raw = fs.readFileSync(path.join(__dirname, 'private-build.json'), 'utf8');
+    const parsed = JSON.parse(raw);
+    if (parsed && parsed.channel === 'private' && typeof parsed.label === 'string' && parsed.label.trim()) {
+      return parsed.label.trim();
+    }
+  } catch (_) {}
+  return '';
+}
 
 contextBridge.exposeInMainWorld('gililDesktop', {
   platform: process.platform,
   isDesktop: true,
+  buildLabel: privateBuildLabel(),
 
   /** Show OS toast when window unfocused/minimized (main decides). */
   notify(payload) {

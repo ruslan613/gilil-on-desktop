@@ -31,6 +31,7 @@ const js = fs.readFileSync(path.join(root, 'server/public/shell-v2.js'), 'utf8')
 const main = fs.readFileSync(path.join(root, 'main.js'), 'utf8');
 
 check('package version is 1.1.5', pkg.version === '1.1.5');
+check('a private label cannot replace the 1.1.5 version', main.includes("const APP_VERSION = '1.1.5'") && main.includes("parsed.channel === 'private'") && main.includes('appWindowTitle()'));
 check('installer name stays on the existing feed pattern', pkg.build.nsis.artifactName === 'GililOn-${version}-win-setup.exe');
 check('uninstall does not opt into deleting AppData', pkg.build.nsis.deleteAppDataOnUninstall === false);
 check('custom uninstall does not remove the user directory', !nsh.includes('RMDir') && nsh.includes('Leave %APPDATA%\\gilil-on-desktop'));

@@ -6131,6 +6131,9 @@
     syncPillsActive(currentSection || 'chats');
     const fixtureRole = (function () {
       if (window.gililDesktop) return '';
+      // The packaged app serves this page from 127.0.0.1. Electron must never
+      // honor fixtureRole, even if the preload bridge is missing.
+      if (typeof navigator !== 'undefined' && /Electron/i.test(navigator.userAgent || '')) return '';
       const host = location.hostname;
       if (host !== '127.0.0.1' && host !== 'localhost') return '';
       const q = new URLSearchParams(location.search).get('fixtureRole');
@@ -6139,6 +6142,18 @@
     if (fixtureRole) {
       isolatedFixtureRole = fixtureRole;
       currentRole = fixtureRole;
+    }
+    if (window.gililDesktop && window.gililDesktop.buildLabel) {
+      const label = String(window.gililDesktop.buildLabel);
+      document.title = 'Gilil On 1.1.5 · ' + label;
+      const pop = document.getElementById('theme-popover');
+      if (pop && !document.getElementById('private-build-label')) {
+        const note = document.createElement('p');
+        note.id = 'private-build-label';
+        note.textContent = label;
+        note.style.cssText = 'margin:0 0 8px;font-size:12px;color:var(--muted)';
+        pop.insertBefore(note, pop.firstChild);
+      }
     }
     applyMailRoleUI();
     applyActivityRoleUI();

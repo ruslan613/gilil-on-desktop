@@ -99,7 +99,7 @@ check('Chinese reload control is Chinese', I18N.zh['supply.reload'] === '刷新'
 check('journal and mail statistics have natural labels', I18N.ru['nav.activity'] === 'Журнал' && I18N.en['nav.activity'] === 'Activity log' && I18N.zh['nav.mail_stats'] === '邮件统计' && I18N.en['nav.mail_stats'] === 'Mail statistics');
 const roleToast = ['toast.tpl_deny', 'toast.tpl_count', 'toast.mail_stats_deny'].map((k) => I18N.zh[k] + '\n' + I18N.ru[k]).join('\n');
 check('Russian and Chinese role toasts use role words, not admin/director ids', !/admin|director/i.test(roleToast));
-check('role fixture stays off in the desktop shell and off outside localhost', js.includes('window.gililDesktop') && js.includes("get('fixtureRole')") && js.includes("host !== '127.0.0.1'") && js.includes("host !== 'localhost'"));
+check('role fixture stays off in the desktop shell and off outside localhost', js.includes('window.gililDesktop') && js.includes('/Electron/i.test') && js.includes("get('fixtureRole')") && js.includes("host !== '127.0.0.1'") && js.includes("host !== 'localhost'"));
 const tv = fs.readFileSync(path.join(root, 'server/public/crm-tv.html'), 'utf8');
 const pageLang = fs.readFileSync(path.join(root, 'server/public/ui-lang.js'), 'utf8');
 check('SRM clock reads the selected language and refreshes when it changes', tv.includes('GililPageLang.lang()') && tv.includes('tickClock()') && !/toLocaleString\(\s*'ru-RU'/.test(tv));

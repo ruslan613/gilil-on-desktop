@@ -31,6 +31,22 @@ const DEFAULT_PORT = 8788;
 const UI_PATH = '/shell-v2.html';
 const APP_VERSION = '1.1.5';
 
+function privateBuildLabel() {
+  try {
+    const raw = fs.readFileSync(path.join(__dirname, 'private-build.json'), 'utf8');
+    const parsed = JSON.parse(raw);
+    if (parsed && parsed.channel === 'private' && typeof parsed.label === 'string' && parsed.label.trim()) {
+      return parsed.label.trim();
+    }
+  } catch (_) {}
+  return '';
+}
+
+function appWindowTitle() {
+  const label = privateBuildLabel();
+  return label ? `Gilil On ${APP_VERSION} · ${label}` : `Gilil On ${APP_VERSION}`;
+}
+
 const DEFAULT_ALLOW_HOSTS = [
   '127.0.0.1',
   'localhost',
@@ -1068,7 +1084,7 @@ async function createWindow() {
     maximizable: true,
     fullscreenable: true,
     backgroundColor: captionForTheme(readSavedSplashTheme()).color,
-    title: `Gilil On ${APP_VERSION}`,
+    title: appWindowTitle(),
     show: false,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
