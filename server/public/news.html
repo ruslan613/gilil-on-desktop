@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Новости — Gilil On / тендеры</title>
+  <title>Gilil On</title>
+  <script src="/ui-lang.js"></script>
   <script>
     (function () {
       try {
@@ -153,27 +154,77 @@
 <body>
   <div class="wrap">
     <header>
-      <p style="margin:0 0 10px;font-size:0.85rem"><a href="/tenders-dashboard.html">Панель</a> · <a href="/crm.html">CRM</a> · <a href="/crm-tv.html">TV</a></p>
-      <h1>Новости</h1>
-      <p class="lead">Свежие тендеры и обновления по освещению (Gilil On · мониторинг площадок РФ)</p>
+      <p style="margin:0 0 10px;font-size:0.85rem"><a href="/tenders-dashboard.html" data-i18n="nav.panel">Панель</a> · <a href="/crm.html">CRM</a> · <a href="/crm-tv.html">SRM TV</a></p>
+      <h1 data-i18n="h1">Новости</h1>
+      <p class="lead" data-i18n="lead">Свежие тендеры и обновления по освещению (Gilil On · мониторинг площадок РФ)</p>
     </header>
     <div class="toolbar" id="filters">
-      <button type="button" data-kind="" class="active">Все</button>
-      <button type="button" data-kind="new">Новые</button>
-      <button type="button" data-kind="change">Изменения</button>
-      <button type="button" data-kind="result">Итоги</button>
-      <button type="button" data-kind="info">Инфо</button>
+      <button type="button" data-kind="" class="active" data-i18n="filter.all">Все</button>
+      <button type="button" data-kind="new" data-i18n="filter.new">Новые</button>
+      <button type="button" data-kind="change" data-i18n="filter.change">Изменения</button>
+      <button type="button" data-kind="result" data-i18n="filter.result">Итоги</button>
+      <button type="button" data-kind="info" data-i18n="filter.info">Инфо</button>
     </div>
-    <div class="status" id="status">Загрузка…</div>
+    <div class="status" id="status" data-i18n="loading">Загрузка…</div>
     <div class="list" id="list"></div>
-    <footer>
-      Данные обновляются ежедневным парсером <code>npm run tenders:fetch</code>.
-      Виджет: встройте эту страницу в iframe или вызывайте
-      <code>GET /api/public/tender-news</code>.
+    <footer data-i18n="footer">
+      Данные обновляются ежедневным парсером npm run tenders:fetch.
     </footer>
   </div>
   <script>
     (function () {
+      const DICT = {
+        zh: {
+          title: '新闻 — Gilil On',
+          'nav.panel': '面板',
+          h1: '新闻',
+          lead: '照明招标与更新（Gilil On · 俄罗斯平台监测）',
+          'filter.all': '全部', 'filter.new': '新的', 'filter.change': '变更', 'filter.result': '结果', 'filter.info': '信息',
+          loading: '加载中…',
+          footer: '数据由每日解析程序 npm run tenders:fetch 更新。',
+          shown: '显示：{n}',
+          emptyFeed: '还没有新闻。',
+          empty: '没有记录',
+          loadErr: '加载失败：',
+          kindNew: '新的', kindChange: '变更', kindResult: '结果', kindInfo: '信息', kindOther: '其他',
+          chatLeft: '聊天项目 · 剩余 {n}',
+          chatNa: '聊天项目 · 无日期',
+        },
+        ru: {
+          title: 'Новости — Gilil On',
+          'nav.panel': 'Панель',
+          h1: 'Новости',
+          lead: 'Свежие тендеры и обновления по освещению (Gilil On · мониторинг площадок РФ)',
+          'filter.all': 'Все', 'filter.new': 'Новые', 'filter.change': 'Изменения', 'filter.result': 'Итоги', 'filter.info': 'Инфо',
+          loading: 'Загрузка…',
+          footer: 'Данные обновляются ежедневным парсером npm run tenders:fetch.',
+          shown: 'Показано: {n}',
+          emptyFeed: 'Пока нет новостей.',
+          empty: 'Нет записей',
+          loadErr: 'Ошибка загрузки: ',
+          kindNew: 'новый', kindChange: 'изменение', kindResult: 'итог', kindInfo: 'инфо', kindOther: 'прочее',
+          chatLeft: 'Чат-проект · осталось {n}',
+          chatNa: 'Чат-проект · н/д',
+        },
+        en: {
+          title: 'News — Gilil On',
+          'nav.panel': 'Panel',
+          h1: 'News',
+          lead: 'New lighting tenders and updates (Gilil On · Russian platform monitoring)',
+          'filter.all': 'All', 'filter.new': 'New', 'filter.change': 'Changes', 'filter.result': 'Results', 'filter.info': 'Info',
+          loading: 'Loading…',
+          footer: 'Data is refreshed by the daily parser npm run tenders:fetch.',
+          shown: 'Shown: {n}',
+          emptyFeed: 'No news yet.',
+          empty: 'No entries',
+          loadErr: 'Could not load: ',
+          kindNew: 'new', kindChange: 'change', kindResult: 'result', kindInfo: 'info', kindOther: 'other',
+          chatLeft: 'Chat project · {n} left',
+          chatNa: 'Chat project · n/a',
+        },
+      };
+      let reloadNews = function () {};
+      const tr = window.GililPageLang.bind(DICT, function () { reloadNews(); });
       const params = new URLSearchParams(location.search);
       if (params.get('embed') === '1') document.body.classList.add('embed');
       const apiBase = params.get('api') || '';
@@ -239,7 +290,7 @@
         if (document.documentElement.dataset.theme !== t) applyNewsTheme(t);
       }, 1500);
 
-      const KIND_RU = { new: 'новый', change: 'изменение', result: 'итог', info: 'инфо' };
+      const KIND_KEY = { new: 'kindNew', change: 'kindChange', result: 'kindResult', info: 'kindInfo' };
       const PLATFORM_RU = {
         zakupki: 'ЕИС / zakupki',
         b2b: 'B2B-Center',
@@ -254,19 +305,21 @@
         if (!s) return '';
         const d = new Date(s);
         if (Number.isNaN(d.getTime())) return String(s).slice(0, 10);
-        return d.toLocaleDateString('ru-RU', {
+        const loc = GililPageLang.lang() === 'zh' ? 'zh-CN' : GililPageLang.lang() === 'en' ? 'en-US' : 'ru-RU';
+        return d.toLocaleDateString(loc, {
           day: '2-digit', month: 'short', year: 'numeric',
         });
       }
       function fmtMoney(n) {
         if (n == null) return null;
-        return new Intl.NumberFormat('ru-RU', {
+        const loc = GililPageLang.lang() === 'zh' ? 'zh-CN' : GililPageLang.lang() === 'en' ? 'en-US' : 'ru-RU';
+        return new Intl.NumberFormat(loc, {
           style: 'currency', currency: 'RUB', maximumFractionDigits: 0,
         }).format(n);
       }
 
       async function load() {
-        statusEl.textContent = 'Загрузка…';
+        statusEl.textContent = tr('loading');
         const q = new URLSearchParams({ limit: '20' });
         if (kind) q.set('kind', kind);
         try {
@@ -274,11 +327,11 @@
           const data = await res.json();
           if (!data.ok) throw new Error('bad response');
           statusEl.textContent = data.count
-            ? `Показано: ${data.count}`
-            : 'Пока нет новостей — запустите npm run tenders:fetch';
+            ? tr('shown').replace('{n}', String(data.count))
+            : tr('emptyFeed');
           listEl.innerHTML = '';
           if (!data.items.length) {
-            listEl.innerHTML = '<div class="empty">Нет записей</div>';
+            listEl.innerHTML = '<div class="empty">' + escapeHtml(tr('empty')) + '</div>';
             return;
           }
           for (const it of data.items) {
@@ -289,7 +342,7 @@
             card.innerHTML =
               '<div class="meta">' +
               '<span class="chip kind-' + (it.kind || 'info') + '">' +
-              (KIND_RU[it.kind] || it.kind) + '</span>' +
+              escapeHtml(tr(KIND_KEY[it.kind] || 'kindOther')) + '</span>' +
               '<span>' + fmtDate(it.published_at || it.created_at) + '</span>' +
               (it.platform
                 ? '<span>' + (PLATFORM_RU[it.platform] || it.platform) + '</span>'
@@ -301,14 +354,16 @@
               (it.body ? '<p class="body">' + escapeHtml(it.body) + '</p>' : '') +
               (money ? '<div class="nmck">' + money + '</div>' : '') +
               (it.project
-                ? '<p class="body"><a href="' + it.project.open_path + '">Чат-проект · осталось ' +
-                  (it.project.days_left != null ? it.project.days_left + ' дн.' : 'н/д') +
+                ? '<p class="body"><a href="' + it.project.open_path + '">' +
+                  escapeHtml(it.project.days_left != null
+                    ? tr('chatLeft').replace('{n}', String(it.project.days_left))
+                    : tr('chatNa')) +
                   '</a></p>'
                 : '');
             listEl.appendChild(card);
           }
         } catch (err) {
-          statusEl.textContent = 'Ошибка загрузки: ' + err.message;
+          statusEl.textContent = tr('loadErr') + err.message;
         }
       }
 
@@ -330,6 +385,7 @@
         load();
       });
 
+      reloadNews = load;
       load();
       // soft auto-refresh every 10 min when left open
       setInterval(load, 600000);

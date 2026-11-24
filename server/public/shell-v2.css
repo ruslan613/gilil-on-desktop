@@ -301,13 +301,13 @@ html.win-caption #app-shell::before {
   z-index: 30;
 }
 .nav-stack {
-  flex: 1;
+  flex: 1 1 auto;
   min-width: 0;
   display: flex;
   flex-direction: row;
   align-items: center;
-  max-height: 40px;
-  overflow: hidden;
+  max-height: none;
+  overflow: visible;
 }
 .brand {
   display: flex; align-items: center; gap: 10px; flex-shrink: 0;
@@ -328,16 +328,15 @@ html.win-caption #app-shell::before {
   display: flex; align-items: center; gap: 5px;
   flex: 1;
   min-width: 0;
-  flex-wrap: nowrap; /* single row — wheel / scrollbar for overflow */
-  overflow-x: auto;
-  overflow-y: hidden;
-  max-height: 36px;
+  flex-wrap: wrap;
+  align-content: center;
+  overflow: visible;
+  max-height: none;
   padding: 2px 2px 2px 0;
   overscroll-behavior: contain;
-  scrollbar-width: thin;
-  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+  scrollbar-width: none;
 }
-.pills::-webkit-scrollbar { width: 6px; height: 6px; display: block; }
+.pills::-webkit-scrollbar { width: 0; height: 0; display: none; }
 .pills::-webkit-scrollbar-thumb {
   background: var(--scrollbar-thumb);
   border-radius: 8px;
@@ -350,7 +349,8 @@ html.win-caption #app-shell::before {
   border: 1px solid color-mix(in srgb, var(--line) 85%, transparent);
   background: linear-gradient(165deg, color-mix(in srgb, var(--bg-card) 55%, var(--bg-elev)), color-mix(in srgb, var(--bg) 90%, var(--bg-elev)));
   color: var(--muted);
-  font-size: 12.5px; font-weight: 550;
+  /* 1.1.5 computed size was 12.5px (9.375pt at 96dpi). +2pt = 8/3 px, once. */
+  font-size: calc(12.5px + (2 * 96px / 72)); font-weight: 550;
   white-space: nowrap;
   transition: .15s ease;
   position: relative;
@@ -498,7 +498,7 @@ html.win-caption #app-shell::before {
   background: linear-gradient(180deg, color-mix(in srgb, var(--bg-elev) 92%, #fff 3%), var(--bg-elev));
   border-right: 1px solid var(--line-soft);
   display: flex; flex-direction: column;
-  height: 100%;
+  height: auto;
   min-height: 0;
   align-self: stretch;
   overflow: hidden;
@@ -608,6 +608,8 @@ html.win-caption #app-shell::before {
   font-size: 11px; font-weight: 700;
   text-transform: uppercase; letter-spacing: .06em;
   color: var(--muted-2); cursor: pointer; user-select: none;
+  white-space: normal;
+  overflow: visible;
 }
 .group-title .count {
   margin-left: auto;
@@ -649,11 +651,11 @@ html.win-caption #app-shell::before {
 .chat-item .cinfo { min-width: 0; flex: 1; }
 .chat-item .cinfo .name {
   font-size: 13px; font-weight: 600;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  white-space: normal; overflow: visible;
 }
 .chat-item .cinfo .role {
   font-size: 11px; color: var(--muted-2);
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  white-space: normal; overflow: visible;
 }
 .chat-item .unread {
   background: var(--teal); color: var(--mark-ink);
@@ -1796,7 +1798,9 @@ html[dir="rtl"] .notif-wrap { /* keep layout */ }
   top: calc(100% + 8px);
   right: 0;
   z-index: 80;
-  width: min(280px, 92vw);
+  width: min(340px, 92vw);
+  max-height: min(70vh, 640px);
+  overflow: auto;
   padding: 12px;
   background: var(--bg-elev);
   border: 1px solid var(--line);
@@ -2465,7 +2469,7 @@ html:not([data-surface]) .chat-item .cav {
   :root { --sidebar-w: 200px; --header-h: 52px; }
   .body { grid-template-columns: var(--sidebar-w) minmax(0, 1fr); }
   .userchip .meta { display: none; }
-  .pill { padding: 6px 10px; font-size: 12px; }
+  .pill { padding: 6px 10px; }
 }
 @media (max-width: 780px) {
   :root { --sidebar-w: 0px; --header-h: 48px; }
@@ -2663,11 +2667,21 @@ html:not([data-surface]) .chat-item .cav {
   font-size: 11px;
   font-weight: 600;
 }
-.settings-link-btn { justify-content: flex-start !important; }
-#btn-settings-check-update { position: relative; overflow: visible; padding-right: 46px; }
+.settings-link-btn {
+  justify-content: flex-start !important;
+  white-space: normal;
+  height: auto;
+  line-height: 1.35;
+  overflow: visible;
+  text-overflow: clip;
+}
+.settings-link-btn[hidden] { display: none !important; }
+#btn-settings-check-update { position: relative; overflow: visible; padding-right: 72px; }
 #btn-settings-check-update .settings-update-new {
-  position: absolute; top: 3px; right: 8px; background: #d40000; color: #fff;
-  font-size: 9px; font-weight: 700; line-height: 1; padding: 2px 4px; border-radius: 3px; pointer-events: none;
+  position: absolute; top: 50%; right: 8px; transform: translateY(-50%);
+  background: #d40000; color: #fff;
+  font-size: 11px; font-weight: 700; line-height: 1; padding: 3px 6px; border-radius: 3px;
+  pointer-events: none; white-space: nowrap;
 }
 .settings-update-status { margin: 0 2px 2px; font-size: 12px; line-height: 1.35; color: var(--muted); text-align: left; }
 .settings-update-status[hidden] { display: none !important; }

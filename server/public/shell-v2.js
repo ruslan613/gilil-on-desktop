@@ -84,7 +84,7 @@
       "login.enter": "以员工身份进入",
       "login.enter_demo": "演示进入（无密码）",
       "login.hint": "演示登录：<strong>ru1 · 阿列克谢 · RU Manager</strong> · 无需密码",
-      "login.sub": "Lighting Supply CN ↔ RU · 邮箱验证码登录",
+      "login.sub": "照明供应 CN ↔ RU · 邮箱验证码登录",
       "login.email": "邮箱",
       "login.username": "用户名",
       "login.password": "密码",
@@ -129,8 +129,8 @@
       "nav.tv": "TV",
       "nav.storage": "存储",
       "nav.supply": "Gilil Supply",
-      "supply.hint": "Stage 2 · JWT · WS · 8797",
-      "supply.reload": "Обновить",
+      "supply.hint": "第二阶段 · JWT · WS · 8797",
+      "supply.reload": "刷新",
       "nav.chats": "聊天",
       "nav.mail": "邮件",
       "nav.funnel": "订单漏斗",
@@ -272,7 +272,7 @@
       "theme.cyan": "移动 · Cyan",
       "theme.blue": "移动 · Cyan",
       "theme.bitrix": "Bitrix24 浅色",
-      "theme.beige": "Bitrix",
+      "theme.beige": "米色",
       "toast.theme": "主题：{name}",
       "crm.admin": "管理后台",
       "crm.admin_hint": "用户与设置管理 — 仅管理员（鲁斯兰）。",
@@ -329,7 +329,7 @@
       "cqr.done": "完成",
       "cqr.set": "状态已更新：{status}",
       "cqr.fail": "无法更新状态",
-      "chats.search": "搜索对话（RU / CN / 项目）…  ⌘K",
+      "chats.search": "搜索对话",
       "chats.msg_search": "按文本搜索…",
       "chats.from": "自",
       "chats.to": "至",
@@ -413,12 +413,12 @@
       "person.volkov": "彼得·沃尔科夫",
       "role.admin": "管理员 · 所有者",
       "role.director": "总监",
-      "role.ru_manager": "RU Manager",
-      "role.cn_manager": "CN Manager",
-      "role.chat.ru_mgr_msk": "RU Manager · 莫斯科 MSK",
-      "role.chat.sales_yekt": "销售经理 · 叶卡捷琳堡 YEKT",
-      "role.chat.pm_novt": "项目经理 · 新西伯利亚 NOVT",
-      "role.chat.support_msk": "支持主管 · 莫斯科 MSK",
+      "role.ru_manager": "俄方经理",
+      "role.cn_manager": "中方经理",
+      "role.chat.ru_mgr_msk": "俄方经理 · 莫斯科 MSK",
+      "role.chat.sales_yekt": "销售经理 · 叶卡捷琳堡",
+      "role.chat.pm_novt": "项目经理 · 新西伯利亚",
+      "role.chat.support_msk": "支持主管 · 莫斯科",
       "role.chat.cn_sales": "CN 销售总监 · 上海 CST",
       "role.chat.factory": "工厂经理 · 中山 CST",
       "role.chat.supply": "供应计划 · 上海 CST",
@@ -438,17 +438,17 @@
       "company.zs_factory": "中山 LED 工厂 · Phase 2",
       "company.sh_supply": "上海供应 · Spot 模组",
       "project.frunze_lights": "弗龙泽小区灯具订单",
-      "project.retail": "Retail lighting",
-      "project.street": "Street lights",
-      "project.b2b": "B2B platform",
-      "project.iot": "IoT solution",
-      "project.tender_b2b": "B2B lighting",
+      "project.retail": "零售照明",
+      "project.street": "路灯",
+      "project.b2b": "B2B 平台",
+      "project.iot": "物联网方案",
+      "project.tender_b2b": "B2B 照明",
       "chat.pr.frunze": "弗龙泽住宅小区",
       "chat.pr.t466": "招标 4661969",
       "chat.pr.2025ru": "2025-RU",
-      "chat.pr.cn2": "Project CN-Phase 2",
-      "chat.pr.led": "LED Platform",
-      "chat.pr.iot": "Control Hub",
+      "chat.pr.cn2": "项目 CN · 第二阶段",
+      "chat.pr.led": "LED 平台",
+      "chat.pr.iot": "控制中心",
       "plan.p1.title": "晨间招标概览",
       "plan.p1.meta": "10:00 前",
       "plan.p2.title": "阿尔法照明报价 → 客户",
@@ -520,7 +520,7 @@
       "inv.alert_open": "打开",
       "inv.beep": "🔔 请确认付款账单审批 {company}，金额 {amount}",
       "beep.overdue": "🔔 提醒：任务超过 1 小时未勾选",
-      "toast.lang": "",
+      "toast.lang": "界面语言已切换",
       "toast.role": "演示角色：{short} · {role}",
       "toast.entered": "已登录为 {login} · {short} · {role}",
       "toast.plan_on": "✓ 计划：「{title}」→ 已发给总监机器人",
@@ -566,7 +566,7 @@
       "crm.samples_none": "暂无样品费用",
       "crm.hide.samples_ru": "样品费用（¥）对 RU 角色隐藏 · CN / 总监 / 管理员可见",
       "crm.hide.ru": "RU 角色：不显示中国价格与 ¥ 金额",
-      "crm.hide.cn": "CN 角色：不显示俄罗斯金额（₽ / НМЦК）",
+      "crm.hide.cn": "CN 角色：不显示俄罗斯金额（₽ / 最高起始价）",
       "crm.hide.dir": "总监：完整 CRM · 用户管理后台不可用",
       "crm.history": "沟通历史",
       "crm.projects": "当前项目",
@@ -591,14 +591,14 @@
       "crm.c3.history1": "账单与最终报价已归档",
       "crm.c3.project": "Q1 线型灯具供货",
       "crm.c3.next": "一季度后再激活",
-      "crm.c4.history0": "Samples BOM confirmed",
-      "crm.c4.history1": "Purchase + shipping logged in ¥",
-      "crm.c4.project": "Street lights CN-Phase 2 · samples",
+      "crm.c4.history0": "样品物料清单已确认",
+      "crm.c4.history1": "采购和运费已按人民币记录",
+      "crm.c4.project": "路灯 CN · 第二阶段 · 样品",
       "crm.c4.next": "关闭项目样品费用",
       "crm.c4.exp0": "采购驱动（样品）",
       "crm.c4.exp1": "样品发往中国",
-      "crm.c5.history0": "New RFQ for 6W spot samples",
-      "crm.c5.project": "Spot 6W 3000K samples batch",
+      "crm.c5.history0": "新的 6 瓦射灯样品询价",
+      "crm.c5.project": "6 瓦 3000K 射灯样品批次",
       "crm.c5.next": "采购样品并计入运费 ¥",
       "crm.c5.exp0": "采购射灯（样品）",
       "tender.t1.title": "4661969 · B2B 照明",
@@ -638,14 +638,66 @@
       "mail.no_subject": "(无主题)",
       "mail.draft": "草稿：",
       "mail.no_access": "无权限或 API",
+      "app.title": "Gilil On",
+      "splash.sub": "照明供应",
+      "state.loading": "加载中…",
+      "state.no_access": "无权限或出错：",
+      "funnel.empty": "还没有漏斗",
+      "funnel.no_steps": "没有步骤",
+      "time.d": "天",
+      "time.h": "小时",
+      "time.m": "分钟",
+      "activity.empty": "没有记录",
+      "useful.empty": "没有数据",
+      "mail.load_fail": "无法加载邮件",
+      "mail.sync_ok": "同步：{mode}",
+      "mail.sync_err": "同步失败",
+      "director.col_employee": "员工",
+      "director.col_open": "未完成",
+      "director.col_overdue": "逾期",
+      "director.col_plan": "今日计划",
+      "director.miss": "计划未完成",
+      "director.escalate": "↗ 上报总经理",
+      "director.ok": "正常",
+      "director.empty": "{label}：可见范围内没有下属。",
+      "director.role": "总监",
+      "director.sent": "报告已发给总经理",
+      "project.created": "项目已创建 · 已加入总经理",
+      "project.create_fail": "创建失败",
+      "project.create": "＋ 项目",
+      "project.new": "新项目",
+      "role.general": "总经理",
+      "cmdk.chat": "聊天",
+      "cmdk.task": "任务",
+      "cmdk.invoice": "账单",
+      "cmdk.project": "项目",
+      "cmdk.tender": "招标",
+      "cmdk.mail": "邮件",
+      "stage.funnel_hint": "第二阶段 · GET /api/funnels",
+      "stage.activity_hint": "第二阶段 · GET /api/activity（仅总管理员）",
+      "stage.usefulness_hint": "第二阶段 · GET /api/usefulness（总监 / 管理员）",
+      "aria.team_vis": "团队可见范围",
+      "aria.dismiss": "隐藏",
+      "director.hint": "下属的计划和负荷。计划未完成时，可上报总经理。",
+      "pcard.general_note": "总经理会自动加入所有项目，且不能被移除。",
+      "tv.frame_title": "SRM TV",
+      "nav.tv_funnel": "▶ 电视漏斗",
+      "nav.director_workload": "▣ 总监 · 员工负荷",
+      "pcard.create_title": "新项目",
+      "pcard.name": "名称",
+      "pcard.manager_ru": "俄方经理",
+      "pcard.manager_cn": "中方经理",
+      "pcard.cancel": "取消",
+      "pcard.create": "创建",
+      "settings.badge_new": "新",
       "mail.manager_col": "经理",
     },
     ru: {
       "login.enter": "Войти как сотрудник",
       "login.enter_demo": "Демо-вход (без пароля)",
       "login.hint": "Демо-вход как <strong>ru1 · Алексей · RU Manager</strong> · без пароля",
-      "login.sub": "Lighting Supply CN ↔ RU · вход по коду из почты",
-      "login.email": "Email",
+      "login.sub": "Поставки освещения CN ↔ RU · вход по коду из почты",
+      "login.email": "Эл. почта",
       "login.username": "Имя пользователя",
       "login.password": "Пароль",
       "login.need_password": "Введите имя пользователя и пароль",
@@ -689,7 +741,7 @@
       "nav.tv": "TV",
       "nav.storage": "Хранилище",
       "nav.supply": "Gilil Supply",
-      "supply.hint": "Stage 2 · JWT · WS · 8797",
+      "supply.hint": "Этап 2 · JWT · WS · 8797",
       "supply.reload": "Обновить",
       "nav.chats": "Чаты",
       "nav.mail": "Почта",
@@ -889,7 +941,7 @@
       "cqr.done": "Готово",
       "cqr.set": "Статус: {status}",
       "cqr.fail": "Не удалось обновить статус",
-      "chats.search": "Поиск диалогов (RU / CN / Проекты)…  ⌘K",
+      "chats.search": "Поиск диалогов",
       "chats.msg_search": "Поиск по тексту…",
       "chats.from": "с",
       "chats.to": "по",
@@ -973,15 +1025,15 @@
       "person.volkov": "Пётр Волков",
       "role.admin": "Админ · владелец",
       "role.director": "Директор",
-      "role.ru_manager": "RU Manager",
-      "role.cn_manager": "CN Manager",
-      "role.chat.ru_mgr_msk": "RU Manager · Москва MSK",
-      "role.chat.sales_yekt": "Sales Manager · Екатеринбург YEKT",
-      "role.chat.pm_novt": "Project Manager · Новосибирск NOVT",
-      "role.chat.support_msk": "Support Lead · Москва MSK",
-      "role.chat.cn_sales": "CN Sales Director · Shanghai CST",
-      "role.chat.factory": "Factory Manager · Zhongshan CST",
-      "role.chat.supply": "Supply Planner · Shanghai CST",
+      "role.ru_manager": "Менеджер RU",
+      "role.cn_manager": "Менеджер CN",
+      "role.chat.ru_mgr_msk": "Менеджер RU · Москва MSK",
+      "role.chat.sales_yekt": "Менеджер по продажам · Екатеринбург",
+      "role.chat.pm_novt": "Руководитель проекта · Новосибирск",
+      "role.chat.support_msk": "Руководитель поддержки · Москва",
+      "role.chat.cn_sales": "Директор продаж CN · Шанхай, CST",
+      "role.chat.factory": "Руководитель завода · Чжуншань, CST",
+      "role.chat.supply": "Планировщик поставок · Шанхай, CST",
       "role.chat.dir_msk": "Директор · Москва MSK",
       "role.chat.owner_msk": "Владелец · Москва MSK",
       "role.chat.igor_dir": "Игорь · Директор",
@@ -995,20 +1047,20 @@
       "company.alfa": "ООО Альфа Лайт",
       "company.frunze": "ЖК Фрунзенский",
       "company.seversvet": "ООО Северсвет",
-      "company.zs_factory": "Zhongshan LED Factory · Phase 2",
-      "company.sh_supply": "Shanghai Supply · Spot modules",
+      "company.zs_factory": "Светодиодный завод Чжуншань · этап 2",
+      "company.sh_supply": "Поставки Шанхая · точечные модули",
       "project.frunze_lights": "Заказ светильников",
-      "project.retail": "Retail lighting",
-      "project.street": "Street lights",
-      "project.b2b": "B2B platform",
-      "project.iot": "IoT solution",
-      "project.tender_b2b": "B2B lighting",
+      "project.retail": "Розничное освещение",
+      "project.street": "Уличное освещение",
+      "project.b2b": "Платформа B2B",
+      "project.iot": "Решение IoT",
+      "project.tender_b2b": "Освещение B2B",
       "chat.pr.frunze": "ЖК Фрунзенский",
       "chat.pr.t466": "Тендер 4661969",
       "chat.pr.2025ru": "2025-RU",
-      "chat.pr.cn2": "Project CN-Phase 2",
-      "chat.pr.led": "LED Platform",
-      "chat.pr.iot": "Control Hub",
+      "chat.pr.cn2": "Проект CN · этап 2",
+      "chat.pr.led": "Платформа LED",
+      "chat.pr.iot": "Центр управления",
       "plan.p1.title": "Утренний обзор тендеров",
       "plan.p1.meta": "до 10:00",
       "plan.p2.title": "КП Альфа Лайт → клиенту",
@@ -1080,7 +1132,7 @@
       "inv.alert_open": "Открыть",
       "inv.beep": "🔔 Подтвердите согласование счёта на оплату {company}, сумма {amount}",
       "beep.overdue": "🔔 Сигнал: задача без галочки больше 1 часа",
-      "toast.lang": "",
+      "toast.lang": "Язык интерфейса изменён",
       "toast.role": "Демо-роль: {short} · {role}",
       "toast.entered": "Вошли как {login} · {short} · {role}",
       "toast.plan_on": "✓ План: «{title}» → отправлено директору-боту",
@@ -1151,14 +1203,14 @@
       "crm.c3.history1": "Счёт и финальное КП в архиве",
       "crm.c3.project": "Поставка линейных светильников Q1",
       "crm.c3.next": "Реактивация через квартал",
-      "crm.c4.history0": "Samples BOM confirmed",
-      "crm.c4.history1": "Purchase + shipping logged in ¥",
-      "crm.c4.project": "Street lights CN-Phase 2 · samples",
+      "crm.c4.history0": "Спецификация образцов подтверждена",
+      "crm.c4.history1": "Закупка и доставка записаны в ¥",
+      "crm.c4.project": "Уличные фонари CN · этап 2 · образцы",
       "crm.c4.next": "Закрыть расходы на образцы по проекту",
       "crm.c4.exp0": "Покупка драйверов (образцы)",
       "crm.c4.exp1": "Отправка образцов в Китай",
-      "crm.c5.history0": "New RFQ for 6W spot samples",
-      "crm.c5.project": "Spot 6W 3000K samples batch",
+      "crm.c5.history0": "Новый запрос на образцы спотов 6 Вт",
+      "crm.c5.project": "Партия образцов спот 6 Вт 3000K",
       "crm.c5.next": "Закупить образцы + учесть shipping ¥",
       "crm.c5.exp0": "Покупка спотов (образцы)",
       "tender.t1.title": "4661969 · B2B освещение",
@@ -1198,13 +1250,65 @@
       "mail.no_subject": "(без темы)",
       "mail.draft": "черновик: ",
       "mail.no_access": "Нет доступа или API",
+      "app.title": "Gilil On",
+      "splash.sub": "Поставки освещения",
+      "state.loading": "Загрузка…",
+      "state.no_access": "Нет доступа или ошибка: ",
+      "funnel.empty": "Воронок пока нет",
+      "funnel.no_steps": "нет шагов",
+      "time.d": "д",
+      "time.h": "ч",
+      "time.m": "м",
+      "activity.empty": "Записей нет",
+      "useful.empty": "Нет данных",
+      "mail.load_fail": "Не удалось загрузить письмо",
+      "mail.sync_ok": "Синхронизация: {mode}",
+      "mail.sync_err": "Ошибка синхронизации",
+      "director.col_employee": "Сотрудник",
+      "director.col_open": "Открыто",
+      "director.col_overdue": "Просрочено",
+      "director.col_plan": "План сегодня",
+      "director.miss": "пропуск плана",
+      "director.escalate": "↗ Генералу",
+      "director.ok": "ок",
+      "director.empty": "{label}: нет подчинённых в зоне видимости.",
+      "director.role": "Директор",
+      "director.sent": "Отчёт отправлен Генералу",
+      "project.created": "Проект создан · Генерал добавлен",
+      "project.create_fail": "Ошибка создания",
+      "project.create": "＋ Проект",
+      "project.new": "Новый проект",
+      "role.general": "Генерал",
+      "cmdk.chat": "Чаты",
+      "cmdk.task": "Задачи",
+      "cmdk.invoice": "Счета",
+      "cmdk.project": "Проекты",
+      "cmdk.tender": "Тендеры",
+      "cmdk.mail": "Почта",
+      "stage.funnel_hint": "Этап 2 · GET /api/funnels",
+      "stage.activity_hint": "Этап 2 · GET /api/activity (только генеральный администратор)",
+      "stage.usefulness_hint": "Этап 2 · GET /api/usefulness (директор / админ)",
+      "aria.team_vis": "Видимость команд",
+      "aria.dismiss": "Скрыть",
+      "director.hint": "План и загрузка подчинённых. При пропуске плана — эскалация Генералу.",
+      "pcard.general_note": "Генерал добавляется на все проекты автоматически и не может быть удалён.",
+      "tv.frame_title": "SRM TV",
+      "nav.tv_funnel": "▶ Воронка ТВ",
+      "nav.director_workload": "▣ Директор · нагрузка сотрудников",
+      "pcard.create_title": "Новый проект",
+      "pcard.name": "Название",
+      "pcard.manager_ru": "Менеджер RU",
+      "pcard.manager_cn": "Менеджер CN",
+      "pcard.cancel": "Отмена",
+      "pcard.create": "Создать",
+      "settings.badge_new": "новое",
       "mail.manager_col": "Менеджер",
     },
     en: {
       "login.enter": "Sign in as employee",
       "login.enter_demo": "Demo enter (no password)",
       "login.hint": "Demo login as <strong>ru1 · Alexey · RU Manager</strong> · no password",
-      "login.sub": "Lighting Supply CN ↔ RU · email OTP login",
+      "login.sub": "Lighting supply CN ↔ RU · email code login",
       "login.email": "Email",
       "login.username": "Username",
       "login.password": "Password",
@@ -1254,7 +1358,7 @@
       "nav.chats": "Chats",
       "nav.mail": "Mail",
       "nav.funnel": "Funnel",
-      "nav.activity": "Activity",
+      "nav.activity": "Activity log",
       "nav.usefulness": "Usefulness",
       "nav.tasks_plans": "Tasks & plans",
       "nav.calendar": "Calendar",
@@ -1299,7 +1403,7 @@
       "tp.added": "Task added",
       "tp.new_title": "New task",
       "tp.new_desc": "Added manually",
-      "nav.mail_stats": "Mail stats",
+      "nav.mail_stats": "Mail statistics",
       "nav.tier.crm": "CRM",
       "nav.tier.media": "Media",
       "nav.tier.mail": "Mail",
@@ -1436,7 +1540,7 @@
       "cqr.done": "Done",
       "cqr.set": "Status: {status}",
       "cqr.fail": "Could not update status",
-      "chats.search": "Search chats (RU / CN / Projects)…  ⌘K",
+      "chats.search": "Search chats",
       "chats.msg_search": "Search by text…",
       "chats.from": "from",
       "chats.to": "to",
@@ -1468,7 +1572,7 @@
       "chats.dictation": "🎤 Dictate",
       "chats.dictation_mail": "🎤 Dictate into draft",
       "chats.voice_dur": "{s}s",
-      "chats.voice_zh": "中文",
+      "chats.voice_zh": "Chinese",
       "chats.voice_transcribing": "transcribing…",
       "mail.sync": "Sync",
       "mail.templates": "Templates",
@@ -1522,10 +1626,10 @@
       "role.director": "Director",
       "role.ru_manager": "RU Manager",
       "role.cn_manager": "CN Manager",
-      "role.chat.ru_mgr_msk": "RU Manager · Moscow MSK",
-      "role.chat.sales_yekt": "Sales Manager · Yekaterinburg YEKT",
-      "role.chat.pm_novt": "Project Manager · Novosibirsk NOVT",
-      "role.chat.support_msk": "Support Lead · Moscow MSK",
+      "role.chat.ru_mgr_msk": "RU manager · Moscow MSK",
+      "role.chat.sales_yekt": "Sales manager · Yekaterinburg",
+      "role.chat.pm_novt": "Project manager · Novosibirsk",
+      "role.chat.support_msk": "Support lead · Moscow",
       "role.chat.cn_sales": "CN Sales Director · Shanghai CST",
       "role.chat.factory": "Factory Manager · Zhongshan CST",
       "role.chat.supply": "Supply Planner · Shanghai CST",
@@ -1627,7 +1731,7 @@
       "inv.alert_open": "Open",
       "inv.beep": "🔔 Confirm invoice approval for {company}, amount {amount}",
       "beep.overdue": "🔔 Alert: task unchecked for over 1 hour",
-      "toast.lang": "",
+      "toast.lang": "Interface language changed",
       "toast.role": "Demo role: {short} · {role}",
       "toast.entered": "Signed in as {login} · {short} · {role}",
       "toast.plan_on": "✓ Plan: “{title}” → sent to director bot",
@@ -1745,6 +1849,71 @@
       "mail.no_subject": "(no subject)",
       "mail.draft": "draft: ",
       "mail.no_access": "No access or API",
+      "app.title": "Gilil On",
+      "splash.sub": "Lighting supply",
+      "state.loading": "Loading…",
+      "state.no_access": "No access or error: ",
+      "funnel.empty": "No funnels yet",
+      "funnel.no_steps": "no steps",
+      "time.d": "d",
+      "time.h": "h",
+      "time.m": "m",
+      "activity.empty": "No entries",
+      "useful.empty": "No data",
+      "mail.load_fail": "Could not load the message",
+      "mail.sync_ok": "Sync: {mode}",
+      "mail.sync_err": "Sync failed",
+      "director.col_employee": "Employee",
+      "director.col_open": "Open",
+      "director.col_overdue": "Overdue",
+      "director.col_plan": "Plan today",
+      "director.miss": "missed plan",
+      "director.escalate": "↗ To the general",
+      "director.ok": "ok",
+      "director.empty": "{label}: no reports in view.",
+      "director.role": "Director",
+      "director.sent": "Report sent to the general",
+      "project.created": "Project created · general added",
+      "project.create_fail": "Could not create the project",
+      "project.create": "+ Project",
+      "project.new": "New project",
+      "role.general": "General",
+      "cmdk.chat": "Chats",
+      "cmdk.task": "Tasks",
+      "cmdk.invoice": "Invoices",
+      "cmdk.project": "Projects",
+      "cmdk.tender": "Tenders",
+      "cmdk.mail": "Mail",
+      "stage.funnel_hint": "Stage 2 · GET /api/funnels",
+      "stage.activity_hint": "Stage 2 · GET /api/activity (general admin only)",
+      "stage.usefulness_hint": "Stage 2 · GET /api/usefulness (director / admin)",
+      "aria.team_vis": "Team visibility",
+      "aria.dismiss": "Hide",
+      "smtp.allowlist_title": "SMTP mailbox access",
+      "smtp.allowlist_hint": "Only listed addresses can receive OTP or use the shared mailbox. The app password is not shown.",
+      "smtp.email_ph": "email@example.com",
+      "smtp.label_ph": "label",
+      "smtp.add": "Add",
+      "smtp.remove": "Remove",
+      "smtp.deactivate": "Off",
+      "smtp.activate": "On",
+      "smtp.empty": "The allowlist is empty",
+      "smtp.saved": "Saved",
+      "smtp.err": "Error: {err}",
+      "smtp.active": "active",
+      "smtp.inactive": "off",
+      "director.hint": "Team plan and workload. A missed plan can be escalated to the general.",
+      "pcard.general_note": "The general is added to every project automatically and cannot be removed.",
+      "tv.frame_title": "SRM TV",
+      "nav.tv_funnel": "▶ TV funnel",
+      "nav.director_workload": "▣ Director · team workload",
+      "pcard.create_title": "New project",
+      "pcard.name": "Name",
+      "pcard.manager_ru": "RU manager",
+      "pcard.manager_cn": "CN manager",
+      "pcard.cancel": "Cancel",
+      "pcard.create": "Create",
+      "settings.badge_new": "new",
       "mail.manager_col": "Manager",
     },
   };
@@ -1888,6 +2057,12 @@
     if (typeof renderStorage === 'function' && $('#personal-tree')) {
       try { renderStorage(); } catch (_) {}
     }
+    document.title = t('app.title');
+    try { if (typeof renderNotifList === 'function') renderNotifList(); } catch (_) {}
+    try { if (typeof loadFunnelPanel === 'function') loadFunnelPanel(); } catch (_) {}
+    try { if (typeof loadActivityPanel === 'function') loadActivityPanel(); } catch (_) {}
+    try { if (typeof loadUsefulnessPanel === 'function') loadUsefulnessPanel(); } catch (_) {}
+    try { if (typeof loadDirectorWorkload === 'function') loadDirectorWorkload(); } catch (_) {}
     if (!(opts && opts.silent) && typeof toast === 'function' && $('#app-shell') && !$('#app-shell').classList.contains('hidden')) {
       const switched = (I18N[currentLang] && I18N[currentLang]['lang.switched']) || ('UI: ' + langMeta(currentLang).native);
       toast(switched);
@@ -4290,7 +4465,7 @@
   }
 
   function applyMailRoleUI() {
-    const pill = $('#pill-mail-stats');
+    const pill = $('#btn-settings-mail-stats');
     if (pill) {
       pill.dataset.roleHidden = isMailStatsRole() ? '0' : '1';
       pill.hidden = !isMailStatsRole();
@@ -4304,7 +4479,7 @@
   }
 
   function applyActivityRoleUI() {
-    const pill = $('#pill-activity');
+    const pill = $('#btn-settings-activity');
     if (pill) {
       pill.dataset.roleHidden = isActivityJournalRole() ? '0' : '1';
       pill.hidden = !isActivityJournalRole();
@@ -4422,7 +4597,7 @@
     if (!det) return;
     if (r.status !== 200) {
       det.classList.remove('hidden');
-      det.innerHTML = '<p>Не удалось загрузить письмо</p>';
+      det.innerHTML = '<p>' + escapeHtml(t('mail.load_fail')) + '</p>';
       return;
     }
     const m = r.data.message;
@@ -5651,6 +5826,9 @@
     bindSettingsLink('btn-settings-funnel', 'funnel');
     bindSettingsLink('btn-settings-usefulness', 'usefulness');
     bindSettingsLink('btn-settings-director', 'director');
+    bindSettingsLink('btn-settings-supply', 'supply');
+    bindSettingsLink('btn-settings-mail-stats', 'mail-stats');
+    bindSettingsLink('btn-settings-activity', 'activity');
     async function openGililManual() {
       closeSettingsPopover();
       if (!(window.gililDesktop && typeof window.gililDesktop.openManual === 'function')) {
@@ -5716,7 +5894,7 @@
     if (btnSync) {
       btnSync.addEventListener('click', async () => {
         const out = await mailApi('/api/mail/sync', { method: 'POST', body: { mock: true } });
-        toast(out.status === 200 ? 'Sync: ' + (out.data.mode || 'ok') : 'Sync error');
+        toast(out.status === 200 ? tf('mail.sync_ok', { mode: (out.data.mode || 'ok') }) : t('mail.sync_err'));
         loadMail();
       });
     }
@@ -7899,12 +8077,12 @@
     root.textContent = '…';
     const r = await apiFetch('/api/funnels');
     if (!r.ok) {
-      root.innerHTML = '<div class="stage2-err">Нет доступа или ошибка: ' + esc((r.data && r.data.error) || r.status) + '</div>';
+      root.innerHTML = '<div class="stage2-err">' + esc(t('state.no_access')) + esc((r.data && r.data.error) || r.status) + '</div>';
       return;
     }
     const items = (r.data && r.data.items) || [];
     if (!items.length) {
-      root.innerHTML = '<div class="muted">Воронок пока нет</div>';
+      root.innerHTML = '<div class="muted">' + esc(t('funnel.empty')) + '</div>';
       return;
     }
     function fmtStepTimer(s) {
@@ -7920,9 +8098,9 @@
       const hours = Math.floor((ms % 86400000) / 3600000);
       const mins = Math.floor((ms % 3600000) / 60000);
       let label;
-      if (days >= 1) label = days + 'д ' + hours + 'ч';
-      else if (hours >= 1) label = hours + 'ч ' + mins + 'м';
-      else label = Math.max(1, mins) + 'м';
+      if (days >= 1) label = days + t('time.d') + ' ' + hours + t('time.h');
+      else if (hours >= 1) label = hours + t('time.h') + ' ' + mins + t('time.m');
+      else label = Math.max(1, mins) + t('time.m');
       return '⏱ ' + label;
     }
     root.innerHTML = items
@@ -7942,7 +8120,7 @@
           esc(it.status || '') +
           (it.region ? ' · ' + esc(it.region) : '') +
           '</div><div class="stage2-steps">' +
-          (steps || '<span class="muted">нет шагов</span>') +
+          (steps || '<span class="muted">' + esc(t('funnel.no_steps')) + '</span>') +
           '</div></div>'
         );
       })
@@ -7969,12 +8147,12 @@
     root.textContent = '…';
     const r = await apiFetch('/api/activity?limit=80');
     if (!r.ok) {
-      root.innerHTML = '<div class="stage2-err">Нет доступа или ошибка: ' + esc((r.data && r.data.error) || r.status) + '</div>';
+      root.innerHTML = '<div class="stage2-err">' + esc(t('state.no_access')) + esc((r.data && r.data.error) || r.status) + '</div>';
       return;
     }
     const items = (r.data && (r.data.items || r.data.events || r.data.logs)) || [];
     if (!items.length) {
-      root.innerHTML = '<div class="muted">Записей нет</div>';
+      root.innerHTML = '<div class="muted">' + esc(t('activity.empty')) + '</div>';
       return;
     }
     root.innerHTML = items
@@ -8033,12 +8211,12 @@
     root.textContent = '…';
     const r = await apiFetch('/api/usefulness');
     if (!r.ok) {
-      root.innerHTML = '<div class="stage2-err">Нет доступа или ошибка: ' + esc((r.data && r.data.error) || r.status) + '</div>';
+      root.innerHTML = '<div class="stage2-err">' + esc(t('state.no_access')) + esc((r.data && r.data.error) || r.status) + '</div>';
       return;
     }
     const items = (r.data && r.data.items) || [];
     if (!items.length) {
-      root.innerHTML = '<div class="muted">Нет данных</div>';
+      root.innerHTML = '<div class="muted">' + esc(t('useful.empty')) + '</div>';
       return;
     }
     root.innerHTML = items
@@ -8216,7 +8394,7 @@
       mem.innerHTML = members.map((m) => {
         const u = m.user || m;
         const lab = (u.display_name || u.username || ('#' + (m.user_id || u.id))) +
-          ' · ' + (m.role_label || (m.role === 'general' ? 'Генерал' : m.role || ''));
+          ' · ' + (m.role_label || (m.role === 'general' ? t('role.general') : m.role || ''));
         const locked = m.locked || m.role === 'general' ? ' locked' : '';
         return '<span class="pcard-member' + locked + '">' + escapeHtml(lab) + '</span>';
       }).join('');
@@ -8339,7 +8517,7 @@
     if (!body.manager_ru_id || !body.manager_cn_id) { toast('Выберите менеджеров RU и CN'); return; }
     const r = await apiFetch('/api/projects', { method: 'POST', body });
     if (!r.ok) {
-      toast((r.data && (r.data.error || r.data.message)) || 'Ошибка создания');
+      toast((r.data && (r.data.error || r.data.message)) || t('project.create_fail'));
       return;
     }
     const proj = r.data && r.data.project;
@@ -8365,7 +8543,7 @@
       setSection('chats');
     }
     openCreateProjectModal(false);
-    toast('Проект создан · Генерал добавлен');
+    toast(t('project.created'));
     if (typeof loadServerChatsIntoSidebar === 'function') loadServerChatsIntoSidebar();
   }
 
@@ -8373,27 +8551,27 @@
   async function loadDirectorWorkload() {
     const box = document.getElementById('director-workload-list');
     if (!box) return;
-    box.textContent = 'Загрузка…';
+    box.textContent = t('state.loading');
     const r = await apiFetch('/api/director/workload');
     if (!r.ok) {
-      box.innerHTML = '<div class="muted">Нет доступа или ошибка: ' + escapeHtml((r.data && r.data.error) || String(r.status)) + '</div>';
+      box.innerHTML = '<div class="muted">' + escapeHtml(t('state.no_access')) + escapeHtml((r.data && r.data.error) || String(r.status)) + '</div>';
       return;
     }
     const items = (r.data && r.data.items) || [];
-    const label = (r.data && r.data.role_label) || 'Директор';
+    const label = (r.data && r.data.role_label) || t('director.role');
     if (!items.length) {
-      box.innerHTML = '<div class="muted">' + escapeHtml(label) + ': нет подчинённых в зоне видимости.</div>';
+      box.innerHTML = '<div class="muted">' + escapeHtml(tf('director.empty', { label: label })) + '</div>';
       return;
     }
     box.innerHTML =
-      '<div class="director-row" style="font-size:11px;opacity:.7"><span>Сотрудник</span><span>Открыто</span><span>Просрочено</span><span>План сегодня</span><span></span></div>' +
+      '<div class="director-row" style="font-size:11px;opacity:.7"><span>' + escapeHtml(t('director.col_employee')) + '</span><span>' + escapeHtml(t('director.col_open')) + '</span><span>' + escapeHtml(t('director.col_overdue')) + '</span><span>' + escapeHtml(t('director.col_plan')) + '</span><span></span></div>' +
       items.map((it) => {
         const u = it.user || {};
         const name = u.display_name || u.username || ('#' + u.id);
-        const miss = it.missed_plan ? '<span class="miss-badge">пропуск плана</span>' : '';
+        const miss = it.missed_plan ? '<span class="miss-badge">' + escapeHtml(t('director.miss')) + '</span>' : '';
         const btn = it.missed_plan
-          ? '<button type="button" class="btn ghost dir-escalate" data-uid="' + u.id + '" data-name="' + escapeHtml(name) + '">↗ Генералу</button>'
-          : '<span class="muted">ок</span>';
+          ? '<button type="button" class="btn ghost dir-escalate" data-uid="' + u.id + '" data-name="' + escapeHtml(name) + '">' + escapeHtml(t('director.escalate')) + '</button>'
+          : '<span class="muted">' + escapeHtml(t('director.ok')) + '</span>';
         return '<div class="director-row' + (it.missed_plan ? ' missed' : '') + '">' +
           '<div><strong>' + escapeHtml(name) + '</strong> ' + miss +
           '<div class="muted" style="font-size:11px">' + escapeHtml(u.role || '') + (u.region ? ' · ' + escapeHtml(u.region) : '') + '</div></div>' +
@@ -8415,7 +8593,7 @@
             detail: 'Сотрудник ' + name + ' не выполнил план. Эскалация от Директора.',
           },
         });
-        if (er.ok) toast('Отчёт отправлен Генералу');
+        if (er.ok) toast(t('director.sent'));
         else toast((er.data && (er.data.error || er.data.message)) || 'Ошибка эскалации');
         loadDirectorWorkload();
       });

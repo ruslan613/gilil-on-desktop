@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>AI Lighting Studio — Gilil Supply</title>
+  <script src="/ui-lang.js"></script>
   <script>
     (function () {
       try {
@@ -103,18 +104,18 @@
   <div class="wrap">
     <header>
       <h1>AI Lighting Studio</h1>
-      <p>Статус работ в Gilil Supply / Gilil On · проект «AI Lighting Studio» · <a href="/shell-v2.html">← в оболочку</a></p>
+      <p><span data-i18n="lead">Статус работ в Gilil Supply / Gilil On · проект «AI Lighting Studio»</span> · <a href="/shell-v2.html" data-i18n="back">← в оболочку</a></p>
     </header>
 
     <div class="card" id="auth-warn">
-      <strong>Нужен вход.</strong> Откройте <a href="/shell-v2.html">Gilil On</a>, войдите, затем обновите эту страницу (токен из localStorage).
+      <strong data-i18n="needLogin">Нужен вход.</strong> <span data-i18n="needLoginBody">Откройте Gilil On, войдите, затем обновите эту страницу.</span>
     </div>
 
     <div class="card">
-      <h2>Ручное обновление</h2>
+      <h2 data-i18n="manual">Ручное обновление</h2>
       <form id="form">
         <div class="row">
-          <label class="fld"><span>Неделя</span>
+          <label class="fld"><span data-i18n="week">Неделя</span>
             <select name="week" id="week">
               <option value="week1">week1</option>
               <option value="week2" selected>week2</option>
@@ -126,39 +127,124 @@
               <option value="week8">week8</option>
             </select>
           </label>
-          <label class="fld"><span>Статус</span>
+          <label class="fld"><span data-i18n="status">Статус</span>
             <select name="status" id="status">
-              <option value="in_progress" selected>in_progress</option>
-              <option value="done">done</option>
-              <option value="blocked">blocked</option>
+              <option value="in_progress" selected data-i18n="st.progress">В работе</option>
+              <option value="done" data-i18n="st.done">Готово</option>
+              <option value="blocked" data-i18n="st.blocked">Заблокировано</option>
             </select>
           </label>
-          <label class="fld"><span>Приёмка</span>
+          <label class="fld"><span data-i18n="accept">Приёмка</span>
             <select name="accept" id="accept">
-              <option value="" selected>— нет —</option>
+              <option value="" selected data-i18n="accept.none">— нет —</option>
               <option value="PASS">PASS</option>
               <option value="FAIL">FAIL</option>
             </select>
           </label>
         </div>
-        <label class="fld"><span>Заголовок</span>
-          <input name="title" id="title" maxlength="500" placeholder="Кратко: что сделано" />
+        <label class="fld"><span data-i18n="titleLbl">Заголовок</span>
+          <input name="title" id="title" maxlength="500" placeholder="Кратко: что сделано" data-i18n-placeholder="titlePh" />
         </label>
-        <label class="fld"><span>Заметка / комментарий</span>
-          <textarea name="body" id="body" placeholder="Прогресс, PASS/FAIL комментарий, детали…"></textarea>
+        <label class="fld"><span data-i18n="noteLbl">Заметка / комментарий</span>
+          <textarea name="body" id="body" placeholder="Прогресс, PASS/FAIL комментарий, детали…" data-i18n-placeholder="notePh"></textarea>
         </label>
-        <button type="submit" class="btn">Сохранить в Gilil Supply</button>
+        <button type="submit" class="btn" data-i18n="save">Сохранить в Gilil Supply</button>
         <div class="msg" id="form-msg"></div>
       </form>
     </div>
 
     <div class="toolbar">
-      <button type="button" class="btn ghost" id="btn-reload">Обновить список</button>
+      <button type="button" class="btn ghost" id="btn-reload" data-i18n="reload">Обновить список</button>
       <span class="msg" id="list-msg"></span>
     </div>
     <div id="list"></div>
   </div>
   <script>
+    const ALS_DICT = {
+      zh: {
+        title: 'AI Lighting Studio — Gilil Supply',
+        lead: 'Gilil Supply / Gilil On 中的工作状态 · 项目「AI Lighting Studio」',
+        back: '← 返回外壳',
+        needLogin: '需要登录。',
+        needLoginBody: '打开 Gilil On，登录后再刷新此页。',
+        manual: '手动更新',
+        week: '周', status: '状态', accept: '验收',
+        'st.progress': '进行中', 'st.done': '完成', 'st.blocked': '受阻',
+        'accept.none': '— 无 —',
+        titleLbl: '标题', titlePh: '简要说明完成了什么',
+        noteLbl: '备注', notePh: '进度、PASS/FAIL 说明、细节…',
+        save: '保存到 Gilil Supply',
+        reload: '刷新列表',
+        noToken: '没有令牌',
+        loading: '加载中…',
+        updates: '{n} 条更新',
+        none: '还没有更新。',
+        signInFirst: '请先登录 Gilil On',
+        saving: '正在保存…',
+        saved: '已保存到 Gilil Supply（id={id}）',
+        err: '错误 ',
+        net: '网络：',
+        paths: '路径：',
+        run: '运行：',
+        noTitle: '（无标题）',
+      },
+      ru: {
+        title: 'AI Lighting Studio — Gilil Supply',
+        lead: 'Статус работ в Gilil Supply / Gilil On · проект «AI Lighting Studio»',
+        back: '← в оболочку',
+        needLogin: 'Нужен вход.',
+        needLoginBody: 'Откройте Gilil On, войдите, затем обновите эту страницу.',
+        manual: 'Ручное обновление',
+        week: 'Неделя', status: 'Статус', accept: 'Приёмка',
+        'st.progress': 'В работе', 'st.done': 'Готово', 'st.blocked': 'Заблокировано',
+        'accept.none': '— нет —',
+        titleLbl: 'Заголовок', titlePh: 'Кратко: что сделано',
+        noteLbl: 'Заметка / комментарий', notePh: 'Прогресс, комментарий PASS/FAIL, детали…',
+        save: 'Сохранить в Gilil Supply',
+        reload: 'Обновить список',
+        noToken: 'нет токена',
+        loading: 'загрузка…',
+        updates: '{n} обновл.',
+        none: 'Пока нет обновлений.',
+        signInFirst: 'Сначала войдите в Gilil On',
+        saving: 'сохранение…',
+        saved: 'Сохранено в Gilil Supply (id={id})',
+        err: 'ошибка ',
+        net: 'сеть: ',
+        paths: 'Пути:',
+        run: 'Запуск:',
+        noTitle: '(без заголовка)',
+      },
+      en: {
+        title: 'AI Lighting Studio — Gilil Supply',
+        lead: 'Work status in Gilil Supply / Gilil On · project “AI Lighting Studio”',
+        back: '← back to the shell',
+        needLogin: 'Sign-in required.',
+        needLoginBody: 'Open Gilil On, sign in, then refresh this page.',
+        manual: 'Manual update',
+        week: 'Week', status: 'Status', accept: 'Acceptance',
+        'st.progress': 'In progress', 'st.done': 'Done', 'st.blocked': 'Blocked',
+        'accept.none': '— none —',
+        titleLbl: 'Title', titlePh: 'Short note of what was done',
+        noteLbl: 'Note', notePh: 'Progress, PASS/FAIL comment, details…',
+        save: 'Save to Gilil Supply',
+        reload: 'Reload list',
+        noToken: 'no token',
+        loading: 'loading…',
+        updates: '{n} updates',
+        none: 'No updates yet.',
+        signInFirst: 'Sign in to Gilil On first',
+        saving: 'saving…',
+        saved: 'Saved to Gilil Supply (id={id})',
+        err: 'error ',
+        net: 'network: ',
+        paths: 'Paths:',
+        run: 'Run:',
+        noTitle: '(no title)',
+      },
+    };
+    let reloadAls = function () {};
+    const tr = window.GililPageLang.bind(ALS_DICT, function () { reloadAls(); });
     function getToken() {
       try {
         return (
@@ -190,34 +276,34 @@
       var warn = document.getElementById('auth-warn');
       if (!getToken()) {
         warn.classList.add('show');
-        msg.textContent = 'нет токена';
+        msg.textContent = tr('noToken');
         return;
       }
       warn.classList.remove('show');
-      msg.textContent = 'загрузка…';
+      msg.textContent = tr('loading');
       try {
         var r = await fetch('/api/als/updates?limit=50', { headers: authHeaders() });
         var data = await r.json().catch(function () { return {}; });
         if (!r.ok) {
-          msg.textContent = 'ошибка ' + r.status + (data.error ? ': ' + data.error : '');
+          msg.textContent = tr('err') + r.status + (data.error ? ': ' + data.error : '');
           if (r.status === 401) warn.classList.add('show');
           return;
         }
         var items = data.items || [];
-        msg.textContent = items.length + ' обновл.';
+        msg.textContent = tr('updates').replace('{n}', String(items.length));
         var root = document.getElementById('list');
         if (!items.length) {
-          root.innerHTML = '<div class="card"><p class="msg">Пока нет обновлений.</p></div>';
+          root.innerHTML = '<div class="card"><p class="msg">' + esc(tr('none')) + '</p></div>';
           return;
         }
         root.innerHTML = items.map(function (it) {
           var paths = '';
           if (it.paths && it.paths.length) {
-            paths = '<div class="paths"><strong>Пути:</strong><br>' +
+            paths = '<div class="paths"><strong>' + esc(tr('paths')) + '</strong><br>' +
               (Array.isArray(it.paths) ? it.paths : [it.paths]).map(esc).join('<br>') + '</div>';
           }
           var run = it.how_to_run
-            ? '<div class="run"><strong>Запуск:</strong><br><code>' + esc(it.how_to_run) + '</code></div>'
+            ? '<div class="run"><strong>' + esc(tr('run')) + '</strong><br><code>' + esc(it.how_to_run) + '</code></div>'
             : '';
           return (
             '<article class="card item">' +
@@ -229,14 +315,14 @@
               '<span>' + esc(it.created_at) + '</span>' +
               (it.author ? '<span>@' + esc(it.author) + '</span>' : '') +
             '</div>' +
-            '<h3>' + esc(it.title || '(без заголовка)') + '</h3>' +
+            '<h3>' + esc(it.title || tr('noTitle')) + '</h3>' +
             (it.body ? '<div class="body">' + esc(it.body) + '</div>' : '') +
             paths + run +
             '</article>'
           );
         }).join('');
       } catch (e) {
-        msg.textContent = 'сеть: ' + (e && e.message ? e.message : e);
+        msg.textContent = tr('net') + (e && e.message ? e.message : e);
       }
     }
     document.getElementById('btn-reload').addEventListener('click', loadList);
@@ -245,12 +331,12 @@
       var out = document.getElementById('form-msg');
       if (!getToken()) {
         out.className = 'msg err';
-        out.textContent = 'Сначала войдите в Gilil On';
+        out.textContent = tr('signInFirst');
         document.getElementById('auth-warn').classList.add('show');
         return;
       }
       out.className = 'msg';
-      out.textContent = 'сохранение…';
+      out.textContent = tr('saving');
       var payload = {
         week: document.getElementById('week').value,
         status: document.getElementById('status').value,
@@ -267,11 +353,11 @@
         var data = await r.json().catch(function () { return {}; });
         if (!r.ok) {
           out.className = 'msg err';
-          out.textContent = 'ошибка ' + r.status + ': ' + (data.error || JSON.stringify(data));
+          out.textContent = tr('err') + r.status + ': ' + (data.error || JSON.stringify(data));
           return;
         }
         out.className = 'msg ok';
-        out.textContent = 'Сохранено в Gilil Supply (id=' + (data.item && data.item.id) + ')';
+        out.textContent = tr('saved').replace('{id}', String(data.item && data.item.id));
         document.getElementById('body').value = '';
         loadList();
       } catch (e) {
@@ -279,6 +365,7 @@
         out.textContent = String(e && e.message ? e.message : e);
       }
     });
+    reloadAls = loadList;
     loadList();
   </script>
 </body>

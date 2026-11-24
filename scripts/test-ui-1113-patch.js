@@ -28,8 +28,8 @@ function check(name, cond) {
 const popStart = html.indexOf('id="theme-popover"');
 const popEnd = html.indexOf('id="notif-wrap"');
 const pop = html.slice(popStart, popEnd);
-check('gear menu has no Gilil Supply entry', !/Gilil Supply/i.test(pop) && !pop.includes('pill-supply') && !pop.includes('sec-supply'));
-check('top navigation still has Gilil Supply', html.includes('id="pill-supply"') && html.includes('>Gilil Supply</span>'));
+check('settings keeps Gilil Supply', pop.includes('id="btn-settings-supply"') && pop.includes('data-i18n="nav.supply"'));
+check('top navigation no longer has the Supply pill', !html.includes('id="pill-supply"'));
 check('supply section and frame remain', html.includes('id="sec-supply"') && html.includes('id="supply-frame"'));
 
 const linksAt = html.indexOf('class="settings-links"');
@@ -42,7 +42,7 @@ check('emblem is 50px, about 1.4 times 36', css.includes('width: 50px !important
 check('emblem keeps its picture', css.includes('object-fit: contain'));
 check('narrow header uses a smaller emblem', css.includes('max-width: 900px') && css.includes('width: 42px'));
 
-check('sidebar stretches to the row', css.includes('.sidebar {') && /height:\s*100%/.test(css.slice(css.indexOf('.sidebar {'), css.indexOf('.sidebar {') + 500)) && css.includes('align-self: stretch'));
+check('sidebar stretches to the row', css.includes('.sidebar {') && /align-self:\s*stretch/.test(css.slice(css.indexOf('.sidebar {'), css.indexOf('.sidebar {') + 500)) && css.includes('min-height: 0'));
 check('team list scrolls inside the sidebar', css.includes('flex: 1 1 auto') && css.includes('min-height: 0'));
 
 assert.strictEqual(CAPTION_HEIGHT, 32);

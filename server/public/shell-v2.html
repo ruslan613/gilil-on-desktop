@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Gilil On · Shell v2 (демо)</title>
+  <title>Gilil On</title>
   <link rel="stylesheet" href="/shell-v2.css" />
   <link rel="stylesheet" href="/themes.css" />
   <link rel="stylesheet" href="/splash.css" />
@@ -52,7 +52,7 @@
       <span class="gilil-splash__ring"></span>
     </div>
     <div class="gilil-splash__word"><span class="mark-gilil">Gilil</span><span class="mark-on">On</span></div>
-    <p class="gilil-splash__sub">Lighting Supply</p>
+    <p class="gilil-splash__sub" data-i18n="splash.sub">Lighting supply</p>
     <div class="gilil-splash__bar"><i></i></div>
   </div>
 </div>
@@ -117,10 +117,7 @@
         <button type="button" class="pill" data-section="mail"><span class="ico">✉</span> <span data-i18n="nav.mail">Почта</span><span class="pill-badge" id="pill-mail-badge" hidden>0</span></button>
         <button type="button" class="pill" data-section="news"><span class="ico">☰</span> <span data-i18n="nav.news">Новости</span></button>
         <button type="button" class="pill" data-section="storage"><span class="ico">◎</span> <span data-i18n="nav.storage">Хранилище</span></button>
-        <button type="button" class="pill" data-section="supply" id="pill-supply"><span class="ico">⇄</span> <span data-i18n="nav.supply">Gilil Supply</span></button>
         <button type="button" class="pill" data-section="crm"><span class="ico">▣</span> <span data-i18n="nav.crm">CRM</span></button>
-        <button type="button" class="pill mail-stats-pill" data-section="mail-stats" id="pill-mail-stats" hidden><span class="ico">▥</span> <span data-i18n="nav.mail_stats">Статистика почты</span></button>
-        <button type="button" class="pill" data-section="activity" id="pill-activity" hidden><span class="ico">◷</span> <span data-i18n="nav.activity">Журнал</span></button>
       </nav>
     </div>
 
@@ -146,10 +143,13 @@
           <button type="button" class="btn ghost settings-link-btn" id="btn-settings-funnel" data-i18n="nav.funnel" style="display:block;width:100%;text-align:left">↗ Воронка заказа</button>
           <button type="button" class="btn ghost settings-link-btn" id="btn-settings-usefulness" data-i18n="nav.usefulness" style="display:block;width:100%;text-align:left">★ Полезность</button>
           <button type="button" class="btn ghost settings-link-btn" id="btn-settings-director" data-i18n="nav.director_workload" style="display:block;width:100%;text-align:left">▣ Директор · нагрузка</button>
+          <button type="button" class="btn ghost settings-link-btn" id="btn-settings-supply" data-i18n="nav.supply" style="display:block;width:100%;text-align:left">Gilil Supply</button>
+          <button type="button" class="btn ghost settings-link-btn" id="btn-settings-mail-stats" data-i18n="nav.mail_stats" hidden style="display:block;width:100%;text-align:left">Статистика почты</button>
+          <button type="button" class="btn ghost settings-link-btn" id="btn-settings-activity" data-i18n="nav.activity" hidden style="display:block;width:100%;text-align:left">Журнал</button>
           <a class="btn ghost settings-link-btn" id="btn-settings-als" href="/als-studio.html" style="display:block;width:100%;text-align:left;text-decoration:none">✦ AI Lighting Studio</a>
           <button type="button" class="btn ghost settings-link-btn" id="btn-settings-check-update" style="display:block;width:100%;text-align:left">
             <span data-i18n="settings.check_update">Проверить обновления</span>
-            <span class="settings-update-new">new</span>
+            <span class="settings-update-new" data-i18n="settings.badge_new">new</span>
           </button>
           <p class="settings-update-status" id="settings-update-status" role="status" aria-live="polite" hidden></p>
           <button type="button" class="btn ghost settings-link-btn" id="btn-settings-manual" data-i18n="settings.manual" style="display:block;width:100%;text-align:left">📖 Инструкция по Gilil On</button>
@@ -207,7 +207,7 @@
       <div class="update-banner-actions">
         <button type="button" class="btn update-btn" id="btn-update-download" data-i18n="update.download">Загрузить</button>
         <button type="button" class="btn update-btn primary hidden" id="btn-update-install" data-i18n="update.install" hidden>Установить и перезапустить</button>
-        <button type="button" class="btn ghost update-btn-dismiss" id="btn-update-dismiss" title="Скрыть" aria-label="Скрыть">×</button>
+        <button type="button" class="btn ghost update-btn-dismiss" id="btn-update-dismiss" title="Скрыть" aria-label="Скрыть" data-i18n-title="aria.dismiss" data-i18n-aria="aria.dismiss">×</button>
       </div>
     </div>
   </div>
@@ -222,7 +222,7 @@
             <span id="team-vis-label">Обе команды</span>
             <span class="team-vis-caret" aria-hidden="true">▾</span>
           </button>
-          <div class="team-vis-menu hidden" id="team-vis-menu" role="listbox" aria-label="Видимость команд">
+          <div class="team-vis-menu hidden" id="team-vis-menu" role="listbox" aria-label="Видимость команд" data-i18n-aria="aria.team_vis">
             <button type="button" class="team-vis-opt" role="option" data-vis="ru" data-i18n="chats.team_ru">Команда RU</button>
             <button type="button" class="team-vis-opt" role="option" data-vis="cn" data-i18n="chats.team_cn">Команда CN</button>
             <button type="button" class="team-vis-opt" role="option" data-vis="both" data-i18n="chats.teams_both" aria-selected="true">Обе команды</button>
@@ -465,7 +465,7 @@
             <span data-i18n="news.bar">新闻</span>
             <a href="/news.html" target="_blank" rel="noopener" data-i18n="news.open">打开 news.html ↗</a>
           </div>
-          <iframe src="/news.html?embed=1" title="Новости" loading="lazy"></iframe>
+          <iframe src="/news.html?embed=1" title="Новости" data-i18n-title="nav.news" loading="lazy"></iframe>
         </div>
       </section>
 
@@ -481,7 +481,7 @@
             <p style="margin:0;color:var(--muted);font-size:13px" data-i18n="tv.desc">招标漏斗大屏展示。下方为预览；完整全屏见链接。</p>
             <div class="simple-grid" id="tv-stats"></div>
             <div class="tv-preview-frame">
-              <iframe src="/crm-tv.html" title="SRM TV" loading="lazy" referrerpolicy="no-referrer"></iframe>
+              <iframe src="/crm-tv.html" title="SRM TV" data-i18n-title="tv.frame_title" loading="lazy" referrerpolicy="no-referrer"></iframe>
             </div>
           </div>
         </div>
@@ -530,7 +530,7 @@
         <div class="chat-thread">
           <div class="chat-thread-head">
             <div class="embed-bar" id="chat-thread-title" data-i18n="chats.select">请选择左侧对话</div>
-            <button type="button" class="btn ghost" id="btn-create-project" title="Новый проект" style="margin-left:8px;white-space:nowrap">＋ Проект</button>
+            <button type="button" class="btn ghost" id="btn-create-project" title="Новый проект" data-i18n="project.create" data-i18n-title="project.new" style="margin-left:8px">＋ Проект</button>
             <div class="chat-tools" id="chat-tools">
               <input type="search" id="chat-msg-search" placeholder="按文本搜索…" data-i18n-placeholder="chats.msg_search" />
               <label class="chat-date-lab"><span data-i18n="chats.from">自</span> <input type="date" id="chat-date-from" /></label>
@@ -647,22 +647,22 @@
       <section class="section" id="sec-funnel">
         <div class="panel">
           <h2 data-i18n="nav.funnel">Воронка заказа</h2>
-          <p class="muted">Этап 2 · GET /api/funnels</p>
-          <div id="funnel-list" class="stage2-panel">Загрузка…</div>
+          <p class="muted" data-i18n="stage.funnel_hint">Этап 2 · GET /api/funnels</p>
+          <div id="funnel-list" class="stage2-panel" data-i18n="state.loading">Загрузка…</div>
         </div>
       </section>
       <section class="section" id="sec-activity">
         <div class="panel">
           <h2 data-i18n="nav.activity">Журнал активности</h2>
-          <p class="muted">Этап 2 · GET /api/activity (только general_admin)</p>
-          <div id="activity-list" class="stage2-panel">Загрузка…</div>
+          <p class="muted" data-i18n="stage.activity_hint">Этап 2 · GET /api/activity (только генеральный администратор)</p>
+          <div id="activity-list" class="stage2-panel" data-i18n="state.loading">Загрузка…</div>
         </div>
       </section>
       <section class="section" id="sec-usefulness">
         <div class="panel">
           <h2 data-i18n="nav.usefulness">Коэффициент полезности</h2>
-          <p class="muted">Этап 2 · GET /api/usefulness (директор / админ)</p>
-          <div id="usefulness-list" class="stage2-panel">Загрузка…</div>
+          <p class="muted" data-i18n="stage.usefulness_hint">Этап 2 · GET /api/usefulness (директор / админ)</p>
+          <div id="usefulness-list" class="stage2-panel" data-i18n="state.loading">Загрузка…</div>
         </div>
       </section>
 
@@ -773,13 +773,13 @@
       <kbd class="cmdk-esc">Esc</kbd>
     </div>
     <div class="cmdk-hints" id="cmdk-hints">
-      <span data-type="chat">Чаты</span>
-      <span data-type="task">Задачи</span>
-      <span data-type="invoice">Счета</span>
-      <span data-type="project">Проекты</span>
-      <span data-type="crm">CRM</span>
-      <span data-type="tender">Тендеры</span>
-      <span data-type="mail">Почта</span>
+      <span data-type="chat" data-i18n="cmdk.chat">Чаты</span>
+      <span data-type="task" data-i18n="cmdk.task">Задачи</span>
+      <span data-type="invoice" data-i18n="cmdk.invoice">Счета</span>
+      <span data-type="project" data-i18n="cmdk.project">Проекты</span>
+      <span data-type="crm" data-i18n="nav.crm">CRM</span>
+      <span data-type="tender" data-i18n="cmdk.tender">Тендеры</span>
+      <span data-type="mail" data-i18n="cmdk.mail">Почта</span>
     </div>
     <div class="cmdk-list" id="cmdk-list" role="listbox"></div>
     <div class="cmdk-empty hidden" id="cmdk-empty" data-i18n="cmdk.empty">Ничего не найдено</div>
@@ -844,7 +844,7 @@
       <div class="section-pad">
         <h2 data-i18n="nav.director_workload">Директор · нагрузка сотрудников</h2>
         <p class="muted" data-i18n="director.hint">План и загрузка подчинённых. При пропуске плана — эскалация Генералу.</p>
-        <div id="director-workload-list" class="stage2-panel">Загрузка…</div>
+        <div id="director-workload-list" class="stage2-panel" data-i18n="state.loading">Загрузка…</div>
       </div>
     </section>
 
