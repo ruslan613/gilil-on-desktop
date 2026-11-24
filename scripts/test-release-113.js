@@ -31,6 +31,7 @@ const js = fs.readFileSync(path.join(root, 'server/public/shell-v2.js'), 'utf8')
 const main = fs.readFileSync(path.join(root, 'main.js'), 'utf8');
 
 check('package version is 1.1.5', pkg.version === '1.1.5');
+check('a private label cannot replace the 1.1.5 version', main.includes("const APP_VERSION = '1.1.5'") && main.includes("parsed.channel === 'private'") && main.includes('appWindowTitle()'));
 check('installer name stays on the existing feed pattern', pkg.build.nsis.artifactName === 'GililOn-${version}-win-setup.exe');
 check('uninstall does not opt into deleting AppData', pkg.build.nsis.deleteAppDataOnUninstall === false);
 check('custom uninstall does not remove the user directory', !nsh.includes('RMDir') && nsh.includes('Leave %APPDATA%\\gilil-on-desktop'));
@@ -48,12 +49,15 @@ check('instruction is last and the other actions keep their order', JSON.stringi
   'btn-settings-funnel',
   'btn-settings-usefulness',
   'btn-settings-director',
+  'btn-settings-supply',
+  'btn-settings-mail-stats',
+  'btn-settings-activity',
   'btn-settings-als',
   'btn-settings-check-update',
   'settings-update-status',
   'btn-settings-manual',
 ]));
-check('red new mark is on the check button', html.includes('class="settings-update-new">new</span>'));
+check('red new mark is on the check button', html.includes('class="settings-update-new"') && html.includes('id="btn-settings-check-update"'));
 const handler = js.slice(js.indexOf('async function onSettingsCheckUpdate'), js.indexOf('function bindUpdateUi'));
 check('settings button calls checkForUpdates only', handler.includes('checkForUpdates') && !handler.includes('downloadUpdate') && !handler.includes('installUpdate') && !handler.includes('location.reload'));
 check('instruction still calls openManual', js.includes("['btn-settings-manual', 'btn-settings-manual-personal']") && js.includes('openManual()'));

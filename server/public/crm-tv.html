@@ -3,7 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>SRM TV — Gilil On · воронка тендеров</title>
+  <title>SRM TV — Gilil On</title>
+  <script src="/ui-locale.js"></script>
+  <script src="/ui-lang.js"></script>
   <script>
     (function () {
       try {
@@ -339,11 +341,11 @@
   <header>
     <div class="brand">
       <div class="eyebrow">Gilil On · SRM</div>
-      <h1>TV <span>воронка тендеров</span></h1>
+      <h1>SRM TV <span data-i18n="h1span">воронка тендеров</span></h1>
     </div>
     <div class="meta-bar">
       <div class="clock" id="clock">—</div>
-      <div id="updated">Обновление…</div>
+      <div id="updated" data-i18n="updating">Обновление…</div>
     </div>
   </header>
 
@@ -351,12 +353,60 @@
   <div class="funnel" id="funnel"></div>
 
   <section class="tasks-strip">
-    <h3>Задачи сотрудников</h3>
+    <h3 data-i18n="tasks">Задачи сотрудников</h3>
     <div class="tasks" id="tasks"></div>
   </section>
-  <div class="footer-hint">Автообновление каждые 45 с · GET /api/tv</div>
+  <div class="footer-hint" data-i18n="footer">Автообновление каждые 45 с · GET /api/tv</div>
 
   <script>
+    const TV_DICT = {
+      zh: {
+        title: 'SRM TV — Gilil On · 招标漏斗',
+        h1span: '招标漏斗',
+        updating: '正在更新…',
+        tasks: '员工任务',
+        footer: '每 45 秒自动更新 · GET /api/tv',
+        d: '天', h: '小时', m: '分钟', overdue: '已逾期 ',
+        totAll: '招标总数', totFound: '已找到', totWork: '进行中', totApps: '申请', totWon: '中标 / 未中标',
+        empty: '空', noTasks: '没有未完成的任务',
+        updated: '数据：{time}（Asia/Hong_Kong）· 约 45 秒更新',
+        by: '截止 ',
+        loadErr: '无法加载 /api/tv：',
+      },
+      ru: {
+        title: 'SRM TV — Gilil On · воронка тендеров',
+        h1span: 'воронка тендеров',
+        updating: 'Обновление…',
+        tasks: 'Задачи сотрудников',
+        footer: 'Автообновление каждые 45 с · GET /api/tv',
+        d: 'д', h: 'ч', m: 'м', overdue: 'просрочено ',
+        totAll: 'Всего тендеров', totFound: 'Найдены', totWork: 'В работе', totApps: 'Заявки', totWon: 'Выиграны / Проиграны',
+        empty: 'Пусто', noTasks: 'Нет открытых задач',
+        updated: 'Данные: {time} (Asia/Hong_Kong) · обновление ~45 с',
+        by: 'до ',
+        loadErr: 'Не удалось загрузить /api/tv: ',
+      },
+      en: {
+        title: 'SRM TV — Gilil On · tender funnel',
+        h1span: 'tender funnel',
+        updating: 'Updating…',
+        tasks: 'Employee tasks',
+        footer: 'Refreshes every 45 s · GET /api/tv',
+        d: 'd', h: 'h', m: 'm', overdue: 'overdue ',
+        totAll: 'Tenders in total', totFound: 'Found', totWork: 'In progress', totApps: 'Applications', totWon: 'Won / Lost',
+        empty: 'Empty', noTasks: 'No open tasks',
+        updated: 'Data: {time} (Asia/Hong_Kong) · refresh ~45 s',
+        by: 'by ',
+        loadErr: 'Could not load /api/tv: ',
+      },
+    };
+    let reloadTv = function () {};
+    const tr = window.GililPageLang.bind(TV_DICT, function (trFn) {
+      tickClock();
+      const upd = document.getElementById('updated');
+      if (upd) upd.textContent = trFn('updating');
+      reloadTv();
+    });
     const REFRESH_MS = 45000;
     const THEME_KEY = 'gilil_theme';
     const THEME_IDS = ['dark', 'bitrix', 'cyan'];
@@ -434,10 +484,12 @@
 
     function tickClock() {
       const now = new Date();
+      const code = window.GililPageLang && GililPageLang.lang ? GililPageLang.lang() : 'zh';
+      const loc = code === 'zh' ? 'zh-CN' : code === 'en' ? 'en-US' : 'ru-RU';
       const opts = { timeZone: 'Asia/Hong_Kong', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
       const dateOpts = { timeZone: 'Asia/Hong_Kong', weekday: 'short', day: 'numeric', month: 'short' };
       document.getElementById('clock').textContent =
-        now.toLocaleTimeString('ru-RU', opts) + ' · ' + now.toLocaleDateString('ru-RU', dateOpts);
+        now.toLocaleTimeString(loc, opts) + ' · ' + now.toLocaleDateString(loc, dateOpts);
     }
 
     function deadlineMs(deadline) {
@@ -463,21 +515,21 @@
       const hours = Math.floor((ms % 86400000) / 3600000);
       const mins = Math.floor((ms % 3600000) / 60000);
       let label;
-      if (days >= 1) label = days + 'д ' + hours + 'ч';
-      else if (hours >= 1) label = hours + 'ч ' + mins + 'м';
-      else label = mins + 'м';
-      return { overdue, label: overdue ? ('просрочено ' + label) : label, soon: !overdue && ms <= 5 * 86400000 };
+      if (days >= 1) label = days + tr('d') + ' ' + hours + tr('h');
+      else if (hours >= 1) label = hours + tr('h') + ' ' + mins + tr('m');
+      else label = mins + tr('m');
+      return { overdue, label: overdue ? (tr('overdue') + label) : label, soon: !overdue && ms <= 5 * 86400000 };
     }
 
     function render(data) {
       const totals = document.getElementById('totals');
       const c = data.counts || {};
       totals.innerHTML = [
-        { n: data.totals?.tenders ?? '—', l: 'Всего тендеров' },
-        { n: c.found ?? 0, l: 'Найдены' },
-        { n: c.in_work ?? 0, l: 'В работе' },
-        { n: c.application ?? 0, l: 'Заявки' },
-        { n: (c.won || 0) + ' / ' + (c.lost || 0), l: 'Выиграны / Проиграны' },
+        { n: data.totals?.tenders ?? '—', l: tr('totAll') },
+        { n: c.found ?? 0, l: tr('totFound') },
+        { n: c.in_work ?? 0, l: tr('totWork') },
+        { n: c.application ?? 0, l: tr('totApps') },
+        { n: (c.won || 0) + ' / ' + (c.lost || 0), l: tr('totWon') },
       ].map((t) => `<div class="tot"><div class="n">${esc(t.n)}</div><div class="l">${esc(t.l)}</div></div>`).join('');
 
       const funnel = document.getElementById('funnel');
@@ -485,7 +537,7 @@
         const cards = (stage.items || []).map((it) => {
           const cd = fmtCountdown(it.deadline);
           const dl = it.deadline
-            ? `<span class="pill deadline timer${cd && cd.soon ? ' soon' : ''}${cd && cd.overdue ? ' overdue' : ''}" data-deadline="${esc(it.deadline)}" title="до ${esc(it.deadline)}">до ${esc(it.deadline)}${cd ? ' · ' + esc(cd.label) : ''}</span>`
+            ? `<span class="pill deadline timer${cd && cd.soon ? ' soon' : ''}${cd && cd.overdue ? ' overdue' : ''}" data-deadline="${esc(it.deadline)}" title="${esc(tr('by') + it.deadline)}">${esc(tr('by') + it.deadline)}${cd ? ' · ' + esc(cd.label) : ''}</span>`
             : '';
           return `<article class="card">
             <p class="t"><span class="no">№ ${esc(it.tender_no)}</span>${esc(it.title)}</p>
@@ -496,7 +548,7 @@
               ${it.owner ? '<span>' + esc(it.owner.display_name) + '</span>' : ''}
             </div>
           </article>`;
-        }).join('') || '<div class="empty">Пусто</div>';
+        }).join('') || ('<div class="empty">' + esc(tr('empty')) + '</div>');
         return `<section class="col" data-stage="${esc(stage.key)}">
           <div class="col-head">
             <h2>${esc(stage.label)}</h2>
@@ -510,7 +562,7 @@
       const tasks = document.getElementById('tasks');
       const list = data.employee_tasks || [];
       if (!list.length) {
-        tasks.innerHTML = '<div class="empty">Нет открытых задач</div>';
+        tasks.innerHTML = '<div class="empty">' + esc(tr('noTasks')) + '</div>';
       } else {
         tasks.innerHTML = list.map((tt) => {
           const p = Math.max(0, Math.min(100, Number(tt.progress) || 0));
@@ -525,8 +577,7 @@
 
       const u = data.updated_at ? new Date(data.updated_at) : new Date();
       document.getElementById('updated').textContent =
-        'Данные: ' + u.toLocaleTimeString('ru-RU', { timeZone: 'Asia/Hong_Kong', hour: '2-digit', minute: '2-digit', second: '2-digit' }) +
-        ' (Asia/Hong_Kong) · обновление ~45 с';
+        tr('updated').replace('{time}', u.toLocaleTimeString(GililPageLang.lang() === 'zh' ? 'zh-CN' : GililPageLang.lang() === 'en' ? 'en-US' : 'ru-RU', { timeZone: 'Asia/Hong_Kong', hour: '2-digit', minute: '2-digit', second: '2-digit' }));
     }
 
     async function load() {
@@ -537,8 +588,9 @@
         if (!data.ok) throw new Error(data.error || 'bad_payload');
         render(data);
       } catch (e) {
+        console.warn('[srm-tv]', e && e.message);
         document.getElementById('funnel').innerHTML =
-          '<div class="err">Не удалось загрузить /api/tv: ' + esc(e.message) + '</div>';
+          '<div class="err">' + esc(window.GililLocale.userError(e && e.message && /^[a-z0-9_]+$/.test(e.message) ? e.message : 'tv_unavailable', GililPageLang.lang())) + '</div>';
       }
     }
 
@@ -547,7 +599,7 @@
         const deadline = el.getAttribute('data-deadline');
         const cd = fmtCountdown(deadline);
         if (!cd) return;
-        el.textContent = 'до ' + deadline + ' · ' + cd.label;
+        el.textContent = tr('by') + deadline + ' · ' + cd.label;
         el.classList.toggle('soon', !!cd.soon);
         el.classList.toggle('overdue', !!cd.overdue);
       });
@@ -556,6 +608,7 @@
     tickClock();
     tickTimers();
     setInterval(() => { tickClock(); tickTimers(); }, 1000);
+    reloadTv = load;
     load();
     setInterval(load, REFRESH_MS);
   </script>

@@ -6,7 +6,9 @@
  * beige is the retired warm theme; blue is the old name for cyan.
  */
 
-const CAPTION_HEIGHT = 32;
+/* Windows caption buttons do not fit in a 32px box once display scaling
+   is applied. 48 CSS px is the reserve both the overlay and the header use. */
+const CAPTION_HEIGHT = 48;
 
 const CAPTION = {
   dark: { color: '#14110e', symbolColor: '#f1e6d4' },
