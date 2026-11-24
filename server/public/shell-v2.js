@@ -294,9 +294,9 @@
       "tenders.open": "单独打开 ↗",
       "tenders.crm": "招标 CRM ↗",
       "news.bar": "新闻",
-      "news.open": "打开 news.html ↗",
+      "news.open": "在新窗口打开新闻",
       "tv.bar": "CRM TV 大屏",
-      "tv.open": "打开 crm-tv.html ↗",
+      "tv.open": "在新窗口打开 SRM TV",
       "tv.title": "CRM TV",
       "tv.desc": "招标漏斗大屏展示。下方为预览；完整全屏见链接。",
       "storage.mine": "我的存储",
@@ -367,7 +367,7 @@
       "mail.templates": "模板",
       "mail.in": "收件箱",
       "mail.out": "已发送",
-      "mail.waiting": "待回复",
+      "mail.waiting": "等待",
       "mail.day": "日",
       "mail.week": "周",
       "mail.month": "月",
@@ -540,7 +540,7 @@
       "toast.tpl_count": "模板数：{n}（通过 API / admin 编辑）",
       "toast.chat_filters": "聊天筛选已重置",
       "toast.contact_block": "联系方式已拦截 · 消息未送达",
-      "toast.mail_stats_deny": "邮件统计仅限 admin/director",
+      "toast.mail_stats_deny": "邮件统计仅限管理员和总监",
       "toast.mail_sent": "邮件已发送（smtp/mock）",
       "toast.mail_err": "错误：{err}",
       "toast.draft_rej": "草稿已拒绝",
@@ -698,6 +698,31 @@
       "time.hint": "按 24 小时制输入，例如 15:30",
       "time.invalid": "时间无效。请按 HH:MM 输入。",
       "err.network": "无法连接服务器。",
+      "mail.bot_draft": "机器人草稿",
+      "mail.edited": "（已修改）",
+      "mail.unedited": "（未修改）",
+      "mail.send": "发送",
+      "mail.reject": "拒绝",
+      "mail.cmd_reply": "命令：回复",
+      "mail.cmd_director": "转给总监",
+      "mail.draft_status": "草稿：{status}",
+      "mail.client": "客户",
+      "mail.project_no": "项目",
+      "mail.analysis": "分析",
+      "mail.bot_clean": "机器人未改",
+      "mail.manual": "人工处理",
+      "mail.avg_hours": "平均回复（小时）",
+      "mail.no_rows": "没有数据",
+      "time.now": "刚刚",
+      "time.ago_min": "{n} 分钟",
+      "time.ago_h": "{n} 小时",
+      "time.ago_d": "{n} 天",
+      "notif.sys.login_ip": "新的登录 IP",
+      "notif.sys.login_ip_body": "新的登录 IP {ip}{geo}",
+      "notif.sys.task_chat": "来自聊天的新任务",
+      "notif.sys.task_new": "新任务",
+      "notif.sys.escalation": "升级 · 计划未完成",
+      "notif.sys.escalation_body": "有人未完成计划，已升级。",
       "mail.manager_col": "经理",
     },
     ru: {
@@ -914,9 +939,9 @@
       "tenders.open": "открыть отдельно ↗",
       "tenders.crm": "CRM тендеров ↗",
       "news.bar": "Новости",
-      "news.open": "открыть news.html ↗",
+      "news.open": "Открыть новости",
       "tv.bar": "TV-экран CRM",
-      "tv.open": "открыть crm-tv.html ↗",
+      "tv.open": "Открыть SRM TV",
       "tv.title": "CRM TV",
       "tv.desc": "Витрина воронки тендеров для большого экрана. Ниже — превью; полный экран по ссылке.",
       "storage.mine": "Моё хранилище",
@@ -987,7 +1012,7 @@
       "mail.templates": "Шаблоны",
       "mail.in": "Входящие",
       "mail.out": "Исходящие",
-      "mail.waiting": "Ждут ответа",
+      "mail.waiting": "ждут",
       "mail.day": "День",
       "mail.week": "Неделя",
       "mail.month": "Месяц",
@@ -1160,7 +1185,7 @@
       "toast.tpl_count": "Шаблонов: {n} (редактирование через API / admin)",
       "toast.chat_filters": "Фильтры чата сброшены",
       "toast.contact_block": "Контакт заблокирован · сообщение не доставлено",
-      "toast.mail_stats_deny": "Статистика почты только для admin/director",
+      "toast.mail_stats_deny": "Статистика почты только для администратора и директора",
       "toast.mail_sent": "Письмо отправлено (smtp/mock)",
       "toast.mail_err": "Ошибка: {err}",
       "toast.draft_rej": "Черновик отклонён",
@@ -1318,6 +1343,31 @@
       "time.hint": "Введите время в 24-часовом виде, например 15:30",
       "time.invalid": "Время неверно. Введите его как ЧЧ:ММ.",
       "err.network": "Нет связи с сервером.",
+      "mail.bot_draft": "Черновик бота",
+      "mail.edited": "(правили)",
+      "mail.unedited": "(без правок)",
+      "mail.send": "Отправить",
+      "mail.reject": "Отклонить",
+      "mail.cmd_reply": "Команда: ответить",
+      "mail.cmd_director": "Перенаправить директору",
+      "mail.draft_status": "Черновик: {status}",
+      "mail.client": "клиент",
+      "mail.project_no": "проект",
+      "mail.analysis": "анализ",
+      "mail.bot_clean": "Бот без правок",
+      "mail.manual": "Ручная обработка",
+      "mail.avg_hours": "Ср. ответ, ч",
+      "mail.no_rows": "нет данных",
+      "time.now": "сейчас",
+      "time.ago_min": "{n} мин",
+      "time.ago_h": "{n} ч",
+      "time.ago_d": "{n} д",
+      "notif.sys.login_ip": "Новый IP входа",
+      "notif.sys.login_ip_body": "Новый IP входа {ip}{geo}",
+      "notif.sys.task_chat": "Новая задача из чата",
+      "notif.sys.task_new": "Новая задача",
+      "notif.sys.escalation": "Эскалация · пропуск плана",
+      "notif.sys.escalation_body": "План не выполнен, отчёт передан генералу.",
       "mail.manager_col": "Менеджер",
     },
     en: {
@@ -1521,9 +1571,9 @@
       "tenders.open": "open separately ↗",
       "tenders.crm": "Tenders CRM ↗",
       "news.bar": "News",
-      "news.open": "open news.html ↗",
+      "news.open": "Open news",
       "tv.bar": "CRM TV screen",
-      "tv.open": "open crm-tv.html ↗",
+      "tv.open": "Open SRM TV",
       "tv.title": "CRM TV",
       "tv.desc": "Tender funnel display for a big screen. Preview below; full screen via the link.",
       "storage.mine": "My storage",
@@ -1594,7 +1644,7 @@
       "mail.templates": "Templates",
       "mail.in": "Inbox",
       "mail.out": "Sent",
-      "mail.waiting": "Awaiting reply",
+      "mail.waiting": "waiting",
       "mail.day": "Day",
       "mail.week": "Week",
       "mail.month": "Month",
@@ -1767,7 +1817,7 @@
       "toast.tpl_count": "Templates: {n} (edit via API / admin)",
       "toast.chat_filters": "Chat filters reset",
       "toast.contact_block": "Contact blocked · message not delivered",
-      "toast.mail_stats_deny": "Mail stats for admin/director only",
+      "toast.mail_stats_deny": "Mail statistics are only for an admin or a director",
       "toast.mail_sent": "Email sent (smtp/mock)",
       "toast.mail_err": "Error: {err}",
       "toast.draft_rej": "Draft rejected",
@@ -1938,6 +1988,31 @@
       "time.hint": "Enter the time in 24-hour form, for example 15:30",
       "time.invalid": "That time is not valid. Enter it as HH:MM.",
       "err.network": "The server could not be reached.",
+      "mail.bot_draft": "Bot draft",
+      "mail.edited": "(edited)",
+      "mail.unedited": "(unedited)",
+      "mail.send": "Send",
+      "mail.reject": "Reject",
+      "mail.cmd_reply": "Command: reply",
+      "mail.cmd_director": "Forward to the director",
+      "mail.draft_status": "Draft: {status}",
+      "mail.client": "client",
+      "mail.project_no": "project",
+      "mail.analysis": "analysis",
+      "mail.bot_clean": "Bot, unedited",
+      "mail.manual": "Handled manually",
+      "mail.avg_hours": "Avg reply, h",
+      "mail.no_rows": "no data",
+      "time.now": "just now",
+      "time.ago_min": "{n} min",
+      "time.ago_h": "{n} h",
+      "time.ago_d": "{n} d",
+      "notif.sys.login_ip": "New sign-in IP",
+      "notif.sys.login_ip_body": "New sign-in IP {ip}{geo}",
+      "notif.sys.task_chat": "New task from chat",
+      "notif.sys.task_new": "New task",
+      "notif.sys.escalation": "Escalation · missed plan",
+      "notif.sys.escalation_body": "A plan was missed and reported to the general.",
       "mail.manager_col": "Manager",
     },
   };
@@ -2088,6 +2163,13 @@
     try { if (typeof loadActivityPanel === 'function') loadActivityPanel(); } catch (_) {}
     try { if (typeof loadUsefulnessPanel === 'function') loadUsefulnessPanel(); } catch (_) {}
     try { if (typeof loadDirectorWorkload === 'function') loadDirectorWorkload(); } catch (_) {}
+    try {
+      if (typeof currentSection !== 'undefined' && currentSection === 'mail') {
+        if (typeof renderMailList === 'function') renderMailList();
+        if (typeof mailSelectedId !== 'undefined' && mailSelectedId && typeof openMailDetail === 'function') openMailDetail(mailSelectedId);
+      }
+      if (typeof currentSection !== 'undefined' && currentSection === 'mail-stats' && typeof renderMailStats === 'function') renderMailStats();
+    } catch (_) {}
     if (!(opts && opts.silent) && typeof toast === 'function' && $('#app-shell') && !$('#app-shell').classList.contains('hidden')) {
       const switched = (I18N[currentLang] && I18N[currentLang]['lang.switched']) || ('UI: ' + langMeta(currentLang).native);
       toast(switched);
@@ -4632,27 +4714,27 @@
     if (d && (d.status === 'pending' || d.status === 'edited')) {
       draftHtml = `
         <div class="mail-draft-box">
-          <h4 style="margin:12px 0 6px">Черновик бота ${d.edited ? '(правили)' : '(без правок)'}</h4>
+          <h4 style="margin:12px 0 6px">${escapeHtml(t('mail.bot_draft'))} ${escapeHtml(d.edited ? t('mail.edited') : t('mail.unedited'))}</h4>
           <input id="mail-draft-subj" value="${escapeHtml(d.subject || '')}" style="width:100%;margin-bottom:8px;padding:8px;border-radius:8px;border:1px solid #334155;background:#0b1018;color:inherit" />
           <div class="mail-dictation-row"><button type="button" class="btn ghost" id="btn-mail-dictate" data-i18n="chats.dictation_mail">🎤</button></div>
           <textarea id="mail-draft-body">${escapeHtml(d.body_text || '')}</textarea>
           <div class="mail-draft-actions">
-            <button type="button" class="btn primary" id="btn-mail-send">Отправить</button>
-            <button type="button" class="btn ghost" id="btn-mail-reject">Отклонить</button>
-            <button type="button" class="btn ghost" id="btn-mail-cmd-reply">Команда: ответь</button>
-            <button type="button" class="btn ghost" id="btn-mail-cmd-dir">Перенаправь директору</button>
+            <button type="button" class="btn primary" id="btn-mail-send">${escapeHtml(t('mail.send'))}</button>
+            <button type="button" class="btn ghost" id="btn-mail-reject">${escapeHtml(t('mail.reject'))}</button>
+            <button type="button" class="btn ghost" id="btn-mail-cmd-reply">${escapeHtml(t('mail.cmd_reply'))}</button>
+            <button type="button" class="btn ghost" id="btn-mail-cmd-dir">${escapeHtml(t('mail.cmd_director'))}</button>
           </div>
         </div>`;
     } else if (d) {
-      draftHtml = `<p style="color:var(--muted);font-size:12px">Черновик: ${escapeHtml(d.status)}</p>`;
+      draftHtml = `<p style="color:var(--muted);font-size:12px">${escapeHtml(tf('mail.draft_status', { status: d.status || '' }))}</p>`;
     }
     det.classList.remove('hidden');
     det.innerHTML = `
       <h3>${escapeHtml(m.subject || '')}</h3>
       <div class="mmeta" style="color:var(--muted);font-size:12px;margin-bottom:8px">
         ${escapeHtml(m.from_addr || '')} → ${escapeHtml(m.to_addr || '')}<br/>
-        клиент: ${escapeHtml(m.client_name || '—')} · проект #${m.project_id || '—'} · ${escapeHtml(m.crm_side || '')}<br/>
-        анализ: ${escapeHtml((analysis.topic || '') + ' · ждут: ' + (analysis.expect || ''))}
+        ${escapeHtml(t('mail.client'))}: ${escapeHtml(m.client_name || '—')} · ${escapeHtml(t('mail.project_no'))} #${m.project_id || '—'} · ${escapeHtml(m.crm_side || '')}<br/>
+        ${escapeHtml(t('mail.analysis'))}: ${escapeHtml((analysis.topic || '') + ' · ' + t('mail.waiting') + ': ' + (analysis.expect || ''))}
       </div>
       <div class="mail-body">${escapeHtml(m.body_text || '')}</div>
       ${draftHtml}`;
@@ -4731,11 +4813,11 @@
     const m = r.data.metrics || {};
     if (metrics) {
       metrics.innerHTML = [
-        ['Входящие', m.inbound],
-        ['Исходящие', m.outbound],
-        ['Бот без правок', m.bot_sent_unedited],
-        ['Ручная обработка', m.manual_handled],
-        ['Ср. ответ, ч', m.avg_response_hours != null ? m.avg_response_hours : '—'],
+        [t('mail.in'), m.inbound],
+        [t('mail.out'), m.outbound],
+        [t('mail.bot_clean'), m.bot_sent_unedited],
+        [t('mail.manual'), m.manual_handled],
+        [t('mail.avg_hours'), m.avg_response_hours != null ? m.avg_response_hours : '—'],
       ]
         .map(
           ([l, n]) =>
@@ -4746,7 +4828,7 @@
         .join('');
     }
     function table(rows, cols) {
-      if (!rows || !rows.length) return '<p style="color:var(--muted);font-size:12px">нет данных</p>';
+      if (!rows || !rows.length) return '<p style="color:var(--muted);font-size:12px">' + escapeHtml(t('mail.no_rows')) + '</p>';
       let h = '<table class="mail-table"><thead><tr>' + cols.map((c) => '<th>' + c[1] + '</th>').join('') + '</tr></thead><tbody>';
       rows.forEach((row) => {
         h +=
@@ -6961,18 +7043,38 @@
 
   function relativeTime(iso) {
     if (!iso) return '';
-    const t = Date.parse(String(iso).includes('T') ? iso : iso.replace(' ', 'T') + 'Z');
-    if (!Number.isFinite(t)) return String(iso).slice(0, 16);
-    const sec = Math.max(0, Math.floor((Date.now() - t) / 1000));
-    if (sec < 60) return 'сейчас';
-    if (sec < 3600) return Math.floor(sec / 60) + ' мин';
-    if (sec < 86400) return Math.floor(sec / 3600) + ' ч';
-    if (sec < 86400 * 7) return Math.floor(sec / 86400) + ' д';
+    const ts = Date.parse(String(iso).includes('T') ? iso : iso.replace(' ', 'T') + 'Z');
+    if (!Number.isFinite(ts)) return String(iso).slice(0, 16);
+    const sec = Math.max(0, Math.floor((Date.now() - ts) / 1000));
+    if (sec < 60) return t('time.now');
+    if (sec < 3600) return tf('time.ago_min', { n: Math.floor(sec / 60) });
+    if (sec < 86400) return tf('time.ago_h', { n: Math.floor(sec / 3600) });
+    if (sec < 86400 * 7) return tf('time.ago_d', { n: Math.floor(sec / 86400) });
     try {
-      return new Date(t).toLocaleDateString();
+      return new Date(ts).toLocaleDateString(localeTag());
     } catch (_) {
       return '';
     }
+  }
+
+  function systemNotifText(it) {
+    const legacy = {
+      'Новый IP входа': 'notif.sys.login_ip',
+      'Новая задача из чата': 'notif.sys.task_chat',
+      'Новая задача': 'notif.sys.task_new',
+      'Эскалация · пропуск плана': 'notif.sys.escalation',
+    };
+    const meta = it.meta || {};
+    const key = meta.title_key || legacy[it.title] || '';
+    const title = key && t(key) !== key ? t(key) : (it.title || '');
+    if (key === 'notif.sys.login_ip' && meta.ip) {
+      return {
+        title,
+        body: tf('notif.sys.login_ip_body', { ip: meta.ip, geo: meta.geo ? ' · ' + meta.geo : '' }),
+      };
+    }
+    if (key === 'notif.sys.escalation') return { title, body: t('notif.sys.escalation_body') };
+    return { title, body: it.body || '' };
   }
 
   function notifTypeClass(type) {
@@ -7066,8 +7168,9 @@
       .map((it) => {
         const unread = !it.read;
         const tc = notifTypeClass(it.type);
-        const who = escapeHtml(it.actor_name || it.title || '');
-        const what = escapeHtml(it.body || it.title || '');
+        const shown = systemNotifText(it);
+        const who = escapeHtml(it.actor_name || shown.title || '');
+        const what = escapeHtml(shown.body || shown.title || '');
         return (
           '<button type="button" class="nitem' +
           (unread ? ' unread' : '') +

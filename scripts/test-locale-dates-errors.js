@@ -49,6 +49,9 @@ const shell = fs.readFileSync(path.join(root, 'server/public/shell-v2.js'), 'utf
 check('api messages are not placed in the panel text', !shell.includes("esc((r.data && r.data.error)"));
 check('language switch refreshes date fields', shell.includes('refreshLocaleFields()'));
 check('a 401 without a body is treated as sign-in required', shell.includes("status === 401") && shell.includes("key = 'unauthorized'"));
+check('relative times use the selected language', shell.includes("return t('time.now')") && shell.includes('time.ago_min'));
+check('system notification titles are mapped, stored bodies stay available', shell.includes('systemNotifText') && shell.includes('Новая задача из чата'));
+check('mail draft buttons use translation keys', shell.includes("t('mail.send')") && shell.includes("t('mail.reject')"));
 
 if (failed) {
   console.error(failed + ' failed');

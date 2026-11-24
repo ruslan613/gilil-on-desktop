@@ -479,10 +479,12 @@
 
     function tickClock() {
       const now = new Date();
+      const code = window.GililPageLang && GililPageLang.lang ? GililPageLang.lang() : 'zh';
+      const loc = code === 'zh' ? 'zh-CN' : code === 'en' ? 'en-US' : 'ru-RU';
       const opts = { timeZone: 'Asia/Hong_Kong', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
       const dateOpts = { timeZone: 'Asia/Hong_Kong', weekday: 'short', day: 'numeric', month: 'short' };
       document.getElementById('clock').textContent =
-        now.toLocaleTimeString('ru-RU', opts) + ' · ' + now.toLocaleDateString('ru-RU', dateOpts);
+        now.toLocaleTimeString(loc, opts) + ' · ' + now.toLocaleDateString(loc, dateOpts);
     }
 
     function deadlineMs(deadline) {
