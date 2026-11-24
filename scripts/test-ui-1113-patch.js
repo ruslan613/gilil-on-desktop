@@ -46,13 +46,14 @@ const sideBlock = css.slice(css.indexOf('.sidebar {'), css.indexOf('.sidebar {')
 check('sidebar stretches to the row', css.includes('.sidebar {') && /align-self:\s*stretch/.test(sideBlock) && /height:\s*100%/.test(sideBlock) && /grid-row:\s*3/.test(css) && css.includes('height: 100dvh'));
 check('team list scrolls inside the sidebar', css.includes('flex: 1 1 auto') && css.includes('min-height: 0'));
 
-assert.strictEqual(CAPTION_HEIGHT, 32);
+assert.strictEqual(CAPTION_HEIGHT, 48);
 assert.deepStrictEqual(captionForTheme('dark'), { color: '#14110e', symbolColor: '#f1e6d4' });
 assert.deepStrictEqual(captionForTheme('bitrix'), { color: '#FFFFFF', symbolColor: '#333333' });
 assert.deepStrictEqual(captionForTheme('beige'), { color: '#fbf8f3', symbolColor: '#2b2622' });
 assert.deepStrictEqual(captionForTheme('cyan'), { color: '#111827', symbolColor: '#e5e7eb' });
 assert.deepStrictEqual(captionForTheme('blue').color, captionForTheme('cyan').color);
-assert.strictEqual(captionOptions('dark').height, 32);
+assert.strictEqual(captionOptions('dark').height, 48);
+check('windows header stays clear of the caption buttons', css.includes('env(titlebar-area-height, 48px)') && css.includes('env(titlebar-area-width, 100vw)') && css.includes('html.win-caption .appbar') && css.includes('-webkit-app-region: no-drag'));
 check('caption colors match the three themes', true);
 
 check('windows caption is applied from the saved theme', main.includes("titleBarStyle = 'hidden'") && main.includes('titleBarOverlay = captionOptions(readSavedSplashTheme())'));

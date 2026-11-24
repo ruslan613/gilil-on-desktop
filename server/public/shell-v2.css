@@ -274,8 +274,14 @@ button, input { font: inherit; }
   grid-template-rows: auto auto minmax(0, 1fr); /* header · update-banner · body */
   overflow: hidden;
 }
+html.win-caption {
+  /* titlebar-area-* is the real Windows control box. The fallbacks apply
+     when those env values are absent. */
+  --gilil-wco-h: max(48px, env(titlebar-area-height, 48px));
+  --gilil-wco-right: max(168px, calc(100vw - env(titlebar-area-x, 0px) - env(titlebar-area-width, 100vw)));
+}
 html.win-caption #app-shell {
-  padding-top: 32px;
+  padding-top: var(--gilil-wco-h);
   box-sizing: border-box;
 }
 html.win-caption #app-shell::before {
@@ -283,10 +289,20 @@ html.win-caption #app-shell::before {
   position: fixed;
   top: 0;
   left: 0;
-  right: 140px;
-  height: 32px;
+  right: var(--gilil-wco-right);
+  height: var(--gilil-wco-h);
   -webkit-app-region: drag;
   z-index: 4000;
+}
+html.win-caption .appbar {
+  padding-right: calc(14px + var(--gilil-wco-right));
+}
+html.win-caption .appbar button,
+html.win-caption .appbar a,
+html.win-caption .appbar input,
+html.win-caption .appbar select,
+html.win-caption .appbar label {
+  -webkit-app-region: no-drag;
 }
 
 /* Header — compact one-tier pills; never eats chat height */
