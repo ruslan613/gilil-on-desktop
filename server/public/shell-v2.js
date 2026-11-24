@@ -690,6 +690,14 @@
       "pcard.cancel": "取消",
       "pcard.create": "创建",
       "settings.badge_new": "新",
+      "nav.als": "✦ 照明工作室",
+      "date.placeholder": "YYYY-MM-DD",
+      "date.hint": "按年-月-日输入，例如 2026-05-26",
+      "date.invalid": "日期无效。请按 YYYY-MM-DD 输入。",
+      "time.placeholder": "HH:MM",
+      "time.hint": "按 24 小时制输入，例如 15:30",
+      "time.invalid": "时间无效。请按 HH:MM 输入。",
+      "err.network": "无法连接服务器。",
       "mail.manager_col": "经理",
     },
     ru: {
@@ -1302,6 +1310,14 @@
       "pcard.cancel": "Отмена",
       "pcard.create": "Создать",
       "settings.badge_new": "новое",
+      "nav.als": "✦ Студия освещения",
+      "date.placeholder": "ДД.ММ.ГГГГ",
+      "date.hint": "Введите дату как ДД.ММ.ГГГГ, например 26.05.2026",
+      "date.invalid": "Дата неверна. Введите её как ДД.ММ.ГГГГ.",
+      "time.placeholder": "ЧЧ:ММ",
+      "time.hint": "Введите время в 24-часовом виде, например 15:30",
+      "time.invalid": "Время неверно. Введите его как ЧЧ:ММ.",
+      "err.network": "Нет связи с сервером.",
       "mail.manager_col": "Менеджер",
     },
     en: {
@@ -1914,6 +1930,14 @@
       "pcard.cancel": "Cancel",
       "pcard.create": "Create",
       "settings.badge_new": "new",
+      "nav.als": "✦ Lighting studio",
+      "date.placeholder": "MM/DD/YYYY",
+      "date.hint": "Enter the date as MM/DD/YYYY, for example 05/26/2026",
+      "date.invalid": "That date is not valid. Enter it as MM/DD/YYYY.",
+      "time.placeholder": "HH:MM",
+      "time.hint": "Enter the time in 24-hour form, for example 15:30",
+      "time.invalid": "That time is not valid. Enter it as HH:MM.",
+      "err.network": "The server could not be reached.",
       "mail.manager_col": "Manager",
     },
   };
@@ -2058,6 +2082,7 @@
       try { renderStorage(); } catch (_) {}
     }
     document.title = t('app.title');
+    try { refreshLocaleFields(); } catch (_) {}
     try { if (typeof renderNotifList === 'function') renderNotifList(); } catch (_) {}
     try { if (typeof loadFunnelPanel === 'function') loadFunnelPanel(); } catch (_) {}
     try { if (typeof loadActivityPanel === 'function') loadActivityPanel(); } catch (_) {}
@@ -4341,7 +4366,7 @@
       return;
     }
     if (status !== 200) {
-      if (statusEl) statusEl.textContent = t('smtp.err').replace('{err}', (data && data.error) || status);
+      if (statusEl) statusEl.textContent = userFacingError(data, status);
       return;
     }
     const items = (data && data.items) || [];
@@ -4386,7 +4411,7 @@
           const id = b.getAttribute('data-id');
           const r = await mailApi('/api/mail/smtp-allowlist/' + id, { method: 'DELETE' });
           if (r.status >= 400) {
-            if (statusEl) statusEl.textContent = t('smtp.err').replace('{err}', (r.data && r.data.error) || r.status);
+            if (statusEl) statusEl.textContent = userFacingError(r.data, r.status);
             return;
           }
           if (statusEl) statusEl.textContent = t('smtp.saved');
@@ -4402,7 +4427,7 @@
             body: { active: !cur },
           });
           if (r.status >= 400) {
-            if (statusEl) statusEl.textContent = t('smtp.err').replace('{err}', (r.data && r.data.error) || r.status);
+            if (statusEl) statusEl.textContent = userFacingError(r.data, r.status);
             return;
           }
           if (statusEl) statusEl.textContent = t('smtp.saved');
@@ -4433,7 +4458,7 @@
         body: { email, label },
       });
       if (r.status >= 400) {
-        if (statusEl) statusEl.textContent = t('smtp.err').replace('{err}', (r.data && r.data.error) || r.status);
+        if (statusEl) statusEl.textContent = userFacingError(r.data, r.status);
         return;
       }
       if ($('#smtp-allowlist-email')) $('#smtp-allowlist-email').value = '';
@@ -4642,7 +4667,7 @@
           body_text: ($('#mail-draft-body') || {}).value,
         };
         const out = await mailApi('/api/mail/drafts/' + d.id + '/approve', { method: 'POST', body });
-        toast(out.status === 200 ? t('toast.mail_sent') : tf('toast.mail_err', { err: out.data.error || out.status }));
+        toast(out.status === 200 ? t('toast.mail_sent') : userFacingError(out.data, out.status));
         loadMail();
         openMailDetail(id);
       });
@@ -4842,6 +4867,76 @@
     const y = +p[0], m = +p[1], d = +p[2];
     if (!y || !m || !d) return null;
     return new Date(y, m - 1, d);
+  }
+
+  function userFacingError(data, status) {
+    const code = data && (data.error || data.code);
+    if (data && data.message) console.warn('[gilil-api]', code || status, data.message);
+    let key = code || '';
+    if (!key && status === 401) key = 'unauthorized';
+    else if (!key && status === 403) key = 'forbidden';
+    else if (!key && status === 0) key = 'network';
+    if (window.GililLocale && typeof window.GililLocale.userError === 'function') {
+      return window.GililLocale.userError(key, currentLang);
+    }
+    return t('err.network');
+  }
+
+  function refreshLocaleFields() {
+    document.querySelectorAll('input.gilil-date').forEach((el) => {
+      el.placeholder = t('date.placeholder');
+      const iso = el.dataset.iso || '';
+      if (iso && window.GililLocale) el.value = window.GililLocale.formatDate(iso, currentLang);
+    });
+    document.querySelectorAll('input.gilil-time').forEach((el) => {
+      el.placeholder = t('time.placeholder');
+    });
+  }
+
+  function commitLocaleDate(el) {
+    if (!el || !window.GililLocale) return '';
+    const parsed = window.GililLocale.parseDate(el.value, currentLang);
+    if (parsed.empty) {
+      el.dataset.iso = '';
+      el.removeAttribute('aria-invalid');
+      return '';
+    }
+    if (parsed.invalid || !parsed.iso) {
+      el.dataset.iso = '';
+      el.setAttribute('aria-invalid', 'true');
+      return '';
+    }
+    el.dataset.iso = parsed.iso;
+    el.value = window.GililLocale.formatDate(parsed.iso, currentLang);
+    el.setAttribute('aria-invalid', 'false');
+    return parsed.iso;
+  }
+
+  function gililDateValue(el) {
+    return commitLocaleDate(el);
+  }
+
+  function gililDateSet(el, iso) {
+    if (!el) return;
+    el.dataset.iso = iso || '';
+    el.value = iso && window.GililLocale ? window.GililLocale.formatDate(iso, currentLang) : '';
+    el.setAttribute('aria-invalid', 'false');
+  }
+
+  function commitLocaleTime(el) {
+    if (!el || !window.GililLocale) return '';
+    const parsed = window.GililLocale.parseTime(el.value);
+    if (parsed.empty) {
+      el.removeAttribute('aria-invalid');
+      return '';
+    }
+    if (parsed.invalid) {
+      el.setAttribute('aria-invalid', 'true');
+      return '';
+    }
+    el.value = parsed.value;
+    el.setAttribute('aria-invalid', 'false');
+    return parsed.value;
   }
 
   function calMonthNames() {
@@ -5045,7 +5140,7 @@
     const dateEl = $('#cal-ev-date');
     const timeEl = $('#cal-ev-time');
     if (titleEl) titleEl.value = '';
-    if (dateEl) dateEl.value = ds;
+    if (dateEl) gililDateSet(dateEl, ds);
     if (timeEl) {
       const now = new Date();
       timeEl.value = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
@@ -5073,10 +5168,14 @@
     const proj = $('#cal-ev-project');
     const task = $('#cal-ev-task');
     const title = String((titleEl && titleEl.value) || '').trim();
-    const date = String((dateEl && dateEl.value) || '').trim();
-    const time = String((timeEl && timeEl.value) || '').trim();
+    const date = gililDateValue(dateEl);
+    const time = commitLocaleTime(timeEl);
     if (!title || !date) {
-      toast(t('cal.modal_hint'));
+      toast(!title ? t('cal.modal_hint') : t('date.invalid'));
+      return;
+    }
+    if (timeEl && String(timeEl.value || '').trim() && !time) {
+      toast(t('time.invalid'));
       return;
     }
     const ev = {
@@ -5226,16 +5325,16 @@
     const signedIn = shell && !shell.classList.contains('hidden');
     clip.classList.toggle('hidden', !signedIn);
     clip.hidden = !signedIn;
+    const tip = window.GililHelper.suggestions(currentSection || 'chats', currentLang);
+    const openBtn = document.getElementById('helper-open');
+    if (openBtn) openBtn.title = tip.open;
     if (!signedIn || panel.hidden) return;
-    const tip = window.GililHelper.suggestions(currentSection, currentLang);
     const title = document.getElementById('helper-title');
     const lead = document.getElementById('helper-lead');
     const list = document.getElementById('helper-list');
-    const openBtn = document.getElementById('helper-open');
     const closeBtn = document.getElementById('helper-close');
     if (title) title.textContent = tip.title;
     if (lead) lead.textContent = tip.lead;
-    if (openBtn) openBtn.title = tip.open;
     if (closeBtn) closeBtn.setAttribute('aria-label', tip.close);
     if (list) {
       list.textContent = '';
@@ -5378,6 +5477,8 @@
     applyMailRoleUI();
     applyActivityRoleUI();
     openTeamChats('projects');
+    const askedSection = new URLSearchParams(location.search).get('section');
+    if (askedSection && document.getElementById('sec-' + askedSection)) setSection(askedSection);
     applyRoleUI();
     applyLang(currentLang, { silent: true });
     if (typeof loadOwnProfile === 'function') loadOwnProfile();
@@ -5441,7 +5542,7 @@
           startOtpResendCountdown(data.retry_after_sec);
           setOtpStatus(tf('login.wait_resend', { sec: data.retry_after_sec }), 'error');
         } else {
-          setOtpStatus(data.error || t('login.bad_code'), 'error');
+          setOtpStatus(userFacingError(data, r.status), 'error');
         }
         return;
       }
@@ -5461,7 +5562,8 @@
       const codeEl = $('#otp-code');
       if (codeEl) codeEl.focus();
     } catch (e) {
-      setOtpStatus(String(e.message || e), 'error');
+      console.warn('[gilil-otp]', e && e.message);
+      setOtpStatus(t('err.network'), 'error');
     } finally {
       if (sendBtn) {
         sendBtn.disabled = false;
@@ -5491,7 +5593,7 @@
       const data = await r.json().catch(() => ({}));
       if (!r.ok) {
         setOtpStatus(
-          (data.error === 'invalid_code' ? t('login.bad_code') : (data.error || t('login.bad_code'))) +
+          userFacingError(data, r.status) +
             (data.attempts_left != null ? ' (' + data.attempts_left + ')' : ''),
           'error'
         );
@@ -5514,7 +5616,8 @@
         toast: tf('toast.entered', { login: u.login, short: u.short, role: u.role }),
       });
     } catch (e) {
-      setOtpStatus(String(e.message || e), 'error');
+      console.warn('[gilil-auth]', e && e.message);
+      setOtpStatus(t('err.network'), 'error');
     } finally {
       if (btn) {
         btn.disabled = false;
@@ -5570,7 +5673,7 @@
       if (!r.ok || !data || !data.token) {
         const msg = data && data.error === 'rate_limited'
           ? tf('login.wait_resend', { sec: data.retry_after_sec || 60 })
-          : t('login.bad_password');
+          : userFacingError(data, r.status);
         setOtpStatus(msg, 'error');
         return;
       }
@@ -5584,7 +5687,8 @@
         toast: tf('toast.entered', { login: username, short: name, role: (data.user && data.user.role) || '' }),
       });
     } catch (e) {
-      setOtpStatus(String(e.message || e), 'error');
+      console.warn('[gilil-auth]', e && e.message);
+      setOtpStatus(t('err.network'), 'error');
     } finally {
       if (btn) btn.disabled = false;
     }
@@ -5739,7 +5843,7 @@
     });
     const data = await r.json().catch(() => ({}));
     if (!r.ok || !data.user) {
-      if (status) status.textContent = (data && data.error) || 'error';
+      if (status) status.textContent = userFacingError(data, r.status);
       return;
     }
     serverProfile = data.user;
@@ -5829,6 +5933,13 @@
     bindSettingsLink('btn-settings-supply', 'supply');
     bindSettingsLink('btn-settings-mail-stats', 'mail-stats');
     bindSettingsLink('btn-settings-activity', 'activity');
+    const tendersCrm = document.getElementById('btn-tenders-open-crm');
+    if (tendersCrm) tendersCrm.addEventListener('click', () => setSection('crm'));
+    const asked = new URLSearchParams(location.search).get('section');
+    const sectionOk = ['crm', 'tenders', 'news', 'mail', 'calendar', 'tasks-plans', 'leads', 'storage', 'supply', 'mail-stats', 'activity', 'funnel', 'tv', 'personal'];
+    if (asked && sectionOk.indexOf(asked) >= 0 && document.getElementById('sec-' + asked)) {
+      setSection(asked);
+    }
     async function openGililManual() {
       closeSettingsPopover();
       if (!(window.gililDesktop && typeof window.gililDesktop.openManual === 'function')) {
@@ -5995,13 +6106,13 @@
     const dt = $('#chat-date-to');
     if (df) {
       df.addEventListener('change', () => {
-        chatDateFrom = df.value || '';
+        chatDateFrom = gililDateValue(df);
         if (selectedChat) openChatThread(selectedChat);
       });
     }
     if (dt) {
       dt.addEventListener('change', () => {
-        chatDateTo = dt.value || '';
+        chatDateTo = gililDateValue(dt);
         if (selectedChat) openChatThread(selectedChat);
       });
     }
@@ -6034,8 +6145,8 @@
         chatMediaOnly = false;
         chatPhotoOnly = false;
         if (msgSearch) msgSearch.value = '';
-        if (df) df.value = '';
-        if (dt) dt.value = '';
+        if (df) gililDateSet(df, '');
+        if (dt) gililDateSet(dt, '');
         if (btnMedia) btnMedia.setAttribute('aria-pressed', 'false');
         if (btnPhoto) btnPhoto.setAttribute('aria-pressed', 'false');
         if (selectedChat) openChatThread(selectedChat);
@@ -6769,7 +6880,7 @@
           toast(t('toast.contact_block'));
           return;
         }
-        toast((r.data && (r.data.error || r.data.message)) || 'Send failed');
+        toast(userFacingError(r.data, r.status));
         return;
       }
       const msg = r.data && r.data.message;
@@ -8077,7 +8188,7 @@
     root.textContent = '…';
     const r = await apiFetch('/api/funnels');
     if (!r.ok) {
-      root.innerHTML = '<div class="stage2-err">' + esc(t('state.no_access')) + esc((r.data && r.data.error) || r.status) + '</div>';
+      root.innerHTML = '<div class="stage2-err">' + esc(userFacingError(r.data, r.status)) + '</div>';
       return;
     }
     const items = (r.data && r.data.items) || [];
@@ -8147,7 +8258,7 @@
     root.textContent = '…';
     const r = await apiFetch('/api/activity?limit=80');
     if (!r.ok) {
-      root.innerHTML = '<div class="stage2-err">' + esc(t('state.no_access')) + esc((r.data && r.data.error) || r.status) + '</div>';
+      root.innerHTML = '<div class="stage2-err">' + esc(userFacingError(r.data, r.status)) + '</div>';
       return;
     }
     const items = (r.data && (r.data.items || r.data.events || r.data.logs)) || [];
@@ -8211,7 +8322,7 @@
     root.textContent = '…';
     const r = await apiFetch('/api/usefulness');
     if (!r.ok) {
-      root.innerHTML = '<div class="stage2-err">' + esc(t('state.no_access')) + esc((r.data && r.data.error) || r.status) + '</div>';
+      root.innerHTML = '<div class="stage2-err">' + esc(userFacingError(r.data, r.status)) + '</div>';
       return;
     }
     const items = (r.data && r.data.items) || [];
@@ -8517,7 +8628,7 @@
     if (!body.manager_ru_id || !body.manager_cn_id) { toast('Выберите менеджеров RU и CN'); return; }
     const r = await apiFetch('/api/projects', { method: 'POST', body });
     if (!r.ok) {
-      toast((r.data && (r.data.error || r.data.message)) || t('project.create_fail'));
+      toast(r.data ? userFacingError(r.data, r.status) : t('project.create_fail'));
       return;
     }
     const proj = r.data && r.data.project;
@@ -8554,7 +8665,7 @@
     box.textContent = t('state.loading');
     const r = await apiFetch('/api/director/workload');
     if (!r.ok) {
-      box.innerHTML = '<div class="muted">' + escapeHtml(t('state.no_access')) + escapeHtml((r.data && r.data.error) || String(r.status)) + '</div>';
+      box.innerHTML = '<div class="muted">' + escapeHtml(userFacingError(r.data, r.status)) + '</div>';
       return;
     }
     const items = (r.data && r.data.items) || [];
@@ -8594,7 +8705,7 @@
           },
         });
         if (er.ok) toast(t('director.sent'));
-        else toast((er.data && (er.data.error || er.data.message)) || 'Ошибка эскалации');
+        else toast(userFacingError(er.data, er.status));
         loadDirectorWorkload();
       });
     });

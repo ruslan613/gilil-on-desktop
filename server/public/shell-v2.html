@@ -146,7 +146,7 @@
           <button type="button" class="btn ghost settings-link-btn" id="btn-settings-supply" data-i18n="nav.supply" style="display:block;width:100%;text-align:left">Gilil Supply</button>
           <button type="button" class="btn ghost settings-link-btn" id="btn-settings-mail-stats" data-i18n="nav.mail_stats" hidden style="display:block;width:100%;text-align:left">Статистика почты</button>
           <button type="button" class="btn ghost settings-link-btn" id="btn-settings-activity" data-i18n="nav.activity" hidden style="display:block;width:100%;text-align:left">Журнал</button>
-          <a class="btn ghost settings-link-btn" id="btn-settings-als" href="/als-studio.html" style="display:block;width:100%;text-align:left;text-decoration:none">✦ AI Lighting Studio</a>
+          <a class="btn ghost settings-link-btn" id="btn-settings-als" href="/als-studio.html" data-i18n="nav.als" style="display:block;width:100%;text-align:left;text-decoration:none">✦ Студия освещения</a>
           <button type="button" class="btn ghost settings-link-btn" id="btn-settings-check-update" style="display:block;width:100%;text-align:left">
             <span data-i18n="settings.check_update">Проверить обновления</span>
             <span class="settings-update-new" data-i18n="settings.badge_new">new</span>
@@ -394,8 +394,7 @@
         <div class="embed-wrap">
           <div class="embed-bar">
             <span data-i18n="tenders.bar">招标 · 内嵌面板</span>
-            <a href="/tenders-dashboard.html" target="_blank" rel="noopener" data-i18n="tenders.open">单独打开 ↗</a>
-            <a href="/crm.html" target="_blank" rel="noopener" data-i18n="tenders.crm">招标 CRM ↗</a>
+            <button type="button" class="btn ghost" id="btn-tenders-open-crm" data-i18n="tenders.crm">招标 CRM ↗</button>
           </div>
           <div class="simple-panel">
             <div class="simple-grid" id="tenders-grid"></div>
@@ -533,8 +532,9 @@
             <button type="button" class="btn ghost" id="btn-create-project" title="Новый проект" data-i18n="project.create" data-i18n-title="project.new" style="margin-left:8px">＋ Проект</button>
             <div class="chat-tools" id="chat-tools">
               <input type="search" id="chat-msg-search" placeholder="按文本搜索…" data-i18n-placeholder="chats.msg_search" />
-              <label class="chat-date-lab"><span data-i18n="chats.from">自</span> <input type="date" id="chat-date-from" /></label>
-              <label class="chat-date-lab"><span data-i18n="chats.to">至</span> <input type="date" id="chat-date-to" /></label>
+              <label class="chat-date-lab"><span data-i18n="chats.from" id="chat-date-from-label">自</span> <input type="text" class="gilil-date" id="chat-date-from" inputmode="numeric" autocomplete="off" spellcheck="false" aria-describedby="chat-date-hint" data-i18n-placeholder="date.placeholder" placeholder="YYYY-MM-DD" /></label>
+              <label class="chat-date-lab"><span data-i18n="chats.to" id="chat-date-to-label">至</span> <input type="text" class="gilil-date" id="chat-date-to" inputmode="numeric" autocomplete="off" spellcheck="false" aria-describedby="chat-date-hint" data-i18n-placeholder="date.placeholder" placeholder="YYYY-MM-DD" /></label>
+              <span id="chat-date-hint" class="visually-hidden" data-i18n="date.hint">YYYY-MM-DD</span>
               <button type="button" class="tf" id="chat-filter-media" aria-pressed="false" data-i18n="chats.media">📎 媒体</button>
               <button type="button" class="tf" id="chat-filter-photo" aria-pressed="false" data-i18n="chats.photo">🖼 图片</button>
               <button type="button" class="tf" id="chat-filter-clear" data-i18n="chats.clear">重置</button>
@@ -736,8 +736,10 @@
     <h3 id="cal-ev-heading" data-i18n="cal.modal_title">Добавить событие</h3>
     <p style="color:var(--muted);margin:0 0 12px;font-size:13px" data-i18n="cal.modal_hint">Название · дата · время · проект или задача</p>
     <label class="fld"><span data-i18n="cal.lbl_title">Название</span><input id="cal-ev-title" type="text" maxlength="200" /></label>
-    <label class="fld"><span data-i18n="cal.lbl_date">Дата</span><input id="cal-ev-date" type="date" /></label>
-    <label class="fld"><span data-i18n="cal.lbl_time">Время</span><input id="cal-ev-time" type="time" /></label>
+    <label class="fld"><span data-i18n="cal.lbl_date" id="cal-ev-date-label">Дата</span><input id="cal-ev-date" class="gilil-date" type="text" inputmode="numeric" autocomplete="off" spellcheck="false" aria-describedby="cal-date-hint" data-i18n-placeholder="date.placeholder" placeholder="ДД.ММ.ГГГГ" /></label>
+    <span id="cal-date-hint" class="visually-hidden" data-i18n="date.hint">ДД.ММ.ГГГГ</span>
+    <label class="fld"><span data-i18n="cal.lbl_time" id="cal-ev-time-label">Время</span><input id="cal-ev-time" class="gilil-time" type="text" inputmode="numeric" autocomplete="off" spellcheck="false" aria-describedby="cal-time-hint" data-i18n-placeholder="time.placeholder" placeholder="ЧЧ:ММ" /></label>
+    <span id="cal-time-hint" class="visually-hidden" data-i18n="time.hint">ЧЧ:ММ</span>
     <label class="fld"><span data-i18n="cal.lbl_project">Проект</span><select id="cal-ev-project"><option value="">—</option></select></label>
     <label class="fld"><span data-i18n="cal.lbl_task">Задача</span><select id="cal-ev-task"><option value="">—</option></select></label>
     <div class="actions">
@@ -805,6 +807,7 @@
   </button>
 </div>
 
+<script src="/ui-locale.js"></script>
 <script src="/splash.js"></script>
 <script src="supply-stage2.js" defer></script>
 <script src="/helper-clip.js"></script>

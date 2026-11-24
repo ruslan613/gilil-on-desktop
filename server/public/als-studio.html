@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>AI Lighting Studio — Gilil Supply</title>
+  <script src="/ui-locale.js"></script>
   <script src="/ui-lang.js"></script>
   <script>
     (function () {
@@ -285,7 +286,8 @@
         var r = await fetch('/api/als/updates?limit=50', { headers: authHeaders() });
         var data = await r.json().catch(function () { return {}; });
         if (!r.ok) {
-          msg.textContent = tr('err') + r.status + (data.error ? ': ' + data.error : '');
+          if (data && data.message) console.warn('[als]', data.error, data.message);
+          msg.textContent = window.GililLocale.userError((data && data.error) || '', GililPageLang.lang());
           if (r.status === 401) warn.classList.add('show');
           return;
         }
@@ -322,7 +324,8 @@
           );
         }).join('');
       } catch (e) {
-        msg.textContent = tr('net') + (e && e.message ? e.message : e);
+        console.warn('[als]', e && e.message);
+        msg.textContent = window.GililLocale.userError('network', GililPageLang.lang());
       }
     }
     document.getElementById('btn-reload').addEventListener('click', loadList);
@@ -353,7 +356,8 @@
         var data = await r.json().catch(function () { return {}; });
         if (!r.ok) {
           out.className = 'msg err';
-          out.textContent = tr('err') + r.status + ': ' + (data.error || JSON.stringify(data));
+          if (data && data.message) console.warn('[als]', data.error, data.message);
+          out.textContent = window.GililLocale.userError((data && data.error) || '', GililPageLang.lang());
           return;
         }
         out.className = 'msg ok';

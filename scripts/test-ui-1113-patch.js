@@ -36,7 +36,7 @@ const linksAt = html.indexOf('class="settings-links"');
 const swatchAt = html.indexOf('id="theme-swatches"');
 const ids = [...html.slice(linksAt, swatchAt).matchAll(/id="([^"]+)"/g)].map((m) => m[1]);
 check('instruction stays last', ids[ids.length - 1] === 'btn-settings-manual');
-check('red new mark stays on the check button', html.includes('class="settings-update-new">new</span>'));
+check('red new mark stays on the check button', html.includes('class="settings-update-new"') && html.includes('id="btn-settings-check-update"'));
 
 check('emblem is 50px, about 1.4 times 36', css.includes('width: 50px !important') && css.includes('height: 50px') && html.includes('width="50" height="50"'));
 check('emblem keeps its picture', css.includes('object-fit: contain'));

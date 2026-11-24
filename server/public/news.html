@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Gilil On</title>
+  <script src="/ui-locale.js"></script>
   <script src="/ui-lang.js"></script>
   <script>
     (function () {
@@ -154,7 +155,7 @@
 <body>
   <div class="wrap">
     <header>
-      <p style="margin:0 0 10px;font-size:0.85rem"><a href="/tenders-dashboard.html" data-i18n="nav.panel">Панель</a> · <a href="/crm.html">CRM</a> · <a href="/crm-tv.html">SRM TV</a></p>
+      <p style="margin:0 0 10px;font-size:0.85rem"><a href="/shell-v2.html?section=tenders" data-i18n="nav.panel">Панель</a> · <a href="/shell-v2.html?section=crm">CRM</a> · <a href="/crm-tv.html">SRM TV</a></p>
       <h1 data-i18n="h1">Новости</h1>
       <p class="lead" data-i18n="lead">Свежие тендеры и обновления по освещению (Gilil On · мониторинг площадок РФ)</p>
     </header>
@@ -363,7 +364,8 @@
             listEl.appendChild(card);
           }
         } catch (err) {
-          statusEl.textContent = tr('loadErr') + err.message;
+          console.warn('[news]', err && err.message);
+          statusEl.textContent = window.GililLocale.userError('network', GililPageLang.lang());
         }
       }
 

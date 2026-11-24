@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>SRM TV — Gilil On</title>
+  <script src="/ui-locale.js"></script>
   <script src="/ui-lang.js"></script>
   <script>
     (function () {
@@ -580,8 +581,9 @@
         if (!data.ok) throw new Error(data.error || 'bad_payload');
         render(data);
       } catch (e) {
+        console.warn('[srm-tv]', e && e.message);
         document.getElementById('funnel').innerHTML =
-          '<div class="err">' + esc(tr('loadErr') + e.message) + '</div>';
+          '<div class="err">' + esc(window.GililLocale.userError(e && e.message && /^[a-z0-9_]+$/.test(e.message) ? e.message : 'tv_unavailable', GililPageLang.lang())) + '</div>';
       }
     }
 

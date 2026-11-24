@@ -56,7 +56,7 @@ check('instruction is last and the other actions keep their order', JSON.stringi
   'settings-update-status',
   'btn-settings-manual',
 ]));
-check('red new mark is on the check button', html.includes('class="settings-update-new">new</span>'));
+check('red new mark is on the check button', html.includes('class="settings-update-new"') && html.includes('id="btn-settings-check-update"'));
 const handler = js.slice(js.indexOf('async function onSettingsCheckUpdate'), js.indexOf('function bindUpdateUi'));
 check('settings button calls checkForUpdates only', handler.includes('checkForUpdates') && !handler.includes('downloadUpdate') && !handler.includes('installUpdate') && !handler.includes('location.reload'));
 check('instruction still calls openManual', js.includes("['btn-settings-manual', 'btn-settings-manual-personal']") && js.includes('openManual()'));

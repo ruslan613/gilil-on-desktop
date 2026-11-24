@@ -1636,6 +1636,7 @@ html[dir="rtl"] .notif-wrap { /* keep layout */ }
   font-size: 11px;
   color: var(--muted-2);
 }
+.chat-date-lab input.gilil-date,
 .chat-date-lab input[type="date"] {
   background: var(--bg);
   border: 1px solid var(--line);
@@ -1645,6 +1646,22 @@ html[dir="rtl"] .notif-wrap { /* keep layout */ }
   font-size: 12px;
   color-scheme: dark;
   box-shadow: var(--elev-in);
+}
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+input.gilil-date[aria-invalid="true"],
+input.gilil-time[aria-invalid="true"] {
+  border-color: var(--red);
+  outline: 2px solid color-mix(in srgb, var(--red) 55%, transparent);
 }
 .chat-tools .tf[aria-pressed="true"] {
   background: color-mix(in srgb, var(--teal) 24%, transparent);
