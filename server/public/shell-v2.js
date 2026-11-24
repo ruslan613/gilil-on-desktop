@@ -2240,16 +2240,16 @@
       { id: 'cn-li', nameKey: 'person.lina.full', roleKey: 'role.chat.supply', initials: 'LN', team: 'cn', unread: 3 },
     ],
     projects: [
-      { id: 'pr-2025ru', nameKey: 'chat.pr.2025ru', roleKey: 'project.retail', initials: 'RU', team: 'pr', unread: 1 },
-      { id: 'pr-cn2', nameKey: 'chat.pr.cn2', roleKey: 'project.street', initials: 'CN', team: 'pr', unread: 0 },
-      { id: 'pr-led', nameKey: 'chat.pr.led', roleKey: 'project.b2b', initials: 'LP', team: 'pr', unread: 2 },
-      { id: 'pr-iot', nameKey: 'chat.pr.iot', roleKey: 'project.iot', initials: 'CH', team: 'pr', unread: 0 },
-      { id: 'pr-frunze', nameKey: 'chat.pr.frunze', roleKey: 'project.frunze_lights', initials: 'ЖК', team: 'pr', unread: 1 },
-      { id: 'pr-t466', nameKey: 'chat.pr.t466', roleKey: 'project.tender_b2b', initials: '46', team: 'pr', unread: 0 },
+      { id: 'pr-2025ru', nameKey: 'chat.pr.2025ru', roleKey: 'project.retail', initials: 'RU', team: 'pr', region: 'RU', unread: 1 },
+      { id: 'pr-cn2', nameKey: 'chat.pr.cn2', roleKey: 'project.street', initials: 'CN', team: 'pr', region: 'CN', unread: 0 },
+      { id: 'pr-led', nameKey: 'chat.pr.led', roleKey: 'project.b2b', initials: 'LP', team: 'pr', region: 'RU', unread: 2 },
+      { id: 'pr-iot', nameKey: 'chat.pr.iot', roleKey: 'project.iot', initials: 'CH', team: 'pr', region: 'ALL', unread: 0 },
+      { id: 'pr-frunze', nameKey: 'chat.pr.frunze', roleKey: 'project.frunze_lights', initials: 'ЖК', team: 'pr', region: 'RU', unread: 1 },
+      { id: 'pr-t466', nameKey: 'chat.pr.t466', roleKey: 'project.tender_b2b', initials: '46', team: 'pr', region: 'RU', unread: 0 },
     ],
     director: [
-      { id: 'dir-igor', nameKey: 'role.chat.igor_dir', roleKey: 'role.chat.dir_msk', initials: 'ИД', team: 'dir', unread: 1 },
-      { id: 'dir-ruslan', nameKey: 'role.chat.ruslan_admin', roleKey: 'role.chat.owner_msk', initials: 'РГ', team: 'dir', unread: 0 },
+      { id: 'dir-igor', nameKey: 'role.chat.igor_dir', roleKey: 'role.chat.dir_msk', initials: 'ИД', team: 'dir', region: 'RU', unread: 1 },
+      { id: 'dir-ruslan', nameKey: 'role.chat.ruslan_admin', roleKey: 'role.chat.owner_msk', initials: 'РГ', team: 'dir', region: 'RU', unread: 0 },
     ],
   };
 
@@ -2935,19 +2935,34 @@
       );
     }
 
+    function visibleForTeam(c) {
+      if (teamVisibility === 'both') return true;
+      const region = String(c.region || '').toUpperCase();
+      if (region === 'ALL') return true;
+      if (region === 'RU') return teamVisibility === 'ru';
+      if (region === 'CN') return teamVisibility === 'cn';
+      if (c.team === 'ru') return teamVisibility === 'ru';
+      if (c.team === 'cn') return teamVisibility === 'cn';
+      return true;
+    }
+    function teamRows(list) {
+      return filter(list).filter(visibleForTeam);
+    }
+
+    const projectRows = teamRows(CHATS.projects);
     const groups = [
-      { key: 'ru', title: t('chats.team_ru'), list: filter(CHATS.ru), badge: null },
-      { key: 'cn', title: t('chats.team_cn'), list: filter(CHATS.cn), badge: null },
+      { key: 'ru', title: t('chats.team_ru'), list: teamRows(CHATS.ru), badge: null },
+      { key: 'cn', title: t('chats.team_cn'), list: teamRows(CHATS.cn), badge: null },
       {
         key: 'projects',
         title: t('chats.projects'),
-        list: filter(CHATS.projects),
-        badge: CHATS.projects.length,
+        list: projectRows,
+        badge: projectRows.length,
       },
       {
         key: 'director',
         title: t('chats.director'),
-        list: filter(CHATS.director || []),
+        list: teamRows(CHATS.director || []),
         badge: null,
       },
     ];
@@ -2955,14 +2970,7 @@
     let filteredGroups = chatGroupFilter
       ? groups.filter((g) => g.key === chatGroupFilter)
       : groups;
-    // Visibility dropdown controls which of RU/CN team lists appear (projects/director always stay unless filtered)
-    if (!chatGroupFilter) {
-      filteredGroups = filteredGroups.filter((g) => {
-        if (g.key === 'ru') return teamVisibility === 'ru' || teamVisibility === 'both';
-        if (g.key === 'cn') return teamVisibility === 'cn' || teamVisibility === 'both';
-        return true;
-      });
-    }
+    filteredGroups = filteredGroups.filter((g) => g.list.length > 0);
 
     root.innerHTML = filteredGroups
       .map((g) => {
@@ -6993,6 +7001,7 @@
         role: '',
         initials: 'CH',
         team: bucket === CHATS.cn ? 'cn' : bucket === CHATS.projects ? 'pr' : 'ru',
+        region: msg.region || '',
         unread: selectedChat === localId ? 0 : 1,
       });
       renderChats();
@@ -8563,6 +8572,7 @@
         role: (c.kind || '') + (c.region ? ' · ' + c.region : ''),
         initials: String(c.title || 'C').slice(0, 2).toUpperCase(),
         team,
+        region: c.region || '',
         unread: 0,
         reply_badges: c.reply_badges || [],
         last_message: c.last_message || null,
@@ -8828,6 +8838,7 @@
         role: 'project',
         initials: String(proj.name || 'PR').slice(0, 2).toUpperCase(),
         team: 'pr',
+        region: proj.region || 'ALL',
         unread: 0,
       });
       renderChats();

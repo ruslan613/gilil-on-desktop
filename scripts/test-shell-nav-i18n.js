@@ -44,6 +44,7 @@ check('settings links still open the same sections', js.includes("bindSettingsLi
 check('top tabs wrap instead of a clipping scrollbar', /flex-wrap:\s*wrap/.test(css) && css.includes('scrollbar-width: none'));
 check('top tab font is the 12.5px baseline plus exactly 2pt', css.includes('calc(12.5px + (2 * 96px / 72))'));
 check('windows caption reserve uses the control box', css.includes('--gilil-wco-h') && css.includes('--gilil-wco-right') && css.includes('padding-right: calc(14px + var(--gilil-wco-right))'));
+check('team selector filters project rows, not only the people groups', js.includes('function visibleForTeam') && js.includes("region === 'CN'") && js.includes("region: 'CN'") && js.includes("region: c.region || ''") && !js.includes('projects/director always stay'));
 check('narrow layout does not put the old 12px size back', !/\.pill\s*\{[^}]*font-size:\s*12px/.test(css));
 const side = css.slice(css.indexOf('.sidebar {'), css.indexOf('.sidebar {') + 700);
 const shell = css.slice(css.indexOf('#app-shell {'), css.indexOf('#app-shell {') + 400);
